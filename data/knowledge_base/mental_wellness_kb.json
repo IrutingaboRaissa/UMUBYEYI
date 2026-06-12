@@ -1,0 +1,201 @@
+{
+  "schema_version": "0.1",
+  "description": "Umubyeyi mental-wellness knowledge base. Each entry is one validated, paraphrased informational response mapped to one of the 6 maternal-wellness intents. Answers are written in plain, short English (kept simple for clean NLLB-200 translation to Kinyarwanda) and paraphrased from cited authoritative sources. Responses are INFORMATIONAL only, never diagnostic. Every entry carries when_to_seek_help + disclaimer.",
+  "intents": [
+    "sadness_low_mood",
+    "anxiety_worry",
+    "sleep",
+    "overwhelmed_identity",
+    "relationship_support",
+    "self_care_coping"
+  ],
+  "disclaimer_en": "This is general information, not medical advice. If you are worried about your health or your baby's, please talk to a nurse, midwife, or health worker. If you ever think about harming yourself or your baby, seek help immediately.",
+  "entry_template": {
+    "id": "kb_XXX",
+    "intent": "one of the 6 intents",
+    "title": "short human label",
+    "trigger_examples": [
+      "example things a mother might type that map here"
+    ],
+    "empathy": "a warm, validating opening line",
+    "guidance": "2-4 short sentences of validated informational guidance",
+    "when_to_seek_help": "concrete signs that mean she should contact a health worker",
+    "danger_flag": false,
+    "sources": [
+      "short citation keys"
+    ]
+  },
+  "entries": [
+    {
+      "id": "kb_001",
+      "intent": "sadness_low_mood",
+      "title": "Persistent sadness or emptiness after birth",
+      "trigger_examples": [
+        "I have felt sad and empty since my baby was born",
+        "I cry all the time and I do not know why",
+        "I feel hopeless and nothing makes me happy anymore"
+      ],
+      "empathy": "I am sorry you are feeling this way. What you are carrying is real, and you are not alone in it.",
+      "guidance": "Many mothers feel low for a few days after birth, and this often passes on its own. But when deep sadness, emptiness, or hopelessness lasts more than two weeks and makes it hard to care for yourself or your baby, it may be postpartum depression. This is a common and treatable health condition, not a weakness or a failure as a mother. With support and care, most mothers recover fully.",
+      "when_to_seek_help": "Please talk to a nurse, midwife, or community health worker if the sadness lasts more than two weeks, if it stops you from caring for yourself or your baby, or if you feel you cannot go on.",
+      "danger_flag": false,
+      "sources": [
+        "UNFPA 2025 PPD FAQ Q1, Q3, Q4, Q8"
+      ],
+      "empathy_rw": "Mbabajwe n'uko wumva umeze utyo, ariko ibyo utwaye ni iby'ukuri, kandi si wowe wenyine.",
+      "guidance_rw": "Umubare munini w'ababyeyi bumva bacitse intege nyuma y'iminsi mike bavutse, kandi akenshi ibyo biragenda ubwabyo.Ariko iyo agahinda kenshi, uburangare cyangwa kubura ibyiringiro bimara ibyumweru birenga bibiri bigatuma kwitwararika cyangwa kwita ku mwana wawe birushaho kugorana, bishobora kuba ari indwara yo kwiheba nyuma yo kubyara.Iyi ni indwara isanzwe kandi ishobora kuvura, si intege nke cyangwa kunanirwa kuba umubyeyi.Iyo abenshi mu babyeyi bashyigikiwe kandi bitabwaho, barakira burundu.",
+      "when_to_seek_help_rw": "Jya uganira n'umuforomokazi, umubyeyi w'umubyeyi cyangwa umukozi w'umuryango w'ubuvuzi niba agahinda gashobora kumara ibyumweru birenga bibiri, niba gatuma udashobora kwitunga cyangwa kwita ku mwana wawe, cyangwa se niba wumva udashobora gukomeza."
+    },
+    {
+      "id": "kb_002",
+      "intent": "overwhelmed_identity",
+      "title": "Feeling overwhelmed or like you have lost yourself",
+      "trigger_examples": [
+        "I feel overwhelmed and I do not feel like myself anymore",
+        "I do not know who I am now that I am a mother",
+        "It is all too much and I feel like I am failing"
+      ],
+      "empathy": "Becoming a mother for the first time is one of the biggest changes a person can go through. Feeling overwhelmed does not mean you are doing it wrong.",
+      "guidance": "Many new mothers feel detached from themselves or unsure of who they are now. This is a known part of the emotional transition into motherhood, and it can be made harder by exhaustion and lack of support. It does not mean you love your baby any less. Taking things one small step at a time, and letting trusted people help, can ease the weight.",
+      "when_to_seek_help": "Reach out to a health worker if the feeling of being overwhelmed does not lift, if you feel detached from your baby, or if you cannot manage daily tasks.",
+      "danger_flag": false,
+      "sources": [
+        "UNFPA 2025 PPD FAQ Q2, Q7"
+      ],
+      "empathy_rw": "Kuba umubyeyi ku ncuro ya mbere ni imwe mu mpinduka zikomeye umuntu ashobora guhura na zo.",
+      "guidance_rw": "Umubare munini w'ababyeyi bashya bumva ko batandukanye n'abandi cyangwa ko batazi neza abo ari bo muri iki gihe.Iki ni kimwe mu bintu bizwi mu gihe cy'ihindagurika ry'ibyiyumvo byo kuba umubyeyi, kandi bishobora kugorana bitewe no kurambirwa no kubura ubufasha.Ibyo ntibisobanura ko ukunda umwana wawe cyane.Gukora ibintu intambwe imwe ku ncuro imwe kandi ukemera ko abantu wizera babafasha, bishobora kugabanya ibiro.",
+      "when_to_seek_help_rw": "Jya ugana ku mukozi w'ubuvuzi niba wumva udashobora kugira icyo ukora, niba wumva utandukanye n'umwana wawe, cyangwa niba udashobora gusohoza inshingano za buri munsi."
+    },
+    {
+      "id": "kb_003",
+      "intent": "anxiety_worry",
+      "title": "Constant worry or anxiety about the baby",
+      "trigger_examples": [
+        "I cannot stop worrying that something will happen to my baby",
+        "I feel anxious and on edge all the time",
+        "I am so nervous I cannot relax even when the baby is fine"
+      ],
+      "empathy": "Worrying about your baby shows how much you care. But when worry never switches off, it can become exhausting, and you deserve relief from it.",
+      "guidance": "Feeling anxious, irritable, or constantly on edge is a common part of the postpartum period, and for some mothers it appears alongside low mood. Some worry is normal. But anxiety that does not ease, that races through your mind, or that stops you from resting is worth talking about. It can be eased with support and care.",
+      "when_to_seek_help": "Speak to a nurse or health worker if the anxiety is constant, if it stops you from sleeping or functioning, or if you have frightening thoughts you cannot control.",
+      "danger_flag": false,
+      "sources": [
+        "UNFPA 2025 PPD FAQ Q2"
+      ],
+      "empathy_rw": "Guhangayikishwa n'umwana wawe bigaragaza ko umwitaho cyane, ariko iyo imihangayiko itazimye, ishobora gutuma ugira umunaniro ukabije, kandi ukwiriye kuruhuka.",
+      "guidance_rw": "Kumva uhangayitse, uhangayitse cyangwa uhora uhangayitse ni ibintu bisanzwe mu gihe cyo kwibaruka, kandi ku bagore bamwe na bamwe bibonekera hamwe n'ibyiyumvo bibi.Guhangayika bimwe na bimwe ni ibisanzwe.Ariko guhangayika kudahosha, guhungabana mu bwenge bwawe, cyangwa kukubuza kuruhuka, birakwiriye ko tuganiraho.Birashobora guhindurwa n'inkunga no kwitabwaho.",
+      "when_to_seek_help_rw": "Jya uganira n'umuforomokazi cyangwa umukozi w'ubuvuzi niba imihangayiko ihoraho, niba ikubuza gusinzira cyangwa gukora neza, cyangwa niba ufite ibitekerezo biteye ubwoba udashobora gutegeka."
+    },
+    {
+      "id": "kb_004",
+      "intent": "relationship_support",
+      "title": "Feeling unsupported or alone",
+      "trigger_examples": [
+        "My partner does not understand what I am going through",
+        "I feel alone with all of this",
+        "I have no one to help me with the baby"
+      ],
+      "empathy": "Going through this without feeling supported is very hard, and your need for support is completely valid.",
+      "guidance": "Motherhood can feel isolating, especially without enough support, and a lack of support is one of the things that makes postpartum distress harder. Building even a small circle of people you trust, and speaking openly about how you feel, can make a real difference. Partners can struggle too, and sometimes they are worried without knowing how to show it. You do not have to carry this alone.",
+      "when_to_seek_help": "If you feel completely alone, unsafe, or unable to cope, please reach out to a community health worker who can connect you with support.",
+      "danger_flag": false,
+      "sources": [
+        "UNFPA 2025 PPD FAQ Q5, Q6, Q7, Q9"
+      ],
+      "empathy_rw": "Kugendera muri ibyo bintu udafite umutima wo gushyigikirwa biragoye cyane, kandi kuba ukeneye gushyigikirwa birumvikana rwose.",
+      "guidance_rw": "Umubyeyi ashobora kumva ari wenyine, cyane cyane iyo adafite ubufasha buhagije, kandi kubura ubwo bufasha ni kimwe mu bintu bituma imihangayiko yo kubyara irushaho kugorana.Gukora n'umukino muto w'abantu wizera, no kuvuga uko wiyumva nta cyo bitwaye.Abashakanye na bo bashobora guhangana n'ikibazo, kandi rimwe na rimwe baba bahangayitse batazi uko bakigaragaza.Si ngombwa ko ubikorera wenyine.",
+      "when_to_seek_help_rw": "Niba wumva uri wenyine, ufite umutekano muke cyangwa udashobora guhangana n'iki kibazo, turakwinginze ujye gushaka umukozi ushinzwe ubuzima bw'abaturage ushobora kugufasha."
+    },
+    {
+      "id": "kb_005",
+      "intent": "self_care_coping",
+      "title": "Practical ways to cope and protect your wellbeing",
+      "trigger_examples": [
+        "What can I do to take care of myself while caring for my newborn",
+        "How can I feel better and cope with all of this",
+        "What helps with low mood after having a baby"
+      ],
+      "empathy": "Wanting to take care of yourself is a strong and healthy step, not a selfish one. Caring for yourself is part of caring for your baby.",
+      "guidance": "Things that help many mothers include attending your postnatal appointments, resting when you can, eating well, and accepting help with the baby. Talking honestly about your feelings, with someone you trust or a health worker, is one of the most helpful things you can do. Recovery can include counselling, support groups, or other care, and asking for help early makes a real difference.",
+      "when_to_seek_help": "If self-care steps are not helping and you still feel low, anxious, or overwhelmed after two weeks, please talk to a health worker about further support.",
+      "danger_flag": false,
+      "sources": [
+        "UNFPA 2025 PPD FAQ Q9, Q11"
+      ],
+      "empathy_rw": "Kwiyitaho ni intambwe ikomeye kandi irangwa n'ubuzima, ntabwo ari intambwe irangwa n'ubwikunde.Kwitwararika ni kimwe mu bigize kwita ku mwana wawe.",
+      "guidance_rw": "Ibintu bifasha ababyeyi benshi birimo kujya mu mihango ya nyuma yo kubyara, kuruhuka igihe cyose bishoboka, kurya neza no kwakira ubufasha ku mwana.Kuvuga ukuri ku byiyumvo byawe, ku muntu wizera cyangwa ku mukozi w'ubuzima, ni kimwe mu bintu by'ingirakamaro cyane ushobora gukora.Gusubiza bishobora kuba bikubiyemo gutanga inama, amatsinda y'ubufasha cyangwa ubundi buryo bwo kwita ku mwana, kandi gusaba ubufasha hakiri kare bigira icyo bitanga.",
+      "when_to_seek_help_rw": "Niba intambwe zo kwivuza zitagufasha kandi ukaba ukomeje kumva ucitse intege, ufite impungenge cyangwa ucitse intege nyuma y'ibyumweru bibiri, jya uganira n'umukozi w'ubuvuzi ku birebana n'ubufasha bw'inyongera."
+    },
+    {
+      "id": "kb_006",
+      "intent": "sadness_low_mood",
+      "title": "Reassurance: what you feel is common and treatable",
+      "trigger_examples": [
+        "Is it normal to feel like this after giving birth",
+        "Am I the only one who feels this way",
+        "Is something wrong with me for feeling sad"
+      ],
+      "empathy": "There is nothing wrong with you. What you are feeling is something many mothers experience, even if few speak about it.",
+      "guidance": "Around one in eight women experience a mental health difficulty after childbirth, and in many communities the number is even higher. Postpartum depression is common, it is not your fault, and it is treatable. Many mothers who feel exactly as you do go on to recover fully with the right care and support.",
+      "when_to_seek_help": "Talking to a health worker is a good step any time these feelings last more than two weeks or affect your daily life.",
+      "danger_flag": false,
+      "sources": [
+        "UNFPA 2025 PPD FAQ Q8"
+      ],
+      "empathy_rw": "Ibyo wumva ni ibintu ababyeyi benshi bahura na byo, nubwo ari bake babivugaho.",
+      "guidance_rw": "Abagore bagera kuri umwe kuri munani baba bafite ibibazo by'uburwayi bwo mu mutwe nyuma yo kubyara, kandi mu baturage benshi uwo mubare ni munini kurushaho.Ububabare nyuma yo kubyara ni ibintu bisanzwe, si ikosa ryawe, kandi birashobora kuvurwa.Abenshi mu babyeyi bumva nk'uko ubyumva bakomeza gukira burundu iyo bafashijwe n'ubufasha bukwiriye.",
+      "when_to_seek_help_rw": "Kuganira n'umukozi w'ubuzima ni intambwe nziza mu gihe ibyo byiyumvo bimaze ibyumweru birenze bibiri cyangwa bigira ingaruka ku buzima bwawe bwa buri munsi."
+    },
+    {
+      "id": "kb_007",
+      "intent": "sleep",
+      "title": "Exhaustion and broken sleep with a newborn",
+      "trigger_examples": [
+        "I am so tired but the baby keeps me awake all night",
+        "I never get enough sleep and I feel exhausted all the time",
+        "How can I rest when my newborn wakes up so often"
+      ],
+      "empathy": "Being this tired is hard on your body and your mind, and your need for rest is real and important.",
+      "guidance": "Broken sleep is one of the most difficult parts of caring for a newborn, and almost every new mother goes through it. Resting when your baby sleeps, even briefly, and sharing night-time care with your partner or a trusted family member can help you recover some energy. Good rest is not a luxury; it protects both your physical recovery and your mood. Postnatal care includes support for your wellbeing, so it is worth raising your tiredness at your postnatal visits.",
+      "when_to_seek_help": "Talk to a nurse or health worker if you feel exhausted but cannot sleep even when the baby is sleeping, as this can be a sign of anxiety or depression and can be helped.",
+      "danger_flag": false,
+      "sources": [
+        "WHO 2022 PNC guideline (postnatal rest and maternal wellbeing)"
+      ],
+      "empathy_rw": "Kugira umunaniro nk'uwo bigora umubiri wawe n'ubwenge bwawe, kandi ukeneye kuruhuka ni ngombwa kandi ni iby'ingenzi.",
+      "guidance_rw": "Kuruhuka mu gihe umwana wawe asinziriye, kabone n'iyo byaba ari akanya gato, no gusangira n'uwo mwashakanye cyangwa umwe mu bagize umuryango wizerwa uburyo bwo kumwitaho mu gihe cy'ijoro, bishobora kugufasha kongera imbaraga. Kuruhuka neza si ibintu by'akataraboneka; birinda umubiri wawe n'imimerere yawe.",
+      "when_to_seek_help_rw": "Jya uganira n'umuforomokazi cyangwa umukozi w'ubuvuzi niba wumva unaniwe ariko ukaba udashobora gusinzira ndetse n'igihe umwana asinziriye, kuko ibyo bishobora kuba ikimenyetso cy'imihangayiko cyangwa kwiheba kandi bishobora kugufasha."
+    },
+    {
+      "id": "kb_008",
+      "intent": "self_care_coping",
+      "title": "Postnatal care visits and support are part of your recovery",
+      "trigger_examples": [
+        "Do I still need to see a health worker after my baby is born",
+        "Where can I get help after giving birth",
+        "What support is there for me as a new mother"
+      ],
+      "empathy": "Caring for yourself after birth matters just as much as caring for your baby, and support is meant to be there for you too.",
+      "guidance": "Postnatal care is not only for your baby; it is also a time for health workers to check on how you are recovering and feeling. Attending your postnatal contacts gives you a chance to ask questions, raise any low mood or worry, and get reassurance and support. You do not need to wait until something feels seriously wrong to ask for help.",
+      "when_to_seek_help": "Reach out to your nearest health worker or community health worker if you have missed your postnatal visits or have no one to turn to for support.",
+      "danger_flag": false,
+      "sources": [
+        "WHO 2022 PNC guideline (positive postnatal experience: information, reassurance, support)"
+      ],
+      "empathy_rw": "Kwita ku buzima bwawe nyuma yo kwibaruka ni iby'ingenzi kimwe no kwita ku mwana wawe, kandi nawe ugomba gushyigikirwa.",
+      "guidance_rw": "Mu kwita ku mwana wawe nyuma yo kwibaruka, si igihe cyo kumwitaho gusa, ahubwo ni igihe cy'uko abakozi bo mu rwego rw'ubuvuzi bagenzura uko urwaye n'uko wiyumva.Kwifatanya n'abagize umuryango wawe mu kwibaruka nyuma yo kwibaruka, bituma ugira amahirwe yo kubaza ibibazo, gutuma wumva wihebye cyangwa ufite impungenge, kandi ukagira icyizere n'ubufasha.Nta mpamvu yo gutegereza kugeza igihe ikintu runaka kizaba cyifashe nabi cyane kugira ngo usabe ubufasha.",
+      "when_to_seek_help_rw": "Ifashishe umukozi w'ubuvuzi ukwegereye cyangwa umukozi w'ubuvuzi ukorera mu gace utuyemo niba waratakaje gusura umwana cyangwa ukaba udafite uwo ushyigikira."
+    }
+  ],
+  "_translation": {
+    "model": "facebook/nllb-200-distilled-600M",
+    "src": "eng_Latn",
+    "tgt": "kin_Latn",
+    "fields": [
+      "empathy",
+      "guidance",
+      "when_to_seek_help"
+    ],
+    "note": "machine-translated; pending human validation"
+  }
+}
