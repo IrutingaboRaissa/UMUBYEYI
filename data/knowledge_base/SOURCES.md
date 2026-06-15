@@ -17,4 +17,3 @@ All entries paraphrase (not copy) these sources and cite them in the `sources` f
 
 ## Citation discipline
 - UNFPA / WHO / RBC content is "all rights reserved" — paraphrase into Umubyeyi's own wording, never paste verbatim, and cite per entry.
-- The MOTHER dataset (Eyobu et al. 2024/2025, Harvard Dataverse 10.7910/DVN/EZLCH3) is CC BY 4.0 — usable with attribution, but it is physical-health/Ugandan and is NOT part of this mental-wellness KB.

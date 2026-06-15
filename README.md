@@ -63,7 +63,6 @@ The app deploys on **Streamlit Community Cloud** (free) using `requirements.txt`
 ## Data & licensing
 
 - **Amod** mental-health counseling conversations — classifier training + intent framing.
-- **MOTHER** (Ugandan maternal health, CC BY 4.0) — cited for literature framing.
 - Response templates are sourced from WHO / UNFPA maternal-health guidance.
 
 ## ⚠️ Disclaimer
