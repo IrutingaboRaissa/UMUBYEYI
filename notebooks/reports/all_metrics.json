@@ -1,0 +1,20 @@
+{
+  "Baseline (Naive Bayes)": {
+    "accuracy": 0.3862,
+    "precision_macro": 0.6247,
+    "recall_macro": 0.2446,
+    "f1_macro": 0.2211
+  },
+  "Model 1: TF-IDF + LogReg (English)": {
+    "accuracy": 0.6069,
+    "precision_macro": 0.6343,
+    "recall_macro": 0.5871,
+    "f1_macro": 0.602
+  },
+  "Model 2: MiniLM + MLP (Kinyarwanda)": {
+    "accuracy": 0.4207,
+    "precision_macro": 0.4022,
+    "recall_macro": 0.4054,
+    "f1_macro": 0.4004
+  }
+}
