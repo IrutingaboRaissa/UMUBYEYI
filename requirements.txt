@@ -1,0 +1,8 @@
+# Umubyeyi - app runtime (deployable on Streamlit Community Cloud free tier)
+# The live NLLB translator (transformers + torch, ~2.4GB) is intentionally NOT pinned here:
+# it exceeds the free-tier ~1GB RAM limit, and src/app.py degrades gracefully without it.
+# To run the translation layer locally, also: pip install transformers torch
+streamlit==1.48.1
+scikit-learn==1.9.0
+joblib==1.5.2
+numpy==2.4.6
