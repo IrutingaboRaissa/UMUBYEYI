@@ -38,7 +38,7 @@ Model 1 is the deployed classifier. The Kinyarwanda-direct models quantify cross
 
 ```
 data/        Amod corpus, intent labels, Kinyarwanda translations, response templates
-notebooks/   umubyeyi.ipynb (full analysis) · umubyeyi_colab.ipynb (full pipeline, GPU)
+notebooks/   umubyeyi.ipynb (full pipeline, Colab-ready)
 src/         app.py (Streamlit chatbot) · build_slides.py (deck generator)
 models/      intent_classifier.joblib · tfidf_vectorizer.joblib
 reports/     metrics (JSON) and figures
@@ -54,9 +54,7 @@ pip install -r requirements.txt
 streamlit run src/app.py
 ```
 
-**Notebook:** open `notebooks/umubyeyi.ipynb` and Run All (needs `pandas matplotlib seaborn scikit-learn sentence-transformers`).
-
-**Full pipeline on GPU:** open `notebooks/umubyeyi_colab.ipynb` in Google Colab → set runtime to T4 GPU → Run All. It pulls the data from this repo and runs the baseline plus all three models (including the AfroXLMR fine-tune) end-to-end.
+**Full pipeline (notebook):** open `notebooks/umubyeyi.ipynb` in Google Colab → set runtime to T4 GPU → Run All. It pulls the data from this repo and runs the baseline plus all three models (including the AfroXLMR fine-tune) end-to-end.
 
 ## Deployment notes
 
