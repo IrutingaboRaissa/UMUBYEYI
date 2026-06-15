@@ -213,8 +213,8 @@ bullets(s, [
      "English-only.", 0),
     ("Kinyarwanda is severely under-resourced in NLP — no public mental-wellness "
      "intent dataset exists.", 0),
-    ("Prior work (e.g. the MOTHER dataset, Uganda) is English-only and physical "
-     "health only, and names “translation needed” as its own limitation.", 0),
+    ("Existing maternal-health chatbots are English-only and physical-health "
+     "focused, and name translation as an unsolved limitation.", 0),
 ], w=Inches(11.5))
 rect(s, Inches(0.6), Inches(5.75), Inches(11.5), Inches(0.7), CORAL)
 tf = textbox(s, Inches(0.85), Inches(5.8), Inches(11), Inches(0.6), MSO_ANCHOR.MIDDLE)
@@ -227,19 +227,14 @@ footer(s, 4)
 # ======================================================================
 # 5. DATA
 # ======================================================================
-s = new("Data", "Three data sources, three distinct roles")
-header(s, "Data", "Three data sources, three distinct roles")
+s = new("Data", "Two data sources, two distinct roles")
+header(s, "Data", "Two data sources, two distinct roles")
 cards = [
     ("Amod counseling Q&A", "TRAINING DATA", TEAL,
      ["3,512 rows of real therapist Q&A",
       "995 unique questions (heavy duplication)",
       "Filtered to maternal-relevant subset",
       "Labeled into 6 wellness intents"]),
-    ("MOTHER dataset (Uganda)", "FRAMING / LIT REVIEW", LAV,
-     ["503 maternal-health Q&A, CC BY 4.0",
-      "English-only, physical health only",
-      "Cited to frame the research gap",
-      "NOT used for training or the KB"]),
     ("WHO / UNFPA guidance", "RESPONSE TEMPLATES", CORAL,
      ["Tier-1 global authorities",
       "Source of every user-facing answer",
