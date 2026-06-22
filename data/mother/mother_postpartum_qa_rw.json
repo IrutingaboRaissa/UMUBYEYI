@@ -1,0 +1,950 @@
+[
+  {
+    "question_en": "How do I know that I am in labor?",
+    "answer_en": "Signs that labor might be starting include contractions or tightening of the abdomen, a \"show\" where the mucus plug from your cervix comes away, backache, an urge to go to the toilet caused by pressure from the baby's head on your bowel, and your waters breaking. The early, latent stage of labor can take some time to progress fully.",
+    "question_rw": "Namenya nte ko ndimo kubyara?",
+    "answer_rw": "Mu bimenyetso bigaragaza ko umwana atangiye kubyara, harimo gukama cyangwa gukomera k'inda, \"kugaragara\" ko hari uruhu rw'inda rukura mu rubavu rw'umwana, kuribwa mu mugongo, kumva ushaka kujya mu bwiherero bitewe n'uko umutwe w'umwana ugushyira mu nda, n'uko amazi atemba."
+  },
+  {
+    "question_en": "When can I start using birth control after giving birth?",
+    "answer_en": "You can start using birth control methods two weeks after a normal childbirth.",
+    "question_rw": "Ni ryari natangira gukoresha uburyo bwo kugenzura inda nyuma yo kubyara?",
+    "answer_rw": "Ushobora gutangira gukoresha uburyo bwo kugenzura inda nyuma y'ibyumweru bibiri umaze kubyara."
+  },
+  {
+    "question_en": "How long should I wait to get pregnant after a C-section?",
+    "answer_en": "It is recommended to wait for two years before trying to conceive again after a C-section birth.",
+    "question_rw": "Ni ryari nagombye gutegereza kugira ngo ntwite nyuma y'imibonano mpuzabitsina?",
+    "answer_rw": "Ni byiza gutegereza imyaka ibiri mbere yo kongera gushaka inda nyuma yo kubyara."
+  },
+  {
+    "question_en": "How to tighten vagina after childbirth?",
+    "answer_en": "Pelvic exercises, such as Kegel exercises, are known to help in recovering vaginal tightness and toning pelvic muscles after childbirth.",
+    "question_rw": "Ni gute umuntu yakomereza inda nyuma yo kubyara?",
+    "answer_rw": "Imyitozo y'uruhu, urugero nk'imyitozo ya Kegel, ni yo izifasha kugarura ubukana bw'inda n'imivumba y'uruhu nyuma yo kubyara."
+  },
+  {
+    "question_en": "When can I start moving after a C-section?",
+    "answer_en": "You can typically start moving around and walking within 24 hours after a C-section.",
+    "question_rw": "Nzatangira kugenda ryari nyuma y'imibonano mpuzabitsina?",
+    "answer_rw": "Ubusanzwe ushobora gutangira kugenda n'amaguru mu masaha 24 nyuma y'imibonano mpuzabitsina."
+  },
+  {
+    "question_en": "My baby cries a lot at night. What should I do?",
+    "answer_en": "It sounds like your baby might be experiencing colic pain. Consider using Gripe water as prescribed.",
+    "question_rw": "Umwana wanjye ararira cyane nijoro.",
+    "answer_rw": "Birashoboka ko umwana wawe afite ububabare bw'ibinyugunyugu."
+  },
+  {
+    "question_en": "Can I have a vaginal delivery after a C-section?",
+    "answer_en": "It is possible depending on the reason for your previous C-section.",
+    "question_rw": "Ese nshobora kubyara mu nda nyuma y'imibonano mpuzabitsina?",
+    "answer_rw": "Ibyo bishobora kubaho bitewe n'impamvu y'uko wakoze iki cyorezo."
+  },
+  {
+    "question_en": "What are the chances of my baby getting HIV if I am HIV positive?",
+    "answer_en": "There's a risk of transmission, but it's significantly reduced if you consistently take your ARVs as prescribed.",
+    "question_rw": "Ese niba mfite virusi itera SIDA umwana wanjye ashobora kwandura iki?",
+    "answer_rw": "Hariho ibyago byo kwandura, ariko bigabanuka cyane iyo ugiye ufata imiti ya ARV nk'uko yabigenewe."
+  },
+  {
+    "question_en": "what is diaper rash",
+    "answer_en": "Skin irritation and redness in the area covered \r\nby the baby’s diaper.",
+    "question_rw": "icyitwa urumogi rw'indembe",
+    "answer_rw": "Indwara y'ubwonko n'ubwandu bw'ubwanwa mu gice cy'indabo z'umwana."
+  },
+  {
+    "question_en": "what is  Labour",
+    "answer_en": "Process by which the baby passes from the uterus \r\nto the outside world, primarily through contractions \r\nof the uterus.",
+    "question_rw": "Umwuga w'akazi ni iki?",
+    "answer_rw": "Uko umwana ava mu nda akajya mu bindi bice by'umubiri, ahanini binyuze mu gucogora kw'inda."
+  },
+  {
+    "question_en": "what is Mastitis",
+    "answer_en": "Inflammation of the breast. May also be an infection.",
+    "question_rw": "Mastitis ni iki?",
+    "answer_rw": "Iyo umuntu afashwe n'indwara y'ibibyimba, ashobora kugira ubumuga bwo mu nda."
+  },
+  {
+    "question_en": "what is  Oxytocin",
+    "answer_en": "A hormone produced by a gland within the brain. \r\nOxytocin circulates in our blood, causing uterine \r\ncontractions during childbirth and the expulsion \r\nof breast milk.",
+    "question_rw": "icyo Oxytocin ari cyo",
+    "answer_rw": "Oxytocin ikwirakwira mu maraso yacu, igatuma inda igwa mu nda mu gihe cyo kubyara, maze amata y'umubyeyi akava mu nda."
+  },
+  {
+    "question_en": "what is Sudden infant death syndrome",
+    "answer_en": "The unexplainable sudden death of an apparently \r\nhealthy newborn under the age of one.",
+    "question_rw": "indwara y'urupfu rw'uruhinja",
+    "answer_rw": "Urupfu rutunguranye rudasobanurwa rw'umwana ukiri muto utaragera ku myaka imwe gusa."
+  },
+  {
+    "question_en": "what is  Vernix caseosa",
+    "answer_en": "A whitish substance coating the skin of a newborn baby.",
+    "question_rw": "Vernix caseosa ni iki?",
+    "answer_rw": "Ikintu cyera cyane gipfukirana uruhu rw'umwana ukiri muto."
+  },
+  {
+    "question_en": "what is  Weaning",
+    "answer_en": "Gradual phasing out of breastfeeding.",
+    "question_rw": "Gukura inda mu nda ni iki?",
+    "answer_rw": "Gukuramo amata buhoro buhoro."
+  },
+  {
+    "question_en": "What does the cervix do during menstruation and labor?",
+    "answer_en": "The cervix allows blood to flow during menstruation when it's almost closed, and during labor, it dilates to allow the baby to pass through.",
+    "question_rw": "Ni iki umubyibuho ukora mu gihe cy'ihindagurika no mu gihe cyo kubyara?",
+    "answer_rw": "Igituba cy'umura cyemerera amaraso gutemba mu gihe cy'ihindagurika ry'ibitsina, mu gihe cy'imibonano mpuzabitsina, kandi mu gihe cy'imibonano mpuzabitsina, kigenda kizamuka kugira ngo uruhinja ruhite runyuraho."
+  },
+  {
+    "question_en": "When is a baby considered full-term?",
+    "answer_en": "Your baby is considered at term as of 37 weeks and could be born anytime between 37 and 42 weeks after your last menstrual period. Most babies are born between 39 and 41 weeks.",
+    "question_rw": "Ni ryari umwana aba amaze igihe kirekire avutse?",
+    "answer_rw": "Umwana wawe avuka ku cyumweru cya 37 kandi ashobora kuvuka hagati y'icyumweru cya 37 na 42 nyuma y'ihindagurika rya nyuma."
+  },
+  {
+    "question_en": "What are the stages of fetal development?",
+    "answer_en": "Your baby constantly grows through several stages before being ready to live outside the uterus. These stages, or key moments, are based on the number of weeks from the last menstrual period and may differ from one woman to the next.",
+    "question_rw": "Ni ibihe byiciro umwana w'uruhinja akuriraho?",
+    "answer_rw": "Umwana wawe akura mu byiciro bitandukanye mbere y'uko aba yiteguye kubaho hanze y'inda, bitewe n'ibyumweru bimara kuva igihe cy'imyanya ndangagitsina cyeze, kandi bishobora gutandukana bitewe n'umugore."
+  },
+  {
+    "question_en": "What happens between 10 and 14 weeks of pregnancy?",
+    "answer_en": "Between 10 and 14 weeks, the fetus grows larger, and skeletal bones begin to form. By 14 weeks, the fetus measures around 8.5 cm. While the genitals are not fully formed, they are developed enough to determine the sex of the baby. An ultrasound between 16 and 18 weeks can typically confirm the baby's sex.",
+    "question_rw": "Ni iki kibaho hagati y'ibyumweru 10 na 14 byo gutwita?",
+    "answer_rw": "Hagati y'ibyumweru 10 n'ibyumweru 14, umwana atangira gukura, maze amagufwa y'umubiri atangira gushinga. Mu cyumweru cya 14, umwana atangira gukura agera kuri santimetero 8.5."
+  },
+  {
+    "question_en": "What happens between 15 and 28 weeks of pregnancy?",
+    "answer_en": "During the second trimester (15-28 weeks), your baby undergoes significant growth and development. At 16 weeks, the head is still large, but the trunk, arms, and legs begin to lengthen. By 20 weeks, you can feel the baby's movements. The baby is coated in vernix caseosa, a protective cream. At 22 weeks, the baby measures around 19 cm, and hair growth begins along with lanugo, a fine fuzz. Between 23-27 weeks, the baby gains weight, and at 24 weeks, they can hear low-frequency sounds. Around 26 weeks, eyebrows and eyelashes become visible, and by 28 weeks, the baby's eyes begin to open and become sensitive to light by 32 weeks.",
+    "question_rw": "Ni iki kibaho hagati y'ibyumweru 15 na 28 by'imbuto?",
+    "answer_rw": "Mu cyumweru cya kabiri (15-28), umwana wawe arakura cyane kandi agatera imbere. Ku cyumweru cya 16, umutwe uracyari munini, ariko igiceri, amaboko n'amaguru bigatangira kurenga. Ku cyumweru cya 20, urumva ukuntu umwana agenda agenda. Ku cyumweru cya 22 umwana ashyirwamo vernix caseosa, ari yo kirimu imurinda. Ku cyumweru cya 22, umwana aba afite santimetero 19 z'uburebure, umusatsi na wo ukagenda ukura hamwe na lanugo, ari yo muriro mwiza. Ku cyumweru cya 23-27, umwana arushaho kugira ibiro, maze ku cyumweru cya 24 ashobora kumva amajwi y'ubwiyongere. Ku cyumweru cya 26 amaso n'amabara atangira kugaragara, ku cyumweru cya 28 amaso y'umwana atangira gufunguka no kumva urumuri ku cyumweru cya 32."
+  },
+  {
+    "question_en": "What happens during the third trimester of pregnancy?",
+    "answer_en": "In the third trimester (29 weeks to birth), your baby continues to grow and prepare for birth. At 30 weeks, the baby measures around 28 cm. By 36 weeks, the baby's skin becomes pinkish, and the fine downy hair (lanugo) begins to disappear, though it might remain until after birth. The baby also increases in size due to fat reserves. Between 37 and 41 weeks, the baby is fully developed and ready for delivery.",
+    "question_rw": "Ni iki kibaho mu gihe cy'igice cya gatatu cy'amezi atwite?",
+    "answer_rw": "Mu cyiciro cya gatatu (29 cy'ibyumweru mbere yo kuvuka), umwana akomeza gukura no kwitegura kuvuka. Ku cyumweru cya 30, umwana aba afite uburebure bwa cm 28. Ku cyumweru cya 36, uruhu rw'umwana ruba rufite ibara ry'umutuku, n'umusatsi mwiza (lanugo) utangira gutakara, nubwo ushobora kugumaho kugeza nyuma yo kuvuka."
+  },
+  {
+    "question_en": "What is the role of the placenta and umbilical cord during pregnancy?",
+    "answer_en": "The placenta starts growing as soon as the fertilized egg embeds itself in the uterus and is connected to the baby by the umbilical cord. The placenta and umbilical cord supply oxygen and nutrients to the fetus, while also helping to remove waste from the baby’s body. Additionally, the placenta secretes hormones needed to maintain the pregnancy and supports fetal growth. However, it doesn't filter all substances, and harmful substances such as alcohol and certain drugs can pass through to the fetus.",
+    "question_rw": "Ni uruhe ruhare uruhu n'umugongo w'igifu bigira mu gihe cy'imirire?",
+    "answer_rw": "Imyambarire itangira gukura vuba cyane iyo intanga yabyaye ikomeje gushyirwa mu nda kandi ikaba ifitanye isano n'umwana binyuze ku mugozi w'uruhu. Imyambarire n'umugozi w'uruhu bitanga umwuka wa ogisijeni n'ibyokurya ku mwana, kandi bigufasha gukura imyanda mu mubiri w'umwana. Byongeye kandi, imyambarire isohora homoni zikenewe kugira ngo igume mu nda kandi igateza imbere iterambere ry'umwana."
+  },
+  {
+    "question_en": "What changes occur in the breasts during pregnancy?",
+    "answer_en": "During pregnancy, your breasts undergo several changes as they prepare for breastfeeding. Sensitivity and an increase in size are common, and blue veins may become more visible. The nipples and areolas also grow slightly and may darken, with bumps forming on the areolas. These bumps are glands that produce oil to keep the skin moisturized. Around 16 weeks, your breasts begin producing colostrum, the first milk for your baby, and some women may experience colostrum leakage, which is completely normal.",
+    "question_rw": "Ni ibihe bintu bigenda bihinduka mu magufwa y'umwana mu gihe atwite?",
+    "answer_rw": "Mu gihe cy'ingumba, ibere ry'umwana rigira ibintu byinshi bihinduka mu gihe yitegura kumwonsa. Mu gihe cy'ibere ry'umwana, ni ibintu bisanzwe kugira ngo amenyo arusheho kumera nk'ibere, kandi imitsi y'amaraso igenda irushaho kugaragara."
+  },
+  {
+    "question_en": "Some women embrace the changes, viewing them as signs of the baby's development, while others may struggle with accepting their new body image, especially given the discomfort and symptoms of pregnancy.",
+    "answer_en": "It's important to give yourself time to adjust to these changes, as they are a testament to your body's incredible ability to nurture and bring new life. If you're feeling discomfort or dissatisfaction, it's helpful to talk to someone you trust.",
+    "question_rw": "Hari abagore bemera ko ibyo bintu bihinduka, bakabibona nk'ibimenyetso by'uko umwana arimo arakura, mu gihe abandi bashobora guhura n'ikibazo cyo kwemera uko umubiri wabo umeze, cyane cyane iyo batekereje ko batumva neza kandi ko bafite ibimenyetso by'uko batwite.",
+    "answer_rw": "Ni iby'ingenzi ko ufata igihe cyo kumenyera ibyo bintu, kuko bigaragaza ko umubiri wawe ufite ubushobozi buhebuje bwo gukomeza kugira ubuzima bushya. Niba wumva udashimishijwe cyangwa utanyuzwe, byaba byiza uganiriye n'umuntu wizera."
+  },
+  {
+    "question_en": "The emotional impact of pregnancy can vary, as women adjust to new realities, including the expectations of motherhood and the arrival of the baby.",
+    "answer_en": "It's important to take the time to adapt to these changes and give yourself the space to process the emotional and psychological shifts that come with preparing for a new chapter in life.",
+    "question_rw": "Ingaruka z'ibyiyumvo umugore aterwa no gutwita zishobora gutandukana bitewe n'uko amenyera ibintu bishya, urugero nk'ibyo ategereje igihe azaba ari umubyeyi n'igihe umwana azavuka.",
+    "answer_rw": "Ni iby'ingenzi ko ufata igihe cyo kwitegura ibyo bintu, kandi ukagira umwanya wo kumenya ibintu bihinduka mu byiyumvo no mu byiyumvo, bigaterwa no kwitegura icyiciro gishya mu buzima."
+  },
+  {
+    "question_en": "Apply product to exposed skin, wash off excess.",
+    "answer_en": "While there is no scientific evidence that insect repellents pose a risk to the baby, it is important to apply the repellent only to exposed skin and to wash off any excess product.",
+    "question_rw": "Ujye ushyira iki cyuma ku ruhu rwanduye, ujye uhanagura ibirenzeho.",
+    "answer_rw": "Nubwo nta gihamya igaragaza ko imiti ihungabanya ibinyabuzima ishobora guteza akaga umwana, ni iby'ingenzi ko uyikoresha ku ruhu gusa kandi ukayisukura."
+  },
+  {
+    "question_en": "Ultraviolet rays, body temperature, potential harm to the baby.",
+    "answer_en": "Even though ultraviolet rays cannot reach the fetus, tanning salons are not recommended for pregnant women. The extreme heat you are exposed to during tanning sessions can significantly increase body temperature and harm your baby. Many tanning salons require pregnant customers to provide written authorization from a health professional.",
+    "question_rw": "Imirasire ya UV, ubushyuhe bw'umubiri, ingaruka zishobora ku mwana.",
+    "answer_rw": "Nubwo urumuri rw'umuriro w'ikirahuri rushobora kutagera ku nda y'umwana, abagore batwite ntibagombye kujya mu bigo by'ubuvuzi. Ubushyuhe bukabije bahura na bwo mu gihe cyo gucanira, bushobora kongera cyane ubushyuhe bw'umubiri kandi bugatuma umwana wawe agira ingaruka mbi."
+  },
+  {
+    "question_en": "Understanding eligibility and procedures for workplace safety programs.",
+    "answer_en": "If you are pregnant or breastfeeding and believe your working conditions could be harmful to your health or your baby’s, discuss your concerns with your prenatal care provider. In Québec, the For a Safe Maternity Experience (PMSD) program offered by CNESST may provide support.",
+    "question_rw": "Kumenya uburyo bwo kwitabira gahunda z'umutekano ku kazi n'uburyo bwo kubikora.",
+    "answer_rw": "Niba uri inda cyangwa uri kurerera kandi ukaba wemera ko imimerere ukoreramo ishobora kugirira nabi ubuzima bwawe cyangwa ubw'abana bawe, ujye uganira n'umutangabuzima wita ku bana."
+  },
+  {
+    "question_en": "Questions often arise such as, \"Does my insurance cover hospital stays and childbirth in another country?\" or \"Am I and my baby insured while traveling abroad?\"",
+    "answer_en": "Before traveling abroad during pregnancy, ensure that your insurance policy covers medical expenses in the event of hospitalization or childbirth, including for your baby. This coverage is especially critical in cases of premature birth, where intensive care can incur significant costs. While Régie de l’assurance maladie du Québec reimburses the equivalent cost of care in Québec, medical expenses abroad may be higher, and you could face a substantial bill if you and your baby are not adequately insured. Always confirm coverage with your insurer before departure.",
+    "question_rw": "Akenshi havuka ibibazo nk'ibi ngo \"Ese ubwishingizi bwanjye bufite aho bugarukira mu bitaro no kubyara mu kindi gihugu?\" cyangwa ngo \"Ese jye n'umwana wanjye dufite ubwishingizi mu gihe tugiye mu mahanga?\"",
+    "answer_rw": "Mbere yo kujya mu mahanga mu gihe cy'imirire, ujye ugenzura niba ubwishingizi bwawe bufite amafaranga y'ubuvuzi mu gihe wagiye mu bitaro cyangwa mu gihe wabyaye, harimo n'umwana wawe."
+  },
+  {
+    "question_en": "Pregnant women may inquire about the importance of dairy products in their diet and ways to include them in their meals for optimal nutrition.",
+    "answer_en": "Dairy products such as milk, cheese, and yogurt are excellent sources of calcium, phosphorus, and proteins essential for your baby’s developing bones and teeth. They also provide vitamin D, which aids in calcium absorption. To incorporate dairy into your diet, you can enjoy milk or yogurt with cereals, use milk in hot cereal preparation, or include dairy in dishes like cream soups, gratins, and smoothies. Choose dairy options with reduced fat, sugar, and salt to maintain a healthy balance.",
+    "question_rw": "Abagore batwite bashobora kwibaza ku bihereranye n'akamaro k'ibikoresho by'amata mu mirire yabo n'uburyo bwo kubishyiramo mu biryo byabo kugira ngo babone indyo nziza.",
+    "answer_rw": "Kugira ngo ufatanye amata n'ibigori, ushobora gukoresha amata mu gutegura ibinyampeke bishyushye, cyangwa ukayashyira mu biryo nk'imitsima ya crème, gratin na smoothies. Hitamo amavuta y'amata afite ibinure byaragabanutse, isukari n'umunyu kugira ngo ugire uburinganire bwiza."
+  },
+  {
+    "question_en": "Does excluding certain foods reduce the risk of allergies in newborns?",
+    "answer_en": "Excluding foods from your diet during pregnancy does not reduce the risk of food allergies in your newborn. In fact, by eliminating certain foods, you may deprive yourself of essential nutrients needed for both your health and your baby's development. If you have concerns about allergies, it's best to discuss them with your health professional for proper guidance.",
+    "question_rw": "Ese gutandukana n'ibyokurya bimwe na bimwe bituma abana bavutse vuba badakomeza kugira ikibazo cy'uburwayi?",
+    "answer_rw": "Mu by'ukuri, uramutse wirengagije ibyokurya mu gihe cy'imirire yawe mu gihe cy'imirire yawe, bishobora gutuma udakomeza kugira intungamubiri z'ingenzi zikenewe mu buzima bwawe no mu iterambere ry'umwana wawe. Niba ufite impungenge ku birebana n'indwara z'uburwayi, byaba byiza ubiganiriyeho n'umuganga wawe w'inzobere mu by'ubuvuzi kugira ngo ubone ubuyobozi bukwiriye."
+  },
+  {
+    "question_en": "What services do CLSCs provide to pregnant women and parents? How can a CLSC help with your health and well-being? What role do CLSCs play after birth? How does a CLSC collaborate with other services? How can you find a CLSC in your area?",
+    "answer_en": "CLSCs provide a wide range of health and social services to pregnant women and parents, and they can also inform you about available services in your region. If you have any questions about your health, your CLSC can offer advice or refer you to the appropriate service. After giving birth, a CLSC nurse may contact you to check on you and your baby’s well-being. CLSCs work with childcare centres (CPEs) and community organizations to support families, referring you to additional resources as needed. To find a CLSC in your area, visit the official website.",
+    "question_rw": "Ni izihe serivisi CLSC zitanga ku bagore batwite n'ababyeyi? Ni gute CLSC ishobora kugufasha mu buzima bwawe no mu mibereho yawe? Ni uruhe ruhare CLSC igira nyuma yo kubyara? Ni gute CLSC ikorana n'izindi serivisi? Ni gute ushobora kubona CLSC mu karere k'iwanyu?",
+    "answer_rw": "Imiryango y'abarwayi n'abarwayi (CLSCs) itanga serivisi zitandukanye z'ubuzima n'imibereho myiza ku bagore batwite n'ababyeyi, kandi ishobora no kubamenyesha ku serivisi ziboneka mu karere k'iwanyu. Niba ufite ibibazo ku buzima bwawe, CLSC yawe ishobora kuguha inama cyangwa ikagushyikiriza serivisi ikwiriye. Nyuma yo kubyara, umurwayi wa CLSC ashobora kugushyikiriza kugira ngo agufashe kumenya uko umeze n'umwana wawe."
+  },
+  {
+    "question_en": "What are Info-Santé and Info-Social, and what services do they provide? How can you access these services? Are these services confidential, and are they available everywhere?",
+    "answer_en": "Info-Santé and Info-Social are confidential, free hotline services available throughout Québec, offering health and psychosocial support. Info-Santé provides advice on health-related concerns for you and your baby, while Info-Social addresses psychological and social issues, offering support for challenges like anxiety, relationship problems, or financial difficulties. These services are available 24/7 by dialing 8-1-1. However, in some remote regions, you will need to contact your prenatal care provider for the local number.",
+    "question_rw": "Ni iki Info-Santé n'Info-Social, kandi ni izihe serivisi zitangwa? Ni gute ushobora kugera kuri izo serivisi?",
+    "answer_rw": "Info-Santé n'Info-Social ni serivisi z'ibanga, zitangwa ku buntu muri Québec hose, zitanga ubufasha bw'ubuzima n'ubufasha bwo mu mutwe. Info-Santé itanga inama ku bibazo bifitanye isano n'ubuzima bwawe n'umwana wawe, mu gihe Info-Social yita ku bibazo byo mu mutwe n'iby'imibereho y'abantu, igatanga ubufasha ku bibazo nk'imihangayiko, ibibazo by'imishyikirano cyangwa ibibazo by'amafaranga. Izi serivisi zitangwa 24/7 binyuze mu guhamagara 8-1-1."
+  },
+  {
+    "question_en": "What does a physical exam involve during your prenatal visits? What will be monitored during subsequent appointments?",
+    "answer_en": "During your first prenatal appointment, a physical exam will be performed, which may include a gynecological exam, checking your weight and blood pressure, and listening to the baby's heartbeat. A PAP test for cervical cancer screening may be suggested, which can also be done later in pregnancy or after birth. Light bleeding after the exam is common and should not cause concern. In subsequent appointments, your health professional will typically check your weight, blood pressure, the height of your uterus (starting around 20 weeks), and the baby’s heartbeat.",
+    "question_rw": "Ni iki kigomba gukorwa mu gihe cyo gusuzuma umwana mbere yo kubyara, kandi se ni iki kizakorwa mu gihe cyo gusuzuma umwana nyuma yaho?",
+    "answer_rw": "Mu gihe cy'ihererekanya ry'umwana mbere yo kubyara, hazakorwa isuzuma ry'umubiri, rishobora kuba rikubiyemo isuzuma ry'abagore, kureba ibiro n'umuvuduko w'amaraso, no gutega amatwi ibihuha by'umutima w'umwana."
+  },
+  {
+    "question_en": "What should pregnant women do if exposed to chickenpox?",
+    "answer_en": "If a pregnant woman is exposed to chickenpox, the risk to the baby depends on her vaccination status or previous infection. If she is vaccinated or has had chickenpox in the past, the baby is generally not at risk. However, if she is not vaccinated and has never had the disease (or is unsure), she should see a doctor within 48 hours for assessment and guidance on the appropriate steps.",
+    "question_rw": "Ni iki abagore batwite bagombye gukora mu gihe bahuye n'indwara y'ibicurane?",
+    "answer_rw": "Iyo umugore utwite ashyigikiwe n'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'indwara y'"
+  },
+  {
+    "question_en": "What should you do if you notice a decrease or lack of baby movement after 26 weeks? How should you monitor the movements?",
+    "answer_en": "After 26 weeks, if you notice fewer or no movements from your baby, try resting and see if the movements return. If you count fewer than six distinct movements over two hours, contact your birthing facility or health professional immediately or go to the hospital. Keep in mind that your baby may be more active at different times, and you might not always feel every movement. If you're uncertain, don't hesitate to reach out to your hospital's obstetrics department or birthing center for advice.",
+    "question_rw": "Ni iki wakora mu gihe ubonye ko uruhinja rucika intege cyangwa ko rutagenda rujya rutera imbere nyuma y'ibyumweru 26?",
+    "answer_rw": "Mu gihe umaze ibyumweru 26, niba ubonye ko umwana wawe agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda, gerageza kuruhuka urebe niba agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda agenda"
+  },
+  {
+    "question_en": "What should you do if you experience regular contractions and increased vaginal discharge before 37 weeks? What does it indicate after 37 weeks?",
+    "answer_en": "If you experience more than seven regular contractions in one day before 37 weeks, along with increased vaginal discharge, it may indicate premature labor. In this case, it’s important to contact your health professional or hospital for evaluation, as premature labor can sometimes be stopped if caught early. However, after 37 weeks, the same symptoms typically indicate the start of normal labor, as your baby is no longer considered premature.",
+    "question_rw": "Ni iki wagombye gukora niba ukunda kwihorera kandi ugakomeza kuvura mu nda mbere y'ibyumweru 37?",
+    "answer_rw": "Niba mu munsi umwe mbere y'ibyumweru 37 ugize imihindagurikire irenga irindwi, hamwe n'iyongerewe mu gitsina, bishobora kugaragaza ko wabyaye mbere y'igihe. Muri iki gihe, ni ngombwa ko ugisha inama umukozi w'ubuzima cyangwa ibitaro kugira ngo umwereke, kuko rimwe na rimwe kubyara mbere y'igihe bishobora guhagarara mu gihe byabonetse hakiri kare."
+  },
+  {
+    "question_en": "How do people grieve after losing an unborn child? Do men and women grieve the same way? How can you get help with grief or inform family and friends? Are there any benefits available for the loss of an unborn child after 19 weeks?",
+    "answer_en": "The grieving process after losing an unborn child is personal and influenced by individual circumstances. Some may bond emotionally with their child early, while for others, the loss represents the end of their parenting plans. Grief is experienced differently by men and women, and individuals may go through stages of grief at varying times. It's important to give yourself time and space to grieve. If you need help informing others, consider talking to someone who has experienced similar loss or seeking advice from a health professional. Additionally, if your baby dies after 19 weeks or after birth, you may be entitled to benefits under the Québec Parental Insurance Plan.",
+    "question_rw": "Ni gute abantu bababazwa no gupfusha umwana utaravuka? Ese abagabo n'abagore bababazwa kimwe? Ni gute ushobora kubona ubufasha bwo guhangana n'agahinda cyangwa ukabibwira bene wanyu n'incuti?",
+    "answer_rw": "Iyo umuntu apfushije umwana utaravuka, agahinda gaterwa no gupfusha umwana ni ikintu cy'umuntu ku giti cye kandi kigaterwa n'imimerere ya buri muntu. Hari bamwe bashobora kugirana ubucuti n'umwana wabo hakiri kare, mu gihe ku bandi, gupfusha umwana bigereranya iherezo ry'imigambi yabo yo kumurera."
+  },
+  {
+    "question_en": "What do health professionals recommend about breastfeeding, and why is it important to understand your reasons for breastfeeding before birth? How can you prepare for the challenges you might face?",
+    "answer_en": "Health professionals globally, including the Canadian Paediatric Society, Dieticians of Canada, and Health Canada, recommend exclusive breastfeeding for the first six months, continuing until the age of two or more once solid foods are introduced. Knowing why you want to breastfeed before your baby is born can help you manage any doubts or challenges. Reasons for breastfeeding vary, such as convenience, strengthening the bond with your baby, or the health benefits for both mother and child. Reflecting on your reasons and values will guide your decision-making. It's also essential to communicate your choice with your family and healthcare provider for better support during this journey. Trust your instincts as you know what's best for your baby.",
+    "question_rw": "Ni iki abahanga mu by'ubuvuzi bagusaba ku birebana no kwonsa, kandi se kuki ari iby'ingenzi ko usobanukirwa impamvu utwite mbere yo kubyara, kandi se wakwitegura ute ibibazo ushobora guhura na byo?",
+    "answer_rw": "Abahanga mu by'ubuvuzi ku isi hose, barimo Ishyirahamwe ry'abana bo muri Kanada, Abaganga mu by'imirire ya Kanada n'Ubuzima bwa Kanada, batanga inama yo kugaburira abana bonyine mu mezi atandatu ya mbere, bakomeza kugeza ku myaka ibiri cyangwa irenga bamaze gutangira kurya ibiribwa bikomeye. Kumenya impamvu wifuza kugaburira umwana mbere y'uko avuka, bishobora kugufasha guhangana n'ibibazo cyangwa ibibazo. Impamvu zo kugaburira abana bonyine ziratandukanye, urugero nko kuboroha, gukomeza umubano n'umwana wawe, cyangwa inyungu z'ubuzima ku mubyeyi n'umwana. Gutekereza ku mpamvu zawe n'indangagaciro zawe bizakuyobora mu gufata imyanzuro. Ni ngombwa kandi ko usobanurira umuryango wawe n'umufasha w'ubuvuzi bwo mu rwego rw'ubuzima ibyemezo wafashe kugira ngo urusheho kumushyigikira"
+  },
+  {
+    "question_en": "What health benefits does breastfeeding provide for both the baby and the mother? How should a mother handle breastfeeding when sick, and what precautions should she take?",
+    "answer_en": "Breastfeeding offers numerous health benefits for both the baby and mother. For the baby, breast milk provides antibodies and other protective substances that boost the immune system and reduce the risk of illnesses such as diarrhea, ear infections, and colds. It also lowers the risk of sudden infant death syndrome and chronic diseases like obesity and diabetes. For mothers, breastfeeding delays the return of menstrual periods, reducing the risk of anemia, and lowers the likelihood of developing diabetes or certain cancers. If a mother is taking medication, it's important to discuss it with a healthcare provider to ensure compatibility with breastfeeding. Even if the mother is sick, breastfeeding is still recommended, but she should take precautions such as wearing a medical mask and washing her hands before feeding to prevent transmission of germs.",
+    "question_rw": "Ni izihe nyungu zo kumwonsa ziha umwana n'umubyeyi, kandi se ni gute umubyeyi yagombye kwita ku buzima bwe iyo arwaye, kandi se ni izihe ngamba zo kwirinda yagombye gufata?",
+    "answer_rw": "Kunywa amata y'ibere bifasha umwana kubona ibyokurya byinshi kandi bikamufasha kugira ubuzima bwiza. Kunywa amata y'ibere bifasha umwana kubona imiti n'ibindi bikingira umubiri, bikongera kugabanya ibyago byo kurwara indwara nk'ihindagurika, ubwandu bw'amatwi n'icyorezo cy'ibicurane. Nanone bigabanya ibyago byo kurwara umwana mu buryo butunguranye n'indwara ziterwa n'ubumuga nk'umubyibuho ukabije."
+  },
+  {
+    "question_en": "How does breastfeeding develop as a skill, and what should a new mother expect during the early stages? What support is recommended during this learning period?",
+    "answer_en": "Breastfeeding is a skill that requires practice, and it takes time for both the mother and the baby to get comfortable. Initially, you’ll learn the theory, but putting it into practice may bring unexpected challenges. It can take four to six weeks for some women to feel fully comfortable with breastfeeding, while others may adjust more quickly. During this learning phase, you and your partner will work together as a team to figure out what works best for you both. It’s normal to face moments of difficulty, and seeking support from family, friends, or breastfeeding resources is encouraged. With practice, breastfeeding will eventually become more natural and enjoyable.",
+    "question_rw": "Ni mu buhe buryo umubyeyi w'umugore ukiri muto ashobora kwitoza kuronsa umwana we ibere, kandi se ni iki yagombye kwitega mu gihe akiri muto, kandi se ni ubuhe bufasha bwagirwa inama muri icyo gihe cyo kwiga?",
+    "answer_rw": "Kunywa amata ni ubuhanga bukenera imyitozo, kandi bisaba igihe kugira ngo umubyeyi n'umwana bombi bamere neza. Mu mizo ya mbere, uzamenya iyo nyigisho, ariko kuyishyira mu bikorwa bishobora guteza ibibazo utari witeze. Bishobora gufata ibyumweru bine kugeza kuri bitandatu kugira ngo bamwe mu bagore bumve bamerewe neza mu gihe abandi bashobora guhita babyigana. Muri iki gihe cyo kwiga, wowe n'uwo mwashakanye muzafatanya mu buryo bw'itsinda kugira ngo mumenye icyaba cyoroshye kuri mwe mwembi. Ni ibisanzwe guhangana n'ibihe bigoye, kandi gushakira inkunga umuryango, inshuti cyangwa ubutunzi bwo kugaburira abana."
+  },
+  {
+    "question_en": "What happens in the first few days after birth in terms of milk production? How does colostrum help during this early period?",
+    "answer_en": "After childbirth, your body begins producing milk, and the first type of milk is called colostrum. Colostrum is thick, yellowish, and packed with the nutrients your newborn needs. Although you might feel like you're not producing much milk, the small amounts of colostrum are perfectly suited to your baby's needs in the first few days. It's normal for your baby to nurse frequently during this time, as she adjusts to feeding outside the womb. This early breastfeeding period is crucial for establishing milk production and bonding with your baby. Your breasts have naturally prepared for this process throughout pregnancy, and they will provide the milk your baby needs.",
+    "question_rw": "Mu minsi ya mbere nyuma y'ivuka, ni iki kibaho mu birebana no gutanga amata?",
+    "answer_rw": "Nyuma yo kubyara, umubiri wawe utangira gukora amata, kandi ubwoko bwa mbere bw'amata bwitwa colostrum. Colostrum ni nini, y'umuhondo, kandi yuzuyemo ibyokurya umwana ukiri muto akeneye. N'ubwo ushobora kumva ko udakora amata menshi, amafunguro make ya colostrum ni meza cyane ku byo umwana akeneye mu minsi mike ya mbere. Ni ibisanzwe ko umwana wawe anywa kenshi muri iki gihe, kuko ahindura ibyokurya hanze y'inda."
+  },
+  {
+    "question_en": "How does frequent breastfeeding or breast stimulation support milk production?",
+    "answer_en": "Stimulating the breasts by nursing at least 8 times every 24 hours is essential for establishing a good milk supply. This frequent nursing helps prevent breast engorgement and supports the initial stages of milk production. If your baby isn't ready to nurse, you can still stimulate milk production by expressing milk manually or using a breast pump. Regular breast stimulation is key to ensuring your milk supply is sufficient and to keeping your breasts comfortable during this early period of breastfeeding.",
+    "question_rw": "Ni mu buhe buryo kugaburira umwana kenshi cyangwa kumuhumuriza mu gihe akiri mu nda bigira uruhare mu gutuma amata akorwa?",
+    "answer_rw": "Gukomeza gutera akabariro mu gihe cy'amasaha 24 ni ngombwa kugira ngo ukomeze kubona amata meza. Gukomeza gutera akabariro kenshi bifasha gukumira umubyibuho ukabije kandi bigatuma ukomeza gukora amata. Niba umwana wawe atarakwitegura, ushobora gukomeza gutera akabariro ukoresheje amata mu buryo bw'amaboko cyangwa ukoresheje pompe y'amabere. Gukomeza gutera akabariro mu gihe cy'amasaha 24 ni ngombwa kugira ngo ukomeze kubona amata ahagije kandi ukomeze kugira amabere meza muri iki gihe cya mbere cyo kugaburira."
+  },
+  {
+    "question_en": "How does milk production change after childbirth?",
+    "answer_en": "Between the second and fifth day after childbirth, milk production increases rapidly, and the milk becomes clearer in color. This process is referred to as your milk \"coming in\" and is triggered by hormonal changes. This happens for all women, regardless of whether they breastfeed or not. This increase in milk supply ensures that your baby receives the nutrients they need as they adjust to feeding outside the womb. For more information, refer to the section on milk production changes.",
+    "question_rw": "Ni gute amata ahinduka nyuma yo kubyara?",
+    "answer_rw": "Hagati y'umunsi wa kabiri n'uwa gatanu nyuma yo kubyara, amata atangwa mu buryo bwihuse, maze amata agatangira kuribwa neza. Ibyo biterwa n'ihindagurika ry'amahomoni. Ibi biba ku bagore bose, baba bonsa cyangwa batonsa."
+  },
+  {
+    "question_en": "How does breast milk change to meet the baby’s needs?",
+    "answer_en": "Breast milk changes in composition throughout the breastfeeding period to meet the evolving needs of the baby. It contains proteins, sugars, and fats, including omega-3 fatty acids, which support brain and eye development. Additionally, it provides essential vitamins and minerals needed for growth, although vitamin D is not present in sufficient amounts (refer to Vitamin D section). Breast milk also contains enzymes that aid digestion and antibodies that help protect against infections, strengthening the baby’s immune system. Over 200 components have been identified in breast milk, and factors such as the mother’s diet can influence its composition and taste.",
+    "question_rw": "Ni gute amata y'umubyeyi ahinduka kugira ngo ahuze n'ibyo umwana akeneye?",
+    "answer_rw": "Ubuki bw'umubyeyi buhinduka mu mikorere y'umwana mu gihe cyose cyo kumwonsa kugira ngo buhuze n'ibyo umwana akeneye. Bufite amaproteni, isukari n'amavuta, harimo n'amasazi y'amavuta ya omega-3, ashyigikira ubwonko n'ubwonko. Byongeye kandi, butanga vitamine n'ibinyabuzima bikenewe mu gukura, nubwo vitamine D itariho mu rugero ruhagije (reba igice cya Vitamine D). Ubuki bw'umubyeyi bufite ingirabuzimafatizo zifasha guhumeka n'imitsi igwanya umubiri ufasha kurinda ubwandu, bikomeza ubushobozi bw'ubwirinzi bw'umwana."
+  },
+  {
+    "question_en": "How to promote successful breastfeeding right after birth.",
+    "answer_en": "To make breastfeeding easier, it is beneficial to practice skin-to-skin contact with your newborn during the first hours after birth. This contact helps regulate the baby’s body temperature, calms them, and triggers the breastfeeding reflex, making it easier to initiate breastfeeding. The first feeding during this time can create a memory that helps the baby recall how to nurse in future sessions. If the baby is not ready to nurse immediately, expressing milk manually or using a spoon to offer a few drops can help start milk production and encourage the baby to begin breastfeeding.",
+    "question_rw": "Uko wakwirinda kuryamana neza nyuma yo kubyara.",
+    "answer_rw": "Kugira ngo umwana akomeze kumererwa neza mu gihe cyo kumwonsa, ni byiza ko mu masaha ya mbere amaze kuvuka, amenyera kumwonsa amoko. Iyo mishyikirano ifasha mu gutegura ubushyuhe bw'umubiri w'umwana, ikagabanya imihangayiko, kandi igatuma amoko y'amaraso atangira kumwonsa."
+  },
+  {
+    "question_en": "How keeping the baby close and recognizing hunger signs enhances breastfeeding.",
+    "answer_en": "Keeping your baby close to you both day and night helps strengthen the bond between you and your baby. Being physically near your baby allows you to better understand and recognize the early signs of hunger. This proximity makes it easier to offer the breast when needed, as your baby will likely be calmer and more receptive. Responding quickly to these hunger cues also helps build trust and reassures your baby, fostering a stronger emotional connection.",
+    "question_rw": "Uko kubika uruhinja hafi no kumenya ibimenyetso by'inzara bituma umwana akererwa neza.",
+    "answer_rw": "Kuguma hafi y'umwana wawe haba ku manywa cyangwa nijoro, bizatuma urushaho kumwegera. Kuba hafi y'umwana wawe mu buryo bw'umubiri bizatuma umenya neza ibimenyetso by'inzara."
+  },
+  {
+    "question_en": "How proper latching technique prevents discomfort and supports breastfeeding success.",
+    "answer_en": "Getting a good latch is crucial for preventing breastfeeding pain and nipple injuries. In the early days, both you and your baby will learn how to establish a comfortable, effective latch. You’ll know your baby is sucking effectively when you see her pause and swallow, though this motion may be harder to notice before your milk comes in, as she will only be swallowing small amounts of colostrum. Some initial sensitivity is normal, but if nursing is painful, seek help right away to avoid discomfort and ensure successful breastfeeding.",
+    "question_rw": "Uburyo bukwiriye bwo gufungura abana butuma batumva bamerewe nabi, kandi bugatuma umwana amererwa neza mu gihe yabyara.",
+    "answer_rw": "Gufata umugozi mwiza ni ingenzi cyane mu kwirinda kubabara mu gihe ukimara kubyara no gukomereka ku maguru. Mu minsi ya mbere, wowe n'umwana wawe muzamenya uko mwashyiraho umugozi uhamye kandi ukora neza. Uzamenya ko umwana wawe anywa neza iyo ubonye agahinda n'amarira, nubwo iyo myitwarire ishobora kugorana kuyibona mbere y'uko amata yawe atangira, kuko azamira amarozi make gusa."
+  },
+  {
+    "question_en": "Understanding and responding to the baby's hunger cues and ensuring adequate milk intake.",
+    "answer_en": "The frequency and duration of breastfeeding can vary between babies, especially in the first few days of life. It’s normal for a newborn to nurse frequently, with clustered feedings. This not only helps stimulate milk production but also reassures the baby during the crucial early days. Expect to nurse at least 8 times every 24 hours, and possibly more. Some babies give clear hunger cues, while others may not. If your baby isn’t showing signs of hunger, you may need to gently wake her to ensure she gets enough milk.",
+    "question_rw": "Kumenya ibyerekeye inzara umwana aba afite no kuyitabira, no kubona ko amoko ye y'amata ari meza.",
+    "answer_rw": "Umubare w'abana bavuka mu gihe cy'amabyiruka n'ibihe by'amabyiruka bishobora gutandukana hagati y'abana, cyane cyane mu minsi ya mbere y'ubuzima. Ni ibisanzwe ko umwana ukiri muto akomeza kubyara kenshi, akagaburirwa mu matsinda. Ibi ntibifasha gusa gutera inkunga umusaruro w'amata, ahubwo nanone bihumuriza umwana mu minsi ya mbere y'ubuzima. Ujye witega kubyara nibura inshuro 8 mu masaha 24, ndetse wenda n'indi myinshi. Hari abana batanga ibimenyetso bifatika by'inzara, mu gihe abandi bashobora kutabigaragaza. Niba umwana wawe adafite ibimenyetso by'inzara, ushobora kuba ugomba kumukangurira mu bugwaneza kugira ngo amenye ko ahabwa amata ahagije."
+  },
+  {
+    "question_en": "Understanding the differences in feeding methods and the importance of recognizing hunger cues.",
+    "answer_en": "While expressed milk can be fed through a bottle if necessary, it’s important to recognize that sucking from a bottle is different from breastfeeding. The milk flow is faster from a bottle, and the baby’s mouth movements differ, which can lead to breastfeeding difficulties if used frequently. If a pacifier is used, it may obscure the baby’s hunger cues, potentially leading to missed feedings and affecting milk production. Before offering a pacifier, ensure the baby isn’t hungry or in need of comfort, to support healthy milk production and feeding.",
+    "question_rw": "Gusobanukirwa itandukaniro riri hagati y'uburyo bwo kugaburira n'akamaro ko kumenya ibimenyetso by'inzara.",
+    "answer_rw": "Nubwo amata yavuzwe ashobora kugaburirwa mu icupa mu gihe bibaye ngombwa, ni ngombwa kumenya ko kumunwa mu icupa bitandukanye no kugaburira umwana. Ubuki bugenda byihuta kurusha ubundi mu icupa, n'imihindagurikire y'umunwa w'umwana itandukanye, bishobora gutuma umwana akomeza kumererwa nabi mu gihe yakoreshwa kenshi. Iyo ukoresheje icupa ry'amata, bishobora gutuma umwana atabona ibyifuzo by'inzara, bikaba bishobora gutuma atagaburirwa kandi bikagira ingaruka ku butunzi bw'amata. Mbere yo gutanga icupa ry'amata, ujye wirinda ko umwana atagira inzara cyangwa ko akeneye ihumure, kugira ngo ushyigikire umusaruro w'amata ufite amagara mazima no kugaburira."
+  },
+  {
+    "question_en": "Practical advice for choosing breastfeeding accessories.",
+    "answer_en": "There are many breastfeeding accessories available, such as breast pumps, nursing bras, pillows, and pads, but none are essential for successful breastfeeding. Nursing pads—either reusable or disposable—can be helpful if your breasts leak milk. While a nursing bra is not a necessity, it can be practical for comfort and convenience. It’s best to purchase one later in pregnancy to ensure it fits your changing breast size. For specific recommendations, community groups and support networks can offer useful advice when selecting accessories like breast pumps.",
+    "question_rw": "Inama z'ingirakamaro ku birebana no guhitamo ibikoresho by'amabere y'amabere.",
+    "answer_rw": "Hari ibikoresho byinshi by'ibikoresho by'ubwonko biboneka, urugero nk'ibikoresho by'amabere y'amabere, ibibindi by'amabere y'amabere y'amabere, imyenda n'ibikoresho by'amabere y'amabere, ariko nta na kimwe muri byo ari ingenzi kugira ngo ubwonko bw'amabere bwongere kugenda neza. Ibikoresho by'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere y'amabere"
+  },
+  {
+    "question_en": "Reassurance and solutions for common breastfeeding challenges.",
+    "answer_en": "Despite the many benefits of breastfeeding, some women have concerns, such as fears about being able to breastfeed, not producing enough milk, experiencing sore nipples, or worrying about giving the father the chance to help with feeding. These concerns are often based on myths. While breastfeeding can be challenging in the beginning, most issues, like engorgement, nipple pain, or worries about milk production, are temporary and can be solved. It's important to talk to a trained breastfeeding support person or mentor to address any concerns and prepare for breastfeeding. Remember, most breastfeeding difficulties are short-term and solutions are available.",
+    "question_rw": "Gutanga icyizere n'ibisubizo by'ibibazo abantu bahura na byo mu gihe bonsa.",
+    "answer_rw": "N'ubwo umubyeyi w'umugore afite inyungu nyinshi zo kugaburira umwana, hari abagore bafite impungenge, urugero nko gutinya ko atabasha kumwonsa, kudakora amata ahagije, kugira ibisebe bibabara cyangwa guhangayikishwa no guha se amahirwe yo kumufasha kumwonsa."
+  },
+  {
+    "question_en": "Encouraging active involvement from partners and family in breastfeeding and infant care.",
+    "answer_en": "Pregnancy is an ideal time for open discussions about breastfeeding with your partner, family, and friends, and to explore breastfeeding resources and community support. Partners play an essential role in the breastfeeding process by offering emotional and physical support. At the beginning, the partner can assist with tasks like helping the mother get the baby latched, providing comfort and encouragement, and managing practical needs like snacks or drinks. Partners can also shield the mother from negative influences and seek out additional support if needed. By working together as a team, partners can help establish a smooth breastfeeding routine, bond with the baby, and ease into parenting roles, making the experience more manageable for the breastfeeding mother.",
+    "question_rw": "Gushishikariza abashakanye n'imiryango kugira uruhare rukomeye mu kugaburira no kwita ku bana.",
+    "answer_rw": "Umubyeyi w'umugore w'imfura, ufite umwana w'umuhungu cyangwa w'umukobwa w'umwangavu, ashobora gufasha umugore w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa w'umukobwa"
+  },
+  {
+    "question_en": "Stressing the importance of family and friends' support during the breastfeeding journey.",
+    "answer_en": "Whether breastfeeding is a familiar practice in your family or you're the first to do so, it’s important to communicate your plans and intentions clearly. Let your family and friends know how they can best support you in your breastfeeding journey. Their understanding and support can make a significant difference. Don’t hesitate to ask for help with practical tasks like preparing meals, running errands, or caring for the baby, as this will allow you to focus more on breastfeeding and adjusting to your new routine.",
+    "question_rw": "Gushimangira akamaro ko gushyigikirwa n'abagize umuryango n'incuti mu rugendo rwo kumwonsa.",
+    "answer_rw": "Waba uri umubyeyi uzi kuryamana n'abana cyangwa uri uwa mbere mu kuryamana n'abana, ni ngombwa ko usobanurira umuryango wawe n'incuti zawe neza intego zawe. Jya umenyesha umuryango wawe n'incuti zawe uburyo bakugirira neza mu rugendo rwawe rwo kuryamana n'abana bawe. Kumenya no kubashyigikira bishobora kugira ingaruka zikomeye. Ntugatinye gusaba ubufasha mu bikorwa by'ingirakamaro nko gutegura amafunguro, gukora imirimo yo mu rugo cyangwa kwita ku mwana, kuko ibyo bizatuma urushaho kwibanda ku kuryamana no kumenyera gahunda yawe nshya."
+  },
+  {
+    "question_en": "What should the partner bring to the hospital or birthing centre? What are the essential items for the baby, such as clothing, diapers, and a car seat?",
+    "answer_en": "The partner should pack comfortable clothes, shoes, and pyjamas, as well as a pillow, toiletries, and reading material. If they wish to join in the whirlpool during labour, a bathing suit is useful. Don't forget food, drinks, and a camera. For the baby, pack diapers (if not provided by the hospital), pyjamas, undershirts, bodysuits, a blanket, and a hat. Also, prepare a going-home outfit suitable for the season and an infant car seat, which is required for leaving the hospital by car.",
+    "question_rw": "Ni iki uwo mwashakanye yagombye kuzana ku bitaro cyangwa mu kigo cyita ku bana, kandi se ni ibihe bintu by'ingenzi umwana akenera, urugero nk'imyambaro, amakanzu n'intebe y'imodoka?",
+    "answer_rw": "Mu gihe cy'imibonano mpuzabitsina, uwo mwashakanye yagombye kwambara imyenda myiza, inkweto n'imyenda, hamwe n'igitambaro, ibikoresho byo mu bwiherero n'ibitabo by'isomo. Niba yifuza kwifatanya muri iyo myenda y'amabere mu gihe cyo kubyara, imyenda yo koga ni ingirakamaro. Ntiwibagirwe ibiryo, ibinyobwa n'ifoto ya kamera."
+  },
+  {
+    "question_en": "Can women who have had a C-section give birth vaginally in the future? What are the benefits and risks of attempting a VBAC?",
+    "answer_en": "Yes, many women who have had a C-section are able to give birth vaginally in subsequent pregnancies, with around three in four successfully having a vaginal birth after caesarean (VBAC). The benefits of VBAC include no risks from surgery, immediate bonding with the baby, greater mobility, and a shorter recovery time. However, VBAC carries a very low risk of uterine rupture, which, though rare, can have serious consequences and may require an emergency C-section. A planned C-section also carries its own risks.",
+    "question_rw": "Ese mu gihe kizaza, abagore babaga baramaze gukora ikizamini cya C-section bashobora kubyara mu nda?",
+    "answer_rw": "Ni koko, abagore benshi bagiye bavurwa mu gihe cy'amabyiruka bashobora kubyara mu nda mu gihe cy'amabyiruka yakurikiyeho, kandi abagera kuri batatu kuri bane baba baragize amabyiruka mu nda nyuma yo gukora ingoma ya cyesariyo (VBAC)."
+  },
+  {
+    "question_en": "What happens if your baby is in a breech position, and what are the options for delivery? Can your doctor help turn the baby, and what happens if vaginal birth is not possible?",
+    "answer_en": "If your baby is in a breech position, your doctor or midwife may attempt to turn the baby into a head-down position around 36 or 37 weeks using a procedure called version, which increases the chances of a vaginal birth. This procedure is performed in the hospital and followed by monitoring to ensure the baby tolerates it. If turning the baby isn't possible, a vaginal breech delivery may be considered, but it requires specific conditions and may not be offered in every hospital. In most cases, a cesarean section will be recommended. Always discuss your options with your healthcare provider.",
+    "question_rw": "Ni iki kizabaho mu gihe umwana wawe azaba ari mu cyumba cy'imfubyi, kandi se ni ibihe bintu ushobora gukora kugira ngo uzabyare?",
+    "answer_rw": "Niba umwana wawe ari mu cyiciro cy'imyanya y'imbere, umuganga wawe cyangwa umubyeyi wawe w'umubyeyi ashobora kugerageza guhindura umwana mu cyiciro cy'imbere mu gihe cy'ibyumweru 36 cyangwa 37 akoresheje uburyo bwitwa verisiyo, butuma bishoboka ko umwana azabyara mu nda."
+  },
+  {
+    "question_en": "What interventions may be considered during childbirth, and how can you plan for them? What should you know about these procedures, and how can you prepare for unexpected situations like a caesarean birth?",
+    "answer_en": "When preparing your birth plan, consider the possible interventions available at your hospital or birthing centre, such as labour induction, fetal monitoring, epidurals, and episiotomy. Ask about the reasons for these procedures and their potential effects on you and your baby. Decide which procedures you'd like to have during delivery and which ones you prefer to refuse. Also, prepare for unexpected developments, including the possibility of a caesarean birth, and decide whether you'd like someone with you during the procedure.",
+    "question_rw": "Ni ubuhe buryo bwo kuvura ushobora gutekerezaho mu gihe cyo kubyara, kandi se wabitegura ute, ni iki wagombye kumenya ku birebana n'ubwo buryo, kandi se ni gute ushobora kwitegura ibintu utari witeze, urugero nko kuvuka kwa Kayisari?",
+    "answer_rw": "Mu gihe utegura gahunda yawe yo kubyara, jya utekereza ku byo ushobora gukora mu bitaro byawe cyangwa mu kigo cy'ababyeyi, urugero nko gutangira kubyara, gukurikirana inda y'umwana, gufata ibijyanye n'imiterere y'umubiri w'uruhu, no gutema inda. Ujye wibaza impamvu z'ibyo bikorwa n'ingaruka zishobora kukugiraho wowe n'umwana wawe. Ujye uhitamo uburyo wifuza gukora mu gihe cyo kubyara n'ubwo wifuza kwanga."
+  },
+  {
+    "question_en": "What are your preferences for the first moments with your baby? How do you envision rooming-in and ensuring privacy at the hospital or birthing centre?",
+    "answer_en": "When planning for the first moments with your baby, consider whether you'd like immediate skin-to-skin contact after birth and how you want to handle rooming-in. Check if staying with your baby at all times is possible and encouraged at the hospital or birthing centre. If you have someone with you, decide if they'd be able to stay at all times. In a shared room, ask about measures to ensure privacy and rooming-in. Also, inquire about the hospital's routines and procedures to find out if there are times you can request privacy or rest without disturbance.",
+    "question_rw": "Ni ibihe bintu ukunda cyane mu bihe bya mbere ukiri kumwe n'umwana wawe?",
+    "answer_rw": "Mu gihe utegura igihe uzajya ubana n'umwana wawe bwa mbere, tekereza niba wifuza guhita ugirana imibonano mpuzabitsina n'undi muntu nyuma yo kuvuka ndetse n'uburyo wifuza gufata icyumba. Suzuma niba igihe cyose ukiri kumwe n'umwana wawe bishoboka kandi bikagushishikariza kuzajya mu bitaro cyangwa mu kigo cy'ababyeyi. Niba ufite umuntu muri kumwe, ujye uhitamo niba ashobora kuzajya agumana nawe igihe cyose. Mu cyumba usangiye, ujye umubaza ibijyanye n'ingamba zo kurinda ubuzima bwawe bwite n'ubwiherero."
+  },
+  {
+    "question_en": "What exams and interventions will be suggested for you and your baby after birth? How will you handle unexpected developments, like a premature baby? What measures can help you stay with your baby during hospitalization and support breastfeeding?",
+    "answer_en": "After birth, inquire about any exams, interventions, or medications recommended for you and your baby, and ask about their reasons, timing, and possible consequences. Be prepared for unexpected situations, such as if your baby is premature and needs to stay in the hospital. Ensure you have access to measures that allow you to remain with your baby throughout their hospitalization. If you're planning to breastfeed, find out what support is available at the hospital or birthing centre, including the use of breast milk banks if necessary.",
+    "question_rw": "Ni izihe ngeso n'ibikorwa bizagufasha wowe n'umwana wawe mu gihe azaba amaze kuvuka? Ni gute muzahangana n'ibintu utari witeze, urugero nk'umwana utwite? Ni izihe ngamba zishobora kugufasha gukomeza kubana n'umwana wawe mu gihe uri mu bitaro no kumwonsa?",
+    "answer_rw": "Nyuma yo kubyara, ujye wibaza ku byerekeye ibizamini, ingamba cyangwa imiti yagufasha wowe n'umwana wawe, kandi ujye wibaza impamvu, igihe n'ingaruka zishobora kubaho. Tegura ibintu utari witeze, urugero nko niba umwana wawe ari mu gihe cy'amabyiruka kandi akeneye kuguma mu bitaro."
+  },
+  {
+    "question_en": "How do you want to feed your baby? Have you discussed your breastfeeding decision with your family and hospital staff? Does your hospital have breastfeeding support? How would you feel about using formula or supplements if needed, especially if your baby is premature?",
+    "answer_en": "When planning to feed your baby, decide if you want to breastfeed and communicate this decision to both your family and the staff at your hospital or birthing centre. Ensure that your hospital has knowledgeable staff to assist you with breastfeeding if needed. If your baby is premature or if complications arise, be prepared to consider commercial infant formula or supplements, and discuss your feelings about this possibility with your healthcare team.",
+    "question_rw": "Ese wifuza kugaburira umwana wawe? Ese wigeze uganira n'umuryango wawe n'abakozi bo mu bitaro ku birebana n'uko ugomba kumwonsa?",
+    "answer_rw": "Mu gihe utegura kugaburira umwana wawe, ujye uhitamo niba wifuza kugaburira umwana kandi ubibwire umuryango wawe n'abakozi bo mu bitaro byawe cyangwa mu kigo cy'ababyeyi."
+  },
+  {
+    "question_en": "How can you prepare for your baby’s arrival at home? What can you do to organize your home and make it easier to adjust? What should you do if you need help? How can you manage the first days and weeks with your baby?",
+    "answer_en": "To prepare for your baby's arrival, you can cook extra meals and freeze them, get the house ready by borrowing or buying baby essentials, and make a list of things you may need help with, like errands or cleaning. If help isn’t offered, don't hesitate to ask for assistance in advance. Being flexible and open to support will help you adjust during your baby's first days and weeks at home.",
+    "question_rw": "Wakwitegura ute igihe umwana wawe azaba ageze mu rugo? Wakora iki kugira ngo umuryango wawe ugire gahunda kandi woroherwe kumenyera? Wakora iki mu gihe ukeneye ubufasha? Wakora iki mu minsi ya mbere n'ibyumweru uzaba uri kumwe n'umwana wawe?",
+    "answer_rw": "Kugira ngo witegure kuza k'umwana wawe, ushobora guteka amafunguro y'inyongera ukayafungura, ukagura ibintu by'ibanze by'umwana, ukagura n'inzu, ukagira urutonde rw'ibintu ushobora kuba ukeneye gufashwa, urugero nko gukora imirimo y'agateganyo cyangwa gukora isuku."
+  },
+  {
+    "question_en": "When should you head to the hospital or birthing center during labor? What are the signs that indicate it's time to go?",
+    "answer_en": "You should go to the hospital or birthing center immediately if any of the following occurs-if it's your first delivery and you have regular contractions every five minutes or less for an hour, or if you’ve had previous deliveries and experience regular contractions every five minutes or less. If you live more than 30 minutes away, head to the hospital when contractions occur every ten minutes. Also, go if your water breaks, you’re losing blood, or you no longer feel your baby move. Towards the end of your pregnancy, it’s important to consult with your doctor or midwife about when is the right time to go, considering factors like your health, previous deliveries, and how far you live from the hospital.",
+    "question_rw": "Ni ryari wagombye kujya mu bitaro cyangwa mu kigo cy'ababyeyi mu gihe cyo kubyara?",
+    "answer_rw": "Ujye kwa muganga cyangwa mu kigo cy'ababyeyi b'abana b'abana b'abahungu b'abana b'abana b'abana b'abana b'abana b'abana b'abana b'abana b'abana b'abahungu b'abana b'abahungu b'abana b'abahungu b'abana b'abahungu b'abana b'abahungu b'abana b'abahungu b'abana b'abahungu b'abana b'abahungu b'abana b'abahungu b'abana b'abahungu b'abahungu b'abana b'abahungu b'abahungu b'abana b'abahungu b'abahungu b'abana b'abahungu b'abahungu b'abahungu b'abana b'abahungu b'abana b'abahungu b'abahungu b'abahungu b'abana b'abahungu b'abahungu b'abana b'abahungu b'"
+  },
+  {
+    "question_en": "How can you cope with the pain of labor without medication? What should you understand about the pain of labor?",
+    "answer_en": "The pain of labor is unique and serves an important purpose—it signals the start of the opening process leading to the birth of your baby. The intensity of pain gradually increases, with stronger pain during contractions, while the periods between contractions provide time for recovery. Some women find the beginning of labor the hardest, while others struggle most when it's time to push. To cope with the pain without medication, it’s helpful to learn and prepare in advance about various non-medical techniques that can assist in managing labor pain effectively. Understanding the rhythm and purpose of pain can also help women and couples feel more empowered during the process.",
+    "question_rw": "Ni iki wakora kugira ngo uhangane n'imibabaro y'amabyara udafite imiti?",
+    "answer_rw": "Ububabare bwo mu gihe cyo kubyara ni ubw'umwihariko kandi bufite intego y'ingenzi.Buratanga ikimenyetso cy'intangiriro y'uburyo bwo gufungura buzatuma umwana avuka. Ububabare bw'ububabare bugenda burushaho kwiyongera buhoro buhoro, ububabare bukaba bukomeye cyane mu gihe cyo gufungura, mu gihe ibihe byo hagati y'amafunguro bitanga igihe cyo gukira. Abagore bamwe babona ko gutangira kubyara bigoye cyane, mu gihe abandi bahura n'ikibazo gikomeye igihe cyo guhata. Kugira ngo uhangane n'ububabare udafite imiti, ni byiza kumenya no kwitegura hakiri kare uburyo butandukanye butari ubw'ubuvuzi bushobora gufasha mu gucunga ububabare bwo mu gihe cyo kubyara. Kumenya uburyo n'intego by'ububabare bishobora kandi gufasha abagore n'abashakanye kumva bafite imbaraga nyinshi mu"
+  },
+  {
+    "question_en": "Why is it important to have someone with you during childbirth, and how can a partner support during labor?",
+    "answer_en": "Having someone you trust with you during childbirth, such as the baby’s father, your partner, a family member, friend, or doula, provides emotional reassurance, encouragement, and support, helping you feel more comfortable and confident. Partners, while they may feel powerless, play a crucial role by staying present, maintaining a positive and caring attitude, and offering constant encouragement during this intense and emotional experience. Their support can make a significant difference in helping you cope with labor challenges.",
+    "question_rw": "Kuki ari iby'ingenzi ko mu gihe cyo kubyara mubana, kandi se ni gute uwo mwashakanye ashobora kugufasha mu gihe cyo kubyara?",
+    "answer_rw": "Iyo ufite umuntu wizera mu gihe cyo kubyara, urugero nka se w'umwana, uwo mwashakanye, umwe mu bagize umuryango, incuti cyangwa doula, bituma ugira icyizere, ugaterwa inkunga kandi ugashyigikirwa mu buryo bw'ibyiyumvo, bigatuma wumva utekanye kandi ufite icyizere."
+  },
+  {
+    "question_en": "What are the three main stages of labor? What happens during each stage of childbirth? How long does each stage last?",
+    "answer_en": "Childbirth is divided into three main stages. The first stage involves the thinning and opening of the cervix, known as dilation. The second stage is the descent and birth of the baby. The third stage is the delivery of the placenta. The length of each stage varies from one delivery to another, making it unpredictable.",
+    "question_rw": "Ni ibihe byiciro bitatu by'ibanze by'imibonano mpuzabitsina?",
+    "answer_rw": "Iyo umwana avutse, aba afite intambwe eshatu z'ingenzi: intambwe ya mbere ni iyo inda y'umura igenda irushaho kumera nk'icyana cy'umura. intambwe ya kabiri ni iyo umwana avutse. intambwe ya gatatu ni iyo umwana avutse."
+  },
+  {
+    "question_en": "What happens during the latent phase of labor? How can you differentiate between early labor and false labor? When should you go to the hospital during the latent phase?",
+    "answer_en": "The latent phase of labor involves contractions that are usually not very strong and may feel irregular and short. During this phase, it can be hard to determine whether it's the start of labor or false labor. You may still be able to talk during contractions. It’s important to stay calm, rest, eat, and shower if desired. The phase can be long or short, and you don’t need to go to the hospital unless your water breaks or you no longer feel the baby moving. If contractions weaken or stop, it’s considered false labor, which is preparatory labor helping to ripen the cervix.",
+    "question_rw": "Ni iki kibaho mu gihe cy'imibonano mpuzabitsina? Ni gute ushobora gutandukanya imibonano mpuzabitsina y'iminsi ya mbere n'imibonano mpuzabitsina y'ibinyoma? Ni ryari wagombye kujya mu bitaro mu gihe cy'imibonano mpuzabitsina?",
+    "answer_rw": "Mu gihe cy'imibonano mpuzabitsina, umuntu ashobora kuba afite ikibazo cy'ubwonko, akumva ko umwana atangiye gukora imibonano mpuzabitsina, cyangwa se akumva ko atangiye gukora imibonano mpuzabitsina."
+  },
+  {
+    "question_en": "What happens during active labor? How do contractions change during this phase? What is the second stage of labor like emotionally, and how can you cope with it?",
+    "answer_en": "During active labor, contractions become more painful, closer together, and longer, signaling that the cervix has thinned and dilated to about 3 to 5 centimeters. The contractions gradually increase in intensity as the cervix opens to 10 cm. The most painful contractions occur just before complete dilation. The second stage, known as descent, can feel intense and emotional, often compared to a storm. You may experience strong emotions, feel the urge to make noise, or lose control, which is normal. To cope, focus on breathing, visualize your baby moving down, and stay connected to the process.",
+    "question_rw": "Ni iki kiba mu gihe cy'imibonano mpuzabitsina? Ni gute imihindagurikire ihinduka muri iki gihe? Ni ikihe cyiciro cya kabiri cy'imibonano mpuzabitsina gisa n'icyo mu byiyumvo, kandi se ni gute wahangana na cyo?",
+    "answer_rw": "Mu gihe cy'imibonano mpuzabitsina, imihindagurikire iba irushaho kuba mibi, igenda irushaho kwegerana, kandi igenda irushaho kuramba, ibyo bikaba bigaragaza ko igifu cy'inda cyagabanutse kigera kuri santimetero 3 kugeza kuri 5. Iyo imihindagurikire igenda yiyongera buhoro buhoro mu gihe igifu cy'inda gifunguka kigera kuri santimetero 10."
+  },
+  {
+    "question_en": "What happens when your cervix is fully dilated? How does the urge to push feel, and what should you do if you feel it before complete dilation? Is it normal to have a bowel movement or experience a perineal tear during pushing? How does an epidural affect the sensation of the urge to push?",
+    "answer_en": "Once your cervix is fully dilated to 10 cm, the sensations change, and you’ll likely feel the urge to push. The contractions become forceful, focusing all your energy on pushing your baby out. If you feel the urge before full dilation, your care team will guide you on when to begin pushing to make it more effective. During pushing, a bowel movement is normal, and your perineum may tear if it doesn’t stretch enough, but these tears typically heal well. If you have an epidural, the urge to push may be diminished initially, but you will regain awareness as your baby descends, allowing you to push more effectively.",
+    "question_rw": "Ni iki kibaho iyo umurindi w'umura w'umugore wawe wagutse burundu? Ni gute wumva ushaka guhata, kandi se wakora iki niba wumva utaragera ku ntego?",
+    "answer_rw": "Iyo ukomeje gutera akabariro mbere yo gutera akabariro, urwego rw'ubuvuzi ruzakwereka igihe ukwiriye gutangira gutera akabariro kugira ngo urusheho gukora neza. Iyo ukomeje gutera akabariro, urwego rw'ubuvuzi ruzakwereka igihe ukwiriye gutangira gutera akabariro kugira ngo urusheho gukora neza."
+  },
+  {
+    "question_en": "What happens when your cervix is fully dilated? How does the urge to push feel, and what should you do if you feel it before complete dilation? Is it normal to have a bowel movement or experience a perineal tear during pushing? How does an epidural affect the sensation of the urge to push?",
+    "answer_en": "Once your cervix is fully dilated to 10 cm, the sensations change, and you’ll likely feel the urge to push. The contractions become forceful, focusing all your energy on pushing your baby out. If you feel the urge before full dilation, your care team will guide you on when to begin pushing to make it more effective. During pushing, a bowel movement is normal, and your perineum may tear if it doesn’t stretch enough, but these tears typically heal well. If you have an epidural, the urge to push may be diminished initially, but you will regain awareness as your baby descends, allowing you to push more effectively.",
+    "question_rw": "Ni iki kibaho iyo umurindi w'umura w'umugore wawe wagutse burundu? Ni gute wumva ushaka guhata, kandi se wakora iki niba wumva utaragera ku ntego?",
+    "answer_rw": "Iyo ukomeje gutera akabariro mbere yo gutera akabariro, urwego rw'ubuvuzi ruzakwereka igihe ukwiriye gutangira gutera akabariro kugira ngo urusheho gukora neza. Iyo ukomeje gutera akabariro, urwego rw'ubuvuzi ruzakwereka igihe ukwiriye gutangira gutera akabariro kugira ngo urusheho gukora neza."
+  },
+  {
+    "question_en": "What happens after the birth of the baby during the third stage of labor? How does the body respond to prevent hemorrhaging, and what role does breastfeeding play? What are the treatments if contractions are not strong enough?",
+    "answer_en": "After your baby is born, the delivery isn't over as the placenta still needs to be delivered. Contractions will continue for a little while to expel the placenta. Once delivered, your uterus will keep contracting to prevent hemorrhages and return to its original shape. Breastfeeding stimulates oxytocin production, which helps increase uterine contractions. If contractions aren't strong enough, massaging the abdomen or administering oxytocin medication may be necessary to encourage proper contractions and prevent hemorrhaging.",
+    "question_rw": "Ni iki kibaho nyuma yo kubyara umwana mu gihe cy'igice cya gatatu cy'imbyaro?",
+    "answer_rw": "Nyuma yo kubyara umwana, umubyeyi ntaba arangije kubyara kuko inda ikeneye kuvuka. Iyo inda ikomeje gucururuka mu gihe gito kugira ngo ishobore kuvuka. Iyo amaze kuvuka, inda ikomeza gucururuka kugira ngo ireke kuvuka amaraso kandi igaruke mu buryo bwayo bwa mbere. Kunywa ibere byongera umusaruro wa oxytocin, bifasha mu kongera umusaruro w'inda. Iyo imihindagurikire idakomeye bihagije, gusukisha inda cyangwa gukoresha imiti ya oxytocin bishobora kuba ngombwa kugira ngo utere inkunga imihindagurikire ikwiriye no kwirinda kuvuka amaraso."
+  },
+  {
+    "question_en": "What happens in the first moments after the baby is born? How does skin-to-skin contact benefit both the baby and mother? What role does breastfeeding play during this time?",
+    "answer_en": "Immediately after birth, your baby will make his first sounds and be placed on your chest. The care team will ensure he is healthy, drying him off and clearing any secretions from his nose and mouth if needed. Skin-to-skin contact is encouraged, ideally for at least two hours, which helps your baby regulate body heat, breathing, and heartbeat while fostering a sense of safety. This bonding time also facilitates breastfeeding, as your baby will instinctively seek comfort and nourishment from nursing, with assistance from the care team as needed to get started.",
+    "question_rw": "Ni iki kiba mu minota ya mbere umwana amaze kuvuka? Ni mu buhe buryo umubano w'uruhu n'uruhu ugirira akamaro umwana n'umubyeyi?",
+    "answer_rw": "Nyuma yo kubyara, umwana wawe azumva amajwi ye ya mbere maze agashyirwa mu gituza cyawe. Itsinda ry'abamwitaho rizamwizeza ko afite amagara mazima, rikamuhanagura kandi rikamuhanaguraho ibyibo byose biva mu mazuru no mu kanwa mu gihe bibaye ngombwa."
+  },
+  {
+    "question_en": "What should you do if immediate skin-to-skin contact isn't possible? How does skin-to-skin contact or being held by a parent or significant person benefit the baby? What are the emotional aspects of this bonding time?",
+    "answer_en": "If immediate skin-to-skin contact isn't possible due to medical conditions, the father or another significant person can hold the baby. Don’t worry if skin-to-skin contact isn’t made right away—there will be other opportunities, and your baby will be just fine. Whether it's with you or another loved one, your baby will feel comforted by the warmth of the body and will begin to recognize familiar voices. During this bonding time, your baby will exhibit movements such as sticking out his tongue, blinking, and breathing more quickly. This marks a wonderful and emotional period of discovery for the family, strengthening the connection.",
+    "question_rw": "Ni iki wagombye gukora mu gihe umuntu adashobora guhita agirana imishyikirano ya bugufi n'undi muntu? Ni mu buhe buryo kugirana imishyikirano ya bugufi n'undi muntu cyangwa kumufata byamugirira akamaro?",
+    "answer_rw": "Niba guhura n'uruhu n'uruhu bidashoboka bitewe n'imimerere y'ubuvuzi, umubyeyi cyangwa undi muntu ukomeye ashobora gufata umwana. Ntukihangayike niba guhura n'uruhu n'uruhu bitatangiye guhita hazabaho andi mahirwe, kandi umwana wawe azaba ameze neza. Waba uri kumwe nawe cyangwa undi muntu ukunda, umwana wawe azumva ahumurijwe n'ubushyuhe bw'umubiri kandi azatangira kumenya amajwi azwiyumvamo. Muri iki gihe cyo guhuza, umwana wawe azagaragaza imikorere nko kumurika ururimi, guhumeka no guhumeka byihuse. Ibi biragaragaza igihe cyiza kandi cyiyumvo cyo kuvumbura umuryango, bikomeza umubano."
+  },
+  {
+    "question_en": "What are the different methods used to induce labour, and how do they work? How is the cervix prepared, and what methods might be used to start contractions or break the water?",
+    "answer_en": "Labour can be induced through various methods, depending on factors such as cervix ripeness and whether it's a first delivery. To prepare the cervix, hormonal treatments may be used, either vaginally or orally, to soften and thin it. A catheter with a small balloon can also be inserted into the cervix to help open it. Contractions may be induced with medication given intravenously, orally, or vaginally. In some cases, the water may be artificially ruptured, which is a relatively painless procedure that does not harm the baby.",
+    "question_rw": "Ni ubuhe buryo butandukanye bukoreshwa mu gutera inda, kandi se bukora bute?",
+    "answer_rw": "Gukora imibonano mpuzabitsina bishobora guterwa n'uburyo butandukanye, bitewe n'impamvu zitandukanye nko gukura kw'igifu cy'umura n'uko ari ugutanga kwa mbere. Mu gutegura igifu cy'umura, imiti ya hormone ishobora gukoreshwa, haba mu nda cyangwa mu kanwa, kugira ngo igoreke kandi igoreke. Catheter ifite balon nto cyane irashobora no gushyirwa mu gifu cy'umura kugira ngo ifungure."
+  },
+  {
+    "question_en": "When might labour be stimulated, and what method is used? How does oxytocin help in this process?",
+    "answer_en": "Labour may be stimulated if the cervix is not dilating and contractions are either too weak or too far apart. Oxytocin, a hormone, is intravenously administered to increase the frequency and strength of contractions. Once it takes effect, oxytocin is usually given continuously until the baby is born.",
+    "question_rw": "Ni ryari umwana ashobora kubyara, kandi se ni ubuhe buryo bukoreshwa?",
+    "answer_rw": "Iyo urusoro rw'umura rutarakura, kandi imihindagurikire ikaba idakomeye cyane cyangwa ikaba iri kure cyane, imihindagurikire ishobora gutuma umuntu akora akazi."
+  },
+  {
+    "question_en": "Why might a fetal monitor be used, and how does it work? What should you do if the monitor is uncomfortable or the heartbeat is not heard?",
+    "answer_en": "A fetal monitor is used if the baby needs to be watched more closely, with monitoring either intermittent or continuous. Two sensors are strapped to the abdomen—one tracks the baby's heartbeat, and the other records contractions and movements. If the monitor is uncomfortable, you can ask for monitoring breaks to move around. If the heartbeat isn't heard, it's usually due to sensor movement, and staff can adjust it.",
+    "question_rw": "Kuki umuntu yakoresha ikoranabuhanga rigenzura inda y'umwana, kandi se rikora rite?",
+    "answer_rw": "Iyo umwana akeneye gukurikiranwa neza, hakoreshwa umwirondoro w'umwana, aho umwirondoro ukorwa buri gihe cyangwa mu buryo butaziguye. Imibare ibiri ifatanye n'igifu: imwe ikurikirana ibihuha by'umutima w'umwana, indi ikurikirana ibihuha n'imyitwarire. Iyo umwirondoro utameze neza, ushobora gusaba kugenzura ibiruhuko byo gutembera. Niba ibihuha by'umutima bitumvikana, ubusanzwe biterwa n'imyitwarire y'ibyihuha, kandi abakozi barashobora kubishyira mu bikorwa."
+  },
+  {
+    "question_en": "Why is monitoring used when inducing or stimulating labour with drugs, and how long does it continue?",
+    "answer_en": "Monitoring is used when inducing or stimulating labour with drugs to ensure the baby's well-being and to assess the frequency of contractions. This monitoring continues until the baby is born.",
+    "question_rw": "Kuki hakoreshwa uburyo bwo kugenzura igihe umuntu akoresha ibiyobyabwenge mu gutera cyangwa gutera akabariro, kandi se, ibyo bikorwa bikomeza kumara igihe kingana iki?",
+    "answer_rw": "Gukurikirana bikoreshwa mu gutera no guhumuriza inda hakoreshejwe ibiyobyabwenge kugira ngo umwana arusheho kumererwa neza no kugira ngo hagaragazwe incuro iyo ndwara ikorwamo."
+  },
+  {
+    "question_en": "Why is monitoring used during labour, and in what situations is it necessary?",
+    "answer_en": "Monitoring during labour is used to ensure the baby is doing well, to track the frequency of contractions, and to observe how the baby is handling them. It is necessary if there are concerns about the baby's well-being, if you request an epidural, are planning a VBAC, or have a high-risk pregnancy. In a normal, uncomplicated pregnancy, the baby’s heart will be checked regularly with an ultrasound machine.",
+    "question_rw": "Kuki hakoreshwa uburyo bwo kugenzura abana mu gihe cyo kubyara, kandi se ni mu yihe mimerere ibyo biba ari ngombwa?",
+    "answer_rw": "Mu gihe cy'imibonano mpuzabitsina, hakorwa igenzura rigamije kureba niba umwana arimo neza, kumenya uko akomeza guhuzagurika no kureba uko abikora. Ni ngombwa niba hari impungenge ku buzima bw'umwana, niba usabye ko bamuvura, niba ateganya gukora VBAC, cyangwa niba afite inda ifite ibyago byinshi. Mu gihe cy'imibonano mpuzabitsina bisanzwe kandi bidafite ibibazo, umutima w'umwana uzajya ugenzurwa buri gihe ukoresheje imashini ikoresha ultrasound."
+  },
+  {
+    "question_en": "How epidural anaesthesia works and its effects",
+    "answer_en": "Epidural anaesthesia is a highly effective pain relief method during childbirth. It involves injecting a local anaesthetic through a catheter inserted between two vertebrae in the lower back. This numbs the abdominal area and partially numbs the legs. While it effectively reduces or eliminates labor pain, it may also diminish contractions and restrict movement, which could slow down the baby's descent. Before administering an epidural, a thorough evaluation will be conducted to ensure that it is suitable for you.",
+    "question_rw": "Uko anesthésie ya epidural ikora n'ingaruka zayo",
+    "answer_rw": "Uburyo bw'ubuhumekero bw'amaraso bugabanya ububabare mu gihe cyo kubyara. Busaba gutera umuti w'ubuhumekero bw'imyanya ndangagitsina binyuze mu gihumekero cyashyizwe hagati y'imigozi ibiri mu mugongo. Ibi bigabanya ububabare bw'ibitsina mu gihe cyo kubyara."
+  },
+  {
+    "question_en": "Administration, effects, and side effects of narcotics",
+    "answer_en": "Narcotics are analgesics that can be administered via injection into a muscle or vein to relieve pain during the early stages of labor. They reduce pain but do not eliminate it completely. As labor progresses and pain increases, higher doses may be needed. However, the side effects of narcotics—such as sleepiness, nausea, and changes in heart rate—also intensify with the dose. These medications can affect the baby as well, which is why they are generally not used during the later stages of labor. After birth, the baby may require monitoring for a few hours to ensure the drugs are cleared from their system. Despite these temporary effects, narcotics do not have any long-term consequences for either the mother or the baby.",
+    "question_rw": "Gufata ibiyobyabwenge, ingaruka zabyo n'ingaruka zabyo",
+    "answer_rw": "Ibiyobyabwenge ni ibiyobyabwenge bigabanya ububabare ariko ntibibuvanaho burundu. Uko ibiyobyabwenge bigenda birushaho gutera imbere n'ububabare burushaho kwiyongera, ni na ko bishobora gukenerwa. Ariko kandi, ingaruka z'ibiyobyabwenge nk'ibitotsi, uburuhe n'imihindagurikire y'imitima na zo zirushaho kwiyongera iyo umuntu abikoze. Ibiyobyabwenge na byo bishobora kugira ingaruka ku mwana, akaba ari na yo mpamvu ubusanzwe bitakoreshwa mu bihe by'imibonano mpuzabitsina."
+  },
+  {
+    "question_en": "Use and risks of episiotomy",
+    "answer_en": "An episiotomy is an incision made in the perineum just before delivery to help the baby exit more quickly. It is done under local anesthesia, and the incision is sutured after the birth. However, episiotomies are no longer routinely performed because they can increase the risk of deeper perineal tears.",
+    "question_rw": "Uburyo bwo gukoresha episiotomie n'ibyago byayo",
+    "answer_rw": "Gufata inda y'umwana ni ukumucira muri perineum mbere gato y'uko avuka kugira ngo umwana asohoke vuba. Gufata inda y'umwana ukamucira mu gihe cy'ubuhumekero bwo mu karere, no kumucira mu gihe cyo kuvuka birakorwa."
+  },
+  {
+    "question_en": "Surgical procedure for delivery",
+    "answer_en": "A caesarean section (C-section) is a surgical procedure used when a baby cannot be delivered vaginally. It involves making an incision in the mother’s abdomen and uterus to remove the baby. In Québec, about one in four women deliver via C-section.",
+    "question_rw": "Uburyo bwo kubaga bwo kubyara",
+    "answer_rw": "Mu gihugu cya Québec, umugore umwe kuri bane avuka binyuze mu gice cya kabiri cy'inda."
+  },
+  {
+    "question_en": "What are the reasons for planning a caesarean? When might an unplanned caesarean be necessary? What are the medical situations that call for a planned caesarean? What could trigger an unplanned caesarean?",
+    "answer_en": "A caesarean can be planned for medical issues with the mother, placenta prævia, breech presentation, or a previous caesarean with conditions that are not favorable for vaginal delivery. Unplanned caesareans may be required when the baby is in an unsafe position, when there are concerns about the baby’s health, if labour does not progress, or when the mother has serious medical problems.",
+    "question_rw": "Ni izihe mpamvu zituma umuntu ateganya kujya kwa Kayisari? Ni ryari kwa Kayisari kutateganyijwe bishobora kuba ngombwa? Ni ibihe bintu byo mu rwego rw'ubuvuzi bisaba ko umuntu ateganya kujya kwa Kayisari? Ni iki gishobora gutuma umuntu ategeka kujya kwa Kayisari atateganyijwe?",
+    "answer_rw": "Imibonano mpuzabitsina ishobora gutunganywa mu gihe cy'ibibazo by'ubuvuzi n'umubyeyi, mu gihe cy'imibonano mpuzabitsina, mu gihe cy'imibonano mpuzabitsina, cyangwa mu gihe cy'imibonano mpuzabitsina mbere y'uko umwana avuka."
+  },
+  {
+    "question_en": "What happens before a caesarean? What types of anaesthesia are used during a caesarean? Who can be present during the operation? How is skin-to-skin contact initiated after a caesarean? What happens during the surgical procedure, and how is the baby delivered?",
+    "answer_en": "Before a caesarean, the mother receives an intravenous solution (IV) and has a urinary catheter fitted. Anaesthesia typically involves an epidural or spinal block, although a general anaesthetic may be used in rare cases. The person accompanying the mother can enter the operating room and sit near her. After the delivery, skin-to-skin contact with the baby can begin in the operating or recovery room, depending on the circumstances. The placenta is removed, and the incision, typically horizontal and above the pubic hairline, is closed with stitches or staples. The baby is placed against the mother’s skin if both are stable.",
+    "question_rw": "Ni iki kibaho mbere y'uko umuntu afatwa na Kayisari? Ni ubuhe buryo bwo kumuhumuriza bukoreshwa mu gihe afatwa na Kayisari? Ni bande bashobora kuba bahari mu gihe ako kazi gakorwa?",
+    "answer_rw": "Mbere y'uko umwana avurwa, nyina ahabwa umuti mu nzira y'umuti w'amaraso (IV) kandi agashyirirwaho catheter y'umucunguzi. Ububabare ubusanzwe bugizwe n'uruhu rw'uruhu rw'uruhu rw'umugongo cyangwa urw'umugongo, nubwo mu bihe bidakunze gukoreshwa ububabare rusange. Umuntu uherekeza umubyeyi ashobora kwinjira mu cyumba cyo kubagwa akicara iruhande rwe. Nyuma yo kubyara, guhura kw'uruhu n'uruhu rw'umwana bishobora gutangira mu cyumba cyo kubagwa cyangwa gukira, bitewe n'imimerere."
+  },
+  {
+    "question_en": "What are the short-term effects of a caesarean? What complications can arise from a caesarean delivery? What are the long-term effects on the mother? How might a caesarean affect the baby?",
+    "answer_en": "Short-term effects of a caesarean include abdominal and pelvic pain requiring medication, difficulty urinating, potential breastfeeding difficulties, a longer hospital stay, and a longer recovery compared to vaginal birth. Complications can arise, such as infection, bleeding, thrombophlebitis, and injury to internal organs, which may require further interventions. Long-term, a caesarean can increase the risk of placental disorders in future pregnancies and the rare risk of uterine rupture during a vaginal birth. For babies, caesarean delivery may result in lower body temperature and mild respiratory distress, but skin-to-skin contact can help address these issues.",
+    "question_rw": "Ni izihe ngaruka z'igihe gito ziterwa n'uko umuntu yahawe ingufu za cyesariyo? ni izihe ngaruka ziterwa n'uko yahawe ingufu za cyesariyo? ni izihe ngaruka ziterwa n'uko yahawe ingufu za cyesariyo? ni izihe ngaruka ziterwa n'uko yahawe ingufu za cyesariyo? ni izihe ngaruka ziterwa n'uko yahawe ingufu za cyesariyo? ni izihe ngaruka ziterwa n'uko yahawe ingufu za cyesariyo ku mwana?",
+    "answer_rw": "Impamvu z'igihe gito z'imibonano mpuzabitsina ya cyesariyani zirimo ububabare bw'igifu n'uburwayi bwo mu nda bukenera imiti, kugorana kwisiga, ibibazo bishobora kuvuka mu gihe cyo kwonsa, kuguma mu bitaro igihe kirekire, no gukira igihe kirekire ugereranyije no kubyara mu nda."
+  },
+  {
+    "question_en": "How should a mother recover after a caesarean? What should be done for pain relief and incision care? When can a mother resume activities after a caesarean?",
+    "answer_en": "After a caesarean, it is important to gradually start walking, drinking, and eating to aid recovery. Moving around helps prevent complications. Pain from the incision and numbness in the surrounding area may occur, with pain relief prescribed by the doctor. The incision will heal over the following weeks, and health professionals will provide guidance on caring for the wound. Mothers are also given advice on newborn care, though babies born by caesarean generally require no special care. It will take a few weeks to resume activities such as driving, lifting, certain physical activities, or having sexual relations.",
+    "question_rw": "Ni gute umubyeyi yagombye gukira nyuma yo kubagwa kwa Kayisari? Ni iki yagombye gukora kugira ngo acungure ububabare no kwita ku bice by'umubiri? Ni ryari umubyeyi ashobora kongera gukora imirimo nyuma yo kubagwa kwa Kayisari?",
+    "answer_rw": "Nyuma y'imibonano mpuzabitsina, ni ngombwa gutangira kugenda, kunywa no kurya buhoro buhoro kugira ngo umuntu akire. Kwigendera bifasha kwirinda ibibazo. Indwara ziterwa n'igice cy'uruhu n'ubuhumekero bishobora kubaho mu gace k'iwabo, mu gihe umuganga yabitegetse. Iyo gice cyakira mu byumweru bikurikiyeho, kandi abaganga mu by'ubuvuzi bazatanga amabwiriza ku birebana no kwita ku gikomere."
+  },
+  {
+    "question_en": "How does skin-to-skin contact benefit a newborn? What is the best way to perform skin-to-skin contact? How does skin-to-skin contact help with breastfeeding?",
+    "answer_en": "Skin-to-skin contact with your newborn in the early hours, days, and weeks helps soothe and comfort the baby while promoting emotional bonding. To practice it, simply place your baby on your chest with just a diaper on and cover her with a blanket. This type of contact not only strengthens the bond between mother and baby but also makes breastfeeding easier.",
+    "question_rw": "Ni mu buhe buryo kuvana uruhu n'uruhu bigirira umwana ukiri muto akamaro? Ni ubuhe buryo bwiza bwo kuvana uruhu n'uruhu?",
+    "answer_rw": "Kugira ngo ukore ibyo, jya ushyira umwana wawe mu gituza, ukambara gusa umwenda, maze umwambike igitambaro."
+  },
+  {
+    "question_en": "How long is the typical stay at a hospital or birthing centre? What are some important tasks and considerations during your stay? Why is rooming-in encouraged, and what should you do before leaving the hospital?",
+    "answer_en": "After childbirth, your hospital stay typically lasts 24 to 36 hours after a vaginal delivery or 36 to 48 hours after a caesarean section, while stays at birthing centres are usually about 24 hours. During this time, it's a great opportunity to bond with your baby and learn about caring for her. Hospitals often encourage rooming-in, which allows you to feed your baby on demand and begin breastfeeding, with a nurse nearby for assistance. Before leaving, ensure your baby has a car seat, as it's mandatory for travel. If you have any questions about vaccinations, you can meet with a vaccination counselor. Additionally, you'll need to complete any necessary paperwork for the birth.",
+    "question_rw": "Mu gihe uri mu bitaro cyangwa mu kigo cy'ababyeyi, ni ikihe kintu cy'ingenzi ugomba kwitaho mu gihe uri mu bitaro?",
+    "answer_rw": "Nyuma yo kubyara, uburwayi mu bitaro ubusanzwe bumara amasaha 24 kugeza kuri 36 nyuma yo kubyara mu nda cyangwa amasaha 36 kugeza kuri 48 nyuma yo gukora icyuma cya cyesariyo, mu gihe uburwayi mu bigo by'ababyeyi ubusanzwe bumara amasaha 24. Muri iki gihe, ni uburyo bwiza bwo kugirana ubucuti n'umwana wawe no kumenya uko wamwitaho."
+  },
+  {
+    "question_en": "What care will the nurses and doctors provide to your newborn during your hospital stay? What preventive measures might be suggested for your baby?",
+    "answer_en": "During your hospital or birthing centre stay, the nurses, doctors, or midwives will provide essential care to ensure your newborn's well-being, including preventive measures like administering a vitamin K shot to prevent bleeding and applying antibiotic ointment to your baby's eyes to prevent serious infections. If you have any concerns or questions about your baby's care, don't hesitate to speak with the health professionals.",
+    "question_rw": "Ni ubuhe bufasha abaforomo n'abaganga bazakorera umwana wawe igihe azaba akiri mu bitaro?",
+    "answer_rw": "Mu gihe uri mu bitaro cyangwa mu kigo cy'ababyeyi, abaforomokazi, abaganga cyangwa ababyaye bazajya bagufasha mu buryo bw'ibanze kugira ngo umwana wawe avuke neza, hakubiyemo n'imyitwarire yo kwirinda, urugero nko kumuha umuti wa K kugira ngo urinde amaraso no kumushyira amavuta ya antibiyotike ku maso y'umwana wawe kugira ngo wirinde kwandura indwara zikomeye."
+  },
+  {
+    "question_en": "What physical examination will your newborn receive during the hospital or birthing centre stay? What is the purpose of this examination?",
+    "answer_en": "During your stay at the hospital or birthing centre, a health professional will perform a thorough physical examination of your newborn to ensure she is healthy and to identify any potential issues.",
+    "question_rw": "Ni ikihe gikorwa cy'ubushakashatsi kizakorwa ku mwana wawe igihe azaba ari mu bitaro cyangwa mu kigo cy'ababyeyi?",
+    "answer_rw": "Mu gihe uri mu bitaro cyangwa mu kigo cy'ababyeyi, umurwayi azakora isuzuma ryimbitse ry'umubiri ry'umwana wawe ukimara kuvuka kugira ngo amenye niba afite amagara mazima kandi amenye ibibazo bishobora kumugeraho."
+  },
+  {
+    "question_en": "What is the purpose of neonatal screening, and what types of screenings are done? How are blood and urine screenings performed for newborns?",
+    "answer_en": "Neonatal screening aims to detect rare diseases that are not apparent at birth but can pose serious health risks. Early detection allows for treatment before symptoms appear, preventing severe complications. Blood screening is done within a few days of birth by taking a few drops of blood from the baby's heel. Urine screening is performed when the baby is 21 days old, and parents are given a kit and instructions to collect a small quantity of urine during their hospital or birthing centre stay.",
+    "question_rw": "Ni iyihe ntego yo gusuzuma inda z'umwana uvutse, kandi se ni ubuhe bwoko bw'imibonano mpuzabitsina bukorwa?",
+    "answer_rw": "Gusuzuma inda mu gihe cy'amavuko bigamije gutahura indwara zidasanzwe zitaboneka mu gihe cy'ivuka ariko zishobora guteza akaga gakomeye ku buzima. Gusuzuma hakiri kare bituma umuntu ashobora kuvurwa mbere y'uko ibimenyetso bigaragara, bigatuma atagira ibibazo bikomeye. Gusuzuma amaraso bikorwa mu minsi micye gusa nyuma yo kuvuka, hakoreshejwe amaraso aturuka ku gatsiko k'umwana. Gusuzuma umura bikorwa igihe umwana amaze iminsi 21 y'amavuko, kandi ababyeyi bahabwa ibikoresho n'amabwiriza yo gukusanya umura muto mu gihe baba bari mu bitaro cyangwa mu kigo cy'ivuka."
+  },
+  {
+    "question_en": "What should parents do when things don’t go as planned during childbirth? How should they handle a baby with health problems or a premature baby?",
+    "answer_en": "When things don’t go as planned during childbirth, parents may have to face unexpected challenges such as health problems, birth defects, or premature birth. In these cases, the baby may require hospitalization for special care. Parents need to adjust to this new reality and the role they may not have anticipated. Babies born prematurely (before 37 weeks) require special care, and the parents should be prepared to support their baby through any necessary medical treatments or interventions.",
+    "question_rw": "Ni iki ababyeyi bagombye gukora mu gihe ibintu bitagenda nk'uko byari biteganyijwe mu gihe cyo kubyara?",
+    "answer_rw": "Iyo ibintu bitagenda nk'uko byari biteganyijwe mu gihe cyo kubyara, ababyeyi bashobora guhura n'ibibazo batari biteze, urugero nk'ibibazo by'uburwayi, ubumuga bwo kuvuka cyangwa kubyara hakiri kare. Muri ibyo bihe, umwana ashobora gukenera kujya mu bitaro kugira ngo afashwe mu buryo bwihariye."
+  },
+  {
+    "question_en": "What care does a premature baby receive if born before 34 weeks? How is a premature baby supported in a neonatal intensive care unit?",
+    "answer_en": "A premature baby born before 34 weeks is typically transferred to a neonatal intensive care unit (NICU), where they may receive several forms of care. This includes being placed in an incubator to maintain body temperature, receiving phototherapy if jaundiced, and being given an intravenous solution (IV) for hydration and nutrition. Additionally, the baby may require assistance with breathing and feeding until they are strong enough to manage these independently.",
+    "question_rw": "Ni ubuhe buryo bwo kwita ku mwana utaravuka buhabwa n'ababyawe mbere y'ibyumweru 34?",
+    "answer_rw": "Umwana wavutse mbere y'ibyumweru 34 asanzwe ajyanwa mu kigo cyita ku babyawe (NICU), aho ashobora guhabwa uburyo butandukanye bwo kwitabwaho. Ibyo bikubiyemo gushyirwa mu cyumba cyita ku burere bw'umubiri, guhabwa ubuvuzi bw'amafoto mu gihe afite icyuma cy'umuhondo, no guhabwa umuti wo mu ngirabuzimafatizo (IV) kugira ngo ushyiremo amazi no kumererwa neza. Byongeye kandi, umwana ashobora gukenera ubufasha mu guhumeka no kugaburira kugeza igihe azaba akomeye bihagije kugira ngo abitegeke."
+  },
+  {
+    "question_en": "What care is given to a baby born between 34 and 37 weeks? What specific treatments may be needed for a late preterm baby?",
+    "answer_en": "A baby born between 34 and 37 weeks may require extra care, although less intensive than that for babies born earlier. They may receive help with feeding, phototherapy for jaundice, and in rare cases, assistance with breathing if needed.",
+    "question_rw": "Ni ubuhe buryo bwihariye bwo kwita ku mwana wavutse hagati y'ibyumweru 34 na 37?",
+    "answer_rw": "Umwana wavutse hagati y'ibyumweru 34 na 37 ashobora kuba akeneye kwitabwaho cyane, nubwo biba bitoroshye ugereranyije n'abavutse mbere y'igihe."
+  },
+  {
+    "question_en": "How can parents cope when their baby is hospitalized? What steps can they take to manage feelings of guilt and get the support they need?",
+    "answer_en": "When a baby is hospitalized, parents may feel guilty or helpless, but there are ways to cope. Asking questions about the baby's health and treatment is crucial, and parents should feel empowered to explore other options if needed. It’s important to ask the care team about the best times for communication. Additionally, parents can ask for help from family and loved ones for household tasks and caring for other children. Getting enough rest and seeking psychological support, such as from social workers or psychologists, can help parents stay healthy and manage the emotional strain.",
+    "question_rw": "Ababyeyi bakora iki mu gihe umwana wabo ari mu bitaro, kandi se ni iki bakora kugira ngo bareke kumva bafite icyaha kandi bahabwe ubufasha bakeneye?",
+    "answer_rw": "Iyo umwana ageze mu bitaro, ababyeyi bashobora kumva bamuhemukiye cyangwa nta cyo bamumariye, ariko hari uburyo bwo guhangana na byo. Kubaza ibibazo ku buzima bw'umwana n'uburyo bwo kumuvura ni iby'ingenzi cyane, kandi ababyeyi bagombye kumva ko bafite ubushobozi bwo gusesengura izindi nzira iyo bibaye ngombwa."
+  },
+  {
+    "question_en": "What suggestions can help make a hospital stay easier for parents of a hospitalized baby? How can parents stay connected with their baby during this time?",
+    "answer_en": "Many parents prefer to stay with their baby during hospitalization, either by taking turns with their partner or spending the night together. It’s important to ask the hospital if they offer rooming-in options, although space may be limited. Even if the baby is in an incubator, parents can still encourage breastfeeding and milk production by stimulating their breasts early on. Parents should ask for help with holding their baby or engaging in skin-to-skin contact if possible. If holding the baby is not an option, placing something with the parent's scent near the baby, such as a scarf or piece of clothing, can provide comfort.",
+    "question_rw": "Ni izihe nama zishobora gufasha ababyeyi b'umwana wabyaye mu bitaro, kandi se ni gute ababyeyi bakomeza kubana n'umwana wabo muri icyo gihe?",
+    "answer_rw": "Ababyeyi benshi bahitamo kubana n'umwana wabo mu gihe bari mu bitaro, bakajya bavugana n'uwo bashakanye cyangwa bakamarana na we ijoro rimwe. Ni ngombwa kubaza ibitaro niba bibaha uburyo bwo kuba mu cyumba, n'ubwo umwanya ushobora kuba uri bugufi."
+  },
+  {
+    "question_en": "How can parents express milk for their baby if breastfeeding isn't immediately possible?",
+    "answer_en": "If your baby is unable to breastfeed initially, you can express your milk using a breast pump. Hospitals, especially in intensive care wards, usually have breast pumps available and can assist you with expressing milk. Don’t worry if only a few drops come out at first—regular stimulation is key to increasing milk production. Remember, newborns have very small stomachs and only need a small amount of milk at the start. Being close to your baby or having skin-to-skin contact before expressing milk can help increase production. If breastfeeding wasn’t part of your initial plan, it’s not too late to try and begin. Additionally, extra minerals or calories can be added to your milk if necessary for your baby's needs.",
+    "question_rw": "Ni gute ababyeyi bashobora guha umwana wabo amata mu gihe nta gihe cyo kumwonsa?",
+    "answer_rw": "Niba umwana wawe atabasha kumerera ibere, ushobora gusohora amata yawe ukoresheje pompe y'amabere. Mu bitaro, by'umwihariko mu bigo byita ku barwayi bakomeye, ubusanzwe hari pompe y'amabere iboneka kandi ishobora kugufasha kumerera ibere."
+  },
+  {
+    "question_en": "How can parents manage hospital visits and support siblings during a newborn's hospitalization?",
+    "answer_en": "If your baby is in the hospital, you may be able to have visitors, including your other children or loved ones. However, make sure that visitors are healthy and do not have any infections, such as a cold or cold sore, as these can be serious for a newborn. It's also important to address any concerns your other children may have. They might feel worried or guilty about the baby's health, and it can be helpful to reassure them that the situation is not their fault. Slightly older siblings may also feel jealous, thinking their feelings caused the complications. To support them, try to involve them in caring for the baby when possible, as this can help them feel included and reduce negative emotions.",
+    "question_rw": "Ababyeyi bakora iki kugira ngo bashobore gusura abana babo mu bitaro no kubashyigikira mu gihe umwana wabo akiri muto ari mu bitaro?",
+    "answer_rw": "Niba umwana wawe ari mu bitaro, ushobora kugira abashyitsi, harimo n'abandi bana bawe cyangwa abo ukunda. Ariko kandi, ujye ureba neza ko abo bashyitsi bafite amagara mazima kandi ko badafite ubwandu, urugero nk'imbeho cyangwa icyorezo cy'ibicurane, kuko ibyo bishobora kuba bikomeye ku mwana ukiri muto."
+  },
+  {
+    "question_en": "How can parents cope with the loss of a newborn child?",
+    "answer_en": "The loss of a newborn is an incredibly painful experience, and it’s important to acknowledge the deep emotional and physical challenges parents may face. While it is rare for a baby to die before birth or in the first few days of life, the causes are typically related to extreme prematurity or birth defects. In the event of a stillbirth, medical professionals often recommend a natural or induced vaginal delivery. This can be especially difficult for the mother, as her body may begin producing milk or experience bleeding after delivery, which can serve as painful reminders of the loss. Parents should allow themselves time to grieve and seek support from counselors, support groups, or loved ones to process this profound loss.",
+    "question_rw": "Ni gute ababyeyi bashobora guhangana n'urupfu rw'umwana wabo umaze kuvuka?",
+    "answer_rw": "Gupfusha umwana w'uruhinja ni ikintu kibabaza cyane, kandi ni ngombwa kumenya ibibazo bikomeye ababyeyi bashobora guhura na byo mu buryo bw'ibyiyumvo no mu buryo bw'umubiri. Mu gihe ari gake umwana apfa ataravuka cyangwa mu minsi mike ya mbere y'ubuzima, impamvu ziterwa n'ubumuga bwo mu nda. Mu gihe umwana yapfuye, abaganga bakunze gusaba ko umwana yabyara mu buryo bw'ibisanzwe. Ibi bishobora kugora cyane umubyeyi, kuko umubiri we ushobora gutangira gukora amata cyangwa gutangira kumena amaraso nyuma yo kubyara, bishobora kumwibutsa urupfu rw'umwana. Ababyeyi bagombye kubona igihe cyo kubabazwa no gushaka ubufasha bw'abajyanama, amatsinda y'ubufasha cyangwa ababo bakunda kugira ngo bakemure iyo mpungenge ikomeye."
+  },
+  {
+    "question_en": "After childbirth, how long does it take to recover and what symptoms should be watched for? What signs indicate a need for immediate medical attention or consultation with a healthcare provider?",
+    "answer_en": "After childbirth, it’s normal for your body to take time to recover, often taking several weeks to regain energy. If you experience signs like heavy bleeding, fever, severe abdominal pain, difficulty breathing, leg pain with swelling, severe headaches, or changes in vision, it’s important to seek immediate medical attention. Contact your doctor, midwife, or emergency services if you notice symptoms like hemorrhaging or signs of shock such as weakness, confusion, or paleness.",
+    "question_rw": "Ni ibihe bimenyetso bigaragaza ko umuntu akeneye kwitabwaho byihuse n'abaganga cyangwa ko agomba kujya kwa muganga?",
+    "answer_rw": "Nyuma yo kubyara, ni ibisanzwe ko umubiri wawe ukenera igihe cyo gukira, akenshi bikamara ibyumweru byinshi kugira ngo usubire kubona ingufu. Niba ubona ibimenyetso nk'amaraso menshi, umuriro, ububabare bukomeye mu nda, guhumeka nabi, ububabare mu maguru buteye uburuhe, ububabare bukomeye bw'umutwe cyangwa guhinduka mu isura, ni iby'ingenzi ko uhita ugana kwa muganga."
+  },
+  {
+    "question_en": "What causes uterine contractions after childbirth, and how do they vary in different pregnancies? What should you do if the pain becomes difficult to manage?",
+    "answer_en": "After childbirth, uterine contractions can occur, especially while breastfeeding. These contractions may be more intense if it is not your first pregnancy. If the pain becomes uncomfortable or difficult to manage, it’s important to contact your health professional for advice or relief.",
+    "question_rw": "Ni iki gituma inda igwa nyuma yo kubyara, kandi se bigenda bite mu gihe cy'imiryango itandukanye?",
+    "answer_rw": "Nyuma yo kubyara, ubwonko bushobora guhindagurika, cyane cyane mu gihe ukimara kubyara. Iyo ubonye ubwonko atari ubwa mbere, bushobora kuba bukomeye kurushaho."
+  },
+  {
+    "question_en": "What is lochia, and how does the blood loss change after childbirth? When should you consult a healthcare provider? What should you use for managing the discharge?",
+    "answer_en": "Lochia refers to the blood loss after childbirth, which can be heavier than menstruation during the first couple of days and then gradually decreases. If the bleeding increases rather than decreases, it's important to consult your healthcare provider. Passing blood clots is common, especially in the morning or after breastfeeding, and as long as the bleeding lessens afterward, there's no cause for concern. The color of the discharge changes over time from pink to brown, and eventually yellow. Lochia typically lasts between three to six weeks, and during this period, it's recommended to use sanitary pads instead of tampons or a menstrual cup.",
+    "question_rw": "Ni iki cyitwa lochia, ni gute amaraso ahinduka nyuma yo kubyara? Ni ryari wagombye kujya kwa muganga? Ni iki wagombye gukoresha kugira ngo ukemure ikibazo cy'amaraso?",
+    "answer_rw": "Lochia yerekeza ku gutakaza amaraso nyuma yo kubyara, bishobora kuba bikomeye kurusha imihango mu minsi ibiri ya mbere hanyuma bikagenda bigabanuka buhoro buhoro. Iyo ihindagurika ry'amaraso ryiyongera aho kugabanuka, ni ngombwa ko ugisha inama umuganga wita ku buzima bwawe. Gutererana amaraso ni ibintu bisanzwe, cyane cyane mu gitondo cyangwa nyuma yo kwonsa, kandi igihe cyose ihindagurika ry'amaraso rigabanuka nyuma yaho, nta mpamvu yo guhangayika. ibara ry'ibanze rigenda rihinduka uko igihe kigenda gihita riva ku ndorerwamo y'umuhondo rikagera ku ibara ry'umuhondo, amaherezo rikaba ry'umuhondo. Lochia ubusanzwe rimara hagati y'ibyumweru bitatu kugeza kuri bitandatu, kandi muri iki gihe, birakorwaho inama yo gukoresha imyenda y'isuku aho gukoresha tamponi cyangwa igikombe cy'ihindagur"
+  },
+  {
+    "question_en": "What hygiene practices are important after giving birth? How should you care for yourself after vaginal and caesarean births?",
+    "answer_en": "After giving birth, maintaining proper hygiene is crucial. It's recommended to change your sanitary pad at least every 4 hours, wipe from front to back, and wash your hands after using the toilet. You should wash yourself once a day or more but avoid using a vaginal douche. If you had a vaginal birth, you can shower or bathe in a clean tub, but avoid oils or bubble baths. If you had a caesarean delivery, you can shower right away, but it's advised to wait about five days before taking a bath, ensuring the incision is healing well.",
+    "question_rw": "Ni ibihe bikorwa by'isuku bigira akamaro nyuma yo kubyara, kandi se ni gute wagombye kwitwararika nyuma yo kubyara mu nda no mu gihe cyo kuvuka kwa cyesariyo?",
+    "answer_rw": "Nyuma yo kubyara, gukomeza kugira isuku ni ingenzi cyane. Ni byiza ko uhindura isuku yawe y'isuku nibura buri masaha ane, ukayisukura imbere ukayisiga inyuma, ukayisukura intoki nyuma yo gukoresha ubwiherero. Ugomba kwiyuhagira rimwe ku munsi cyangwa birenzeho ariko wirinde gukoresha isuku yo mu nda."
+  },
+  {
+    "question_en": "How should you care for stitches after childbirth? What should you do if you notice signs of infection in your stitches?",
+    "answer_en": "After childbirth, caring for stitches is essential for healing. If you have stitches in your perineum, don't worry; they won't tear during bowel movements. After showering or bathing, gently dry the stitches before dressing. For those who had a caesarean delivery, it's important to dry the stitches on your belly thoroughly with a clean towel. After seven days, you can remove any adhesive strips that have not naturally come off. If you notice signs of infection, such as redness or discharge, contact your healthcare provider.",
+    "question_rw": "Ni gute wagombye kwita ku myenda umaze kubyara? Ni iki wagombye gukora mu gihe ubonye ibimenyetso by'ubwandu mu myenda yawe?",
+    "answer_rw": "Nyuma yo kubyara, kwita ku myenda ni ngombwa kugira ngo umuntu akire. Niba ufite imyenda mu nda yawe, ntuhangayike; ntizaturika mu gihe ukura. Nyuma yo koga cyangwa koga, umesa neza imyenda mbere yo kwambara. Ku bantu bafashe icyuma cya Kayisari, ni ngombwa ko imyenda yo mu nda yawe umesa neza n'umwenda uhagije. Nyuma y'iminsi irindwi, ushobora gukuraho imyenda yose y'imyenda idakuka mu buryo bw'ibisanzwe. Niba ubonye ibimenyetso by'ubwandu, urugero nko gutukura cyangwa gusohoka, ujye wita ku muganga wawe."
+  },
+  {
+    "question_en": "What is the normal time for a bowel movement after delivery? What can you do if you experience constipation postpartum?",
+    "answer_en": "It’s normal not to have a bowel movement for the first two to three days after vaginal delivery or three to five days after a caesarean. If you haven’t had one after this period, you may be constipated, which is common post-delivery. To help with constipation, gradually increase your intake of high-fiber foods, such as whole grains, vegetables, fruits, legumes, and nuts. Drink plenty of water, go to the bathroom as soon as you feel the urge, and start low-intensity physical activity when you're ready. If these steps aren’t enough, consult a healthcare provider to see if a laxative might help.",
+    "question_rw": "Ni iki wakora mu gihe ugiye kubyara, iyo umaze kubyara?",
+    "answer_rw": "Ni ibisanzwe ko mu minsi ibiri cyangwa itatu ya mbere nyuma yo kubyara mu nda cyangwa mu minsi itatu cyangwa itanu nyuma yo gukora ingoma ya cyesariyo, utajya ugira iyo ndwara, ushobora kuba ufite ubumuga. Kugira ngo ufashe ubumuga, ujye wongera buhoro buhoro kurya ibiribwa bifite fibre nyinshi, urugero nk'ibinyampeke, imboga, imbuto, ibinyampeke n'ibigori. Ujye unywa amazi menshi, ujye mu bwiherero ukimara kumva ushaka, kandi utangire gukora imyitozo ngororamubiri y'imbaraga nke igihe uzaba witeguye. Niba ibyo bitagenda neza, ujye ugisha inama umuganga w'ubuvuzi kugira ngo umenye niba umuti wo kuvura ubumuga ushobora kugufasha."
+  },
+  {
+    "question_en": "Is it normal to feel fatigued after giving birth? How can you manage your energy levels during recovery?",
+    "answer_en": "Yes, feeling tired after childbirth is normal, whether you've had a vaginal or caesarean delivery. Recovery takes time, and it can take several weeks to regain a good level of energy. Your recovery speed and energy levels may vary depending on factors like the baby’s demands, your sleep quality, and available support. To manage fatigue, try to rest when your baby sleeps and don't hesitate to ask for help when you need it. Be patient with yourself as your body recovers.",
+    "question_rw": "Ese ni ibisanzwe ko umuntu yumva ananiwe nyuma yo kubyara?",
+    "answer_rw": "Ni iby'ukuri ko kumva ucitse intege nyuma yo kubyara ari ibintu bisanzwe, haba mu gihe wabyaye cyangwa igihe wabyaye. Gusubiza umwana mu nda bisaba igihe, kandi bishobora gufata ibyumweru byinshi kugira ngo ubone imbaraga."
+  },
+  {
+    "question_en": "Is it safe to resume physical activity after childbirth? What activities can you start with, and when?",
+    "answer_en": "Yes, it is safe to gradually resume physical activity after childbirth once you feel ready and your pain has subsided. Begin with low-intensity activities, such as walking, starting with one daily walk and gradually increasing the frequency and length. Around four to six weeks postpartum, you can increase the intensity of your activities, like brisk walking, while listening to your body’s limits. Avoid high-impact exercises like running until your perineum has regained its muscle tone, which can take several weeks to months. Consult with your healthcare provider before resuming activities like swimming or if you had any complications during delivery.",
+    "question_rw": "Ese nyuma yo kubyara, ni byiza kongera gukora siporo?",
+    "answer_rw": "Ni koko, ni byiza kongera gukora imyitozo ngororamubiri nyuma yo kubyara igihe wumva witeguye kandi ububabare bwawe bwagabanutse. Tangira gukora imyitozo ngororamubiri ifite imbaraga nke, urugero nko gutambuka, ugatangira n'urugendo rw'umunsi umwe, hanyuma ukongere buhoro buhoro ubwiyongere. Mu byumweru bine cyangwa bitandatu nyuma yo kubyara, ushobora kongera imbaraga z'ibikorwa byawe, urugero nko gutambuka mu buryo bwihuse, mu gihe wumvira imipaka y'umubiri wawe. Irinde gukora imyitozo ngororamubiri ifite ingaruka nyinshi nko kwiruka kugeza igihe perineum yawe izongera kugira imiterere y'ubwonko bwayo, ishobora kumara ibyumweru byinshi cyangwa amezi menshi. Banza uganire n'umuganga wawe mbere yo kongera gukora ibikorwa nk'isurije cyangwa niba waragize ibibazo mu gihe cyo kubyara."
+  },
+  {
+    "question_en": "What are baby blues, and how long do they last? What can new mothers do to cope with mood swings? When should you seek help?",
+    "answer_en": "The baby blues are a common experience after childbirth, marked by mood swings and crying more than usual, typically lasting from a few days to about two weeks. Hormonal changes and fatigue are the main causes of this temporary condition. To cope, it helps to talk about your feelings, allow yourself to cry, get support from family and friends, take naps, care for yourself, and practice skin-to-skin contact with your baby. If the baby blues persist for more than two weeks, or if you feel increasingly sad or irritable, it could indicate postpartum depression, and it’s advisable to contact a healthcare professional such as a psychologist or call Info-Santé at 8-1-1.",
+    "question_rw": "Ni ibihe bintu biranga abana bafite ubumuga bw'amaraso, kandi bikamara igihe kingana iki? Ni iki ababyeyi bakiri bato bakora kugira ngo bahangane n'imihangayiko? Ni ryari wagombye gushaka ubufasha?",
+    "answer_rw": "Iyo umwana arwaye indwara yo kubura amafunguro y'amaraso, akenshi iyo amaze kubyara ararira cyane kandi akagira akamenyero ko guhinduka mu byiyumvo. Iyo bimera nk'uko bisanzwe, akenshi bimara iminsi mike kugeza ku byumweru bibiri. Kugira ngo umuntu ahangane n'iyo ndwara byanze bikunze aba afite imihangayiko n'ihindagurika ry'umubiri. Kugira ngo umuntu ahangane n'iyo ndwara, ashobora kuganira n'abandi ku byiyumvo bye, akemera kurira, akemera gushyigikirwa n'umuryango we n'incuti ze, akaryama, akita ku buzima bwe, kandi agakora imibonano mpuzabitsina n'umwana we. Iyo indwara yo kubura amafunguro y'amaraso ikomeje kumara ibyumweru birenga bibiri, cyangwa iyo wumva urushijeho kuba mubi, bishobora kugaragaza ko umuntu yihebye cyangwa ko afite uburakari."
+  },
+  {
+    "question_en": "What are the signs of depression after childbirth? How can you differentiate between postpartum depression and normal post-birth struggles?",
+    "answer_en": "Up to 1 in 5 women experience depression after childbirth. The signs of postpartum depression may include sadness, loss of interest in daily activities, changes in appetite, fatigue, anxiety, irritability, feelings of worthlessness, difficulty bonding with the baby, trouble concentrating, and even suicidal thoughts. While some of these signs may overlap with normal post-birth challenges like fatigue or changes in appetite from breastfeeding, it’s important to take them seriously. If you're experiencing several of these symptoms, particularly thoughts of death or difficulty bonding with your baby, it’s important to seek help from a healthcare provider or contact support services.",
+    "question_rw": "Ni ibihe bimenyetso bigaragaza ko umuntu yagize agahinda kenshi nyuma yo kubyara?",
+    "answer_rw": "Abagore bagera kuri 1 kuri 5 baba bafite agahinda kenshi nyuma yo kubyara.Ibimenyetso by'agahinda kenshi nyuma yo kubyara bishobora kuba ari agahinda kenshi, gutakaza ubushake mu bikorwa bya buri munsi, guhinduka kw'ibyifuzo, umunaniro, impungenge, uburakari, kumva ko nta cyo bimaze, kugirana ibibazo n'umwana, kugirana ibibazo no kwiyahura.Nubwo bimwe muri ibyo bimenyetso bishobora guhura n'ibibazo bisanzwe nyuma yo kubyara, urugero nk'umunaniro cyangwa guhinduka kw'ibyifuzo biterwa no kumwonsa, ni ngombwa kubitekerezaho cyane. Niba ufite bimwe muri ibi bimenyetso, cyane cyane ibitekerezo by'urupfu cyangwa kugirana ibibazo n'umwana wawe, ni ngombwa gushaka ubufasha ku muganga cyangwa guhura n'abagufasha."
+  },
+  {
+    "question_en": "What are the signs of postpartum depression in men? How can men express depression differently from women?",
+    "answer_en": "Up to 1 in 10 men experience depression after the birth of a child. While men may feel similar emotions to women, they might express their distress in different ways. Signs of depression in men can include aggression, irritability, mood swings, and physical discomfort such as stomach aches, headaches, or difficulty breathing. Some men may also engage in hyperactive behaviors, like excessive work or sports, or use alcohol or drugs as a coping mechanism. If you or your partner are showing signs of depression, it’s important to seek support. Treatments are available, and consulting a healthcare professional is a vital step in managing mental health.",
+    "question_rw": "Ni ibihe bimenyetso bigaragaza ko abagabo bagira agahinda kenshi nyuma yo kubyara, kandi se ni gute abagabo bashobora kugaragaza agahinda kenshi mu buryo butandukanye n'uko abagore babigenza?",
+    "answer_rw": "Mu bagabo, umuntu umwe kuri icumi ashobora kugira agahinda kenshi nyuma yo kubyara umwana. Mu gihe abagabo bashobora kumva ibintu nk'ibyo abagore baba bafite, bashobora kugaragaza agahinda kabo mu buryo butandukanye. Mu bimenyetso by'agahinda abagabo baba bafite, harimo ubwiyandarike, kurakara, guhinduka mu byiyumvo n'uburwayi bw'umubiri, urugero nk'ububabare bw'igifu, umutwe cyangwa guhumeka nabi. Hari n'abagabo bashobora kugira imyitwarire irenze urugero, urugero nko gukora cyane cyangwa gukora siporo, cyangwa gukoresha inzoga cyangwa ibiyobyabwenge nk'uburyo bwo guhangana n'ikibazo."
+  },
+  {
+    "question_en": "How can childbirth affect sexual activity and intimacy?",
+    "answer_en": "After childbirth, many people experience a decrease in sexual desire due to factors such as fatigue, hormonal changes, the adjustment to parenthood, and the physical or emotional recovery from childbirth. Additionally, breastfeeding can cause vaginal dryness due to hormonal changes, which can be alleviated by using a water-based lubricant if needed. The timing of when to resume sexual activity varies for each couple. There are no set rules, and it’s important to listen to your body and your partner’s needs. Intimacy can take on a new form, and there’s no need to rush; adapt to your new life and communicate openly with your partner.",
+    "question_rw": "Ni gute kubyara bishobora kugira ingaruka ku mibonano mpuzabitsina no ku mishyikirano ya bugufi?",
+    "answer_rw": "Nyuma yo kubyara, abantu benshi bagira ibyifuzo byo gukora imibonano mpuzabitsina bigabanuka bitewe n'impamvu nk'umunaniro, impinduka za homoni, kumenyera kuba umubyeyi, no kugaruka mu buryo bw'umubiri cyangwa mu byiyumvo nyuma yo kubyara. Byongeye kandi, kugaburira umwana bishobora gutuma umwenda umera kubera impinduka za homoni, ibyo bikaba bishobora kugabanuka ukoresheje umusemburo ushingiye ku mazi mu gihe bibaye ngombwa. Igihe cyo kongera gukora imibonano mpuzabitsina gitandukanye kuri buri mugabo n'umugore. Nta mategeko yashyizweho, kandi ni ngombwa gutega amatwi umubiri wawe n'ibyo uwo mwashakanye akeneye. Kugirana imibonano mpuzabitsina bishobora gufata uburyo bushya, kandi nta mpamvu yo kwihutira; kwitoza ubuzima bushya no kuvugana n'uwo mwashakanye mu buryo bwuzuye."
+  },
+  {
+    "question_en": "What conditions must be met for breastfeeding to work as a birth control method? Can you rely on it if you haven't had your period yet? When should you consult a healthcare provider?",
+    "answer_en": "For breastfeeding to work as a birth control method, the following conditions must be met- your baby must be less than six months old, you should breastfeed exclusively without introducing formula, food, or water, and feedings must be on-demand with no more than four hours between feeds during the day and six hours at night. Additionally, you must not have started menstruating yet. Even if you haven't had your period, ovulation may still occur, and you could become pregnant. It is recommended to consult a healthcare provider before using LAM or other natural methods of birth control for guidance.",
+    "question_rw": "Ni ibihe bintu ugomba gukora kugira ngo umubyeyi akunde kuryamana n'umugore we? Ese ushobora kubigirira icyizere niba utaragira igihe cyo kujya mu mihango? Ni ryari wagombye kujya kwa muganga?",
+    "answer_rw": "Kugira ngo umubyeyi akire umwana, agomba kubahiriza ibi bikurikira: umwana wawe agomba kuba afite amezi atandatu, agomba kugaburirwa amagi gusa nta kurya, kurya cyangwa kunywa amazi, kandi agomba kugaburirwa ku bushake, igihe cy'amasaha atarenze ane hagati y'umunsi n'amasaha atandatu nijoro."
+  },
+  {
+    "question_en": "When can you start using contraceptive implants after childbirth if there are no contraindications?",
+    "answer_en": "You can start using contraceptive implants at any time after giving birth, depending on your state of health, as long as there are no contraindications.",
+    "question_rw": "Ni ryari ushobora gutangira gukoresha imiti yo kwirinda kubyara nyuma yo kubyara, niba nta kintu gifatika gifatika kigaragaza ko utabyara?",
+    "answer_rw": "Urashobora gutangira gukoresha imiti ikurinda kubyara igihe icyo ari cyo cyose umaze kubyara, bitewe n'ubuzima bwawe, igihe cyose nta bimenyetso bifatika bihari."
+  },
+  {
+    "question_en": "When can you start using a hormonal IUD after childbirth if there are no contraindications?",
+    "answer_en": "You can start using a hormonal IUD at any time after giving birth, depending on your state of health, as long as there are no contraindications.",
+    "question_rw": "Ni ryari ushobora gutangira gukoresha IUD ifasha abana kubyara, niba nta kintu gifatika gifatika kigaragaza ko ugiye kubyara?",
+    "answer_rw": "Urashobora gutangira gukoresha IUD ikoresha amahomoni igihe icyo ari cyo cyose umaze kubyara, bitewe n'uko ubuzima bwawe buzaba bumeze, igihe cyose nta kintu na kimwe cyagucira urubanza."
+  },
+  {
+    "question_en": "When is it possible to start using a copper IUD after childbirth, provided there are no contraindications?",
+    "answer_en": "You can start using a copper IUD at any time after giving birth, depending on your state of health, as long as there are no contraindications.",
+    "question_rw": "Ni ryari umuntu ashobora gutangira gukoresha IUD y'umuringa amaze kubyara, niba nta cyo yavuga?",
+    "answer_rw": "Urashobora gutangira gukoresha IUD y'umuringa igihe icyo ari cyo cyose umaze kubyara, bitewe n'uko ubuzima bwawe buhagaze, igihe cyose nta kintu na kimwe kibuzanya."
+  },
+  {
+    "question_en": "When can you start using a contraceptive injection after childbirth, and what factors should be considered?",
+    "answer_en": "You can start using a contraceptive injection depending on your doctor's advice and your state of health after childbirth.",
+    "question_rw": "Ni ryari ushobora gutangira gukoresha umuti wo kwirinda kubyara nyuma yo kubyara, kandi se ni ibihe bintu wagombye kuzirikana?",
+    "answer_rw": "Ushobora gutangira gukoresha umuti wo kwirinda kubyara bitewe n'inama z'umuganga wawe n'ubuzima bwawe nyuma yo kubyara."
+  },
+  {
+    "question_en": "When can you start using the progestin-only pill after childbirth, and are there any restrictions?",
+    "answer_en": "You can start using the progestin-only pill any time after giving birth, as there are no specific restrictions, assuming no contraindications.",
+    "question_rw": "Ni ryari ushobora gutangira gufata iyo ndwara nyuma yo kubyara, kandi se hari amategeko abubuza kuyinywa?",
+    "answer_rw": "Ushobora gutangira gukoresha iyi ndwara ya progestine gusa igihe icyo ari cyo cyose umaze kubyara, kuko nta bihano by'umwihariko bihari, kandi nta kintu na kimwe gifatika cyakorwa."
+  },
+  {
+    "question_en": "When can you start combined hormonal contraceptives like pills, patches, or vaginal rings after giving birth, and are there any variations in timing?",
+    "answer_en": "You can start combined hormonal contraceptives (pills, patch, or vaginal ring) six weeks after giving birth. However, depending on your individual situation, your healthcare provider may recommend starting them three to four weeks after giving birth.",
+    "question_rw": "Ni ryari ushobora gutangira gukoresha imiti ikoreshwa n'ibitsina, urugero nk'imiti, amafunguro cyangwa ibiganza byo mu nda nyuma yo kubyara, kandi se igihe cyo kubyara kigenda gitandukana?",
+    "answer_rw": "Ushobora gutangira gukoresha imiti ikoreshwa n'abantu bakoresha imyanya ndangagitsina mu gihe cy'ibyumweru bitandatu nyuma yo kubyara (impuzandengo, icyapa cyangwa impeta y'inda) ariko, bitewe n'imimerere urimo, umuganga wawe ashobora kuguha inama yo kuyitangira mu gihe cy'ibyumweru bitatu cyangwa bine nyuma yo kubyara."
+  },
+  {
+    "question_en": "When can you start using a diaphragm or cervical cap after giving birth?",
+    "answer_en": "You can start using a diaphragm or cervical cap six weeks after giving birth.",
+    "question_rw": "Ni ryari ushobora gutangira gukoresha igishura cyangwa igitambaro cyo mu ijosi ry'umwana nyuma yo kubyara?",
+    "answer_rw": "Ushobora gutangira gukoresha diyaframme cyangwa igitambaro cyo mu ijosi ry'umwana nyuma y'ibyumweru bitandatu umaze kubyara."
+  },
+  {
+    "question_en": "When can you start using a condom after giving birth?",
+    "answer_en": "You can start using a condom from the start of sexual relations after giving birth.",
+    "question_rw": "Ni ryari ushobora gutangira gukoresha agakingirizo nyuma yo kubyara?",
+    "answer_rw": "Ushobora gutangira gukoresha agakingirizo uhereye igihe ugiye gukora imibonano mpuzabitsina umaze kubyara."
+  },
+  {
+    "question_en": "How do hormonal contraceptives affect milk production, and what should you do if there’s a problem?",
+    "answer_en": "Hormonal contraceptives typically do not affect milk quality or baby health. However, combined hormonal contraceptives may cause a slight drop in milk production. If this occurs, consult a lactation consultant, midwife, doctor, or CLSC nurse. Hormonal IUDs, contraceptive injections, and progestin-only pills are unlikely to affect breastfeeding, but if problems arise, seek advice from a healthcare professional.",
+    "question_rw": "Ni mu buhe buryo imiti ikoreshwa mu gukumira inda igira ingaruka ku gusiga amata, kandi se ni iki wagombye gukora mu gihe hari ikibazo?",
+    "answer_rw": "Ubusanzwe, imiti ikoreshwa mu gukumira ibyiyumvo by'umubiri nta ngaruka igira ku bwiza bw'amata cyangwa ku buzima bw'umwana. Icyakora, imiti ikoreshwa mu gukumira ibyiyumvo by'umubiri ishobora gutuma amata acika intege."
+  },
+  {
+    "question_en": "What are the emergency contraception options after unprotected sex, and how does breastfeeding affect them?",
+    "answer_en": "Emergency oral contraception (EOC), also known as the morning after pill, is effective up to five days after unprotected or poorly protected sex. It can be used at any time after vaginal delivery or caesarean, regardless of breastfeeding. The sooner it’s taken, the more effective it is. If you are breastfeeding, inform the pharmacist or doctor, who can prescribe an EOC that is safe during breastfeeding.",
+    "question_rw": "Ni ubuhe buryo bwo kwirinda kuryamana mu buryo bwihutirwa nyuma yo gukora imibonano mpuzabitsina udakingiwe, kandi se kuyongerera amabere bigira izihe ngaruka?",
+    "answer_rw": "Uburyo bwo kwirinda kubyara byihutirwa mu kanwa (Emergency oral contraception, EOC), nanone bwitwa umugera w'igitondo nyuma y'imibonano mpuzabitsina, bufite akamaro kugeza ku minsi itanu nyuma y'imibonano mpuzabitsina idakingiwe cyangwa itarakingiwe neza."
+  },
+  {
+    "question_en": "What is the average size and weight of a full-term baby, and why does a baby lose weight after birth?",
+    "answer_en": "A full-term baby, born between 37 and 42 weeks, typically measures 45 to 55 cm (18 to 21 inches) and weighs between 2,500 to 4,300 grams (5.5 to 9.5 lbs.). It is normal for a baby to lose up to 10% of their birth weight in the first few days due to the elimination of meconium, loss of water from being in the womb, and consuming only small amounts of milk. By 10 to 14 days after birth, a healthy full-term baby usually regains their birth weight.",
+    "question_rw": "Umwana w'uruhinja ufite uburebure buhe n'uburemere buhe, kandi se kuki iyo avutse atakaza ibiro?",
+    "answer_rw": "Ubusanzwe umwana uvuka hagati y'ibyumweru 37 na 42 aba afite uburebure bwa cm 45 na 55 (inches 18 na 21) kandi aremereye hagati ya gramu 2,500 na 4,300 (ipondo 5.5 na 9.5)."
+  },
+  {
+    "question_en": "What are the characteristics of a newborn’s skin, including its color and sensitivity, and what changes occur after birth?",
+    "answer_en": "A newborn's skin can vary in color, with hands and feet often appearing paler or bluish for up to 48 hours due to temperature regulation. The skin may also appear mottled, which typically resolves once the baby is warm. The skin is soft, smooth, and may be translucent in places, with wrinkling and peeling, especially on the hands and feet. At birth, babies may be covered in vernix caseosa, a white protective coating that will absorb within a few hours or days. Some babies, including preterm ones, may also have fine down-like hair that disappears after a few weeks.",
+    "question_rw": "Ni ibihe bintu biranga uruhu rw'umwana ukiri muto, hakubiyemo amabara yarwo n'ubushishozi bwawo, kandi se ni ibihe bintu bihinduka nyuma yo kuvuka?",
+    "answer_rw": "Ubwiza bw'uruhu rw'umwana uvutse bushya bushobora guhinduka bitewe n'ibara ry'uruhu rwe, ndetse n'amaboko n'ibirenge bikagaragara nk'ibirabura cyangwa nk'ubururu mu gihe cy'amasaha 48 bitewe n'ihindagurika ry'ubushyuhe."
+  },
+  {
+    "question_en": "What are the characteristics of a newborn’s eyes, including their color and tear production, and when do they change?",
+    "answer_en": "Newborns with lighter skin typically have blue-grey or slate blue eyes, while darker-skinned babies tend to have dark eyes at birth. The eyes generally reach their permanent color around 3 months, though they may continue to change up to a year. Newborns usually cry without producing tears, which typically appear between 1 and 2 months of age.",
+    "question_rw": "Ni ibihe bintu biranga amaso y'umwana ukiri muto, hakubiyemo ibara ryayo n'amarira yayo, kandi se ni ryari ahinduka?",
+    "answer_rw": "Ubusanzwe abana bavutse bafite uruhu rworoheje baba bafite amaso y'ubururu cyangwa y'ubururu bworoheje, mu gihe abana bafite uruhu rw'umwijima baba bafite amaso y'umwijima igihe bavuka."
+  },
+  {
+    "question_en": "How should you care for your newborn’s head, and what changes occur in the skull and fontanels after birth?",
+    "answer_en": "A newborn's neck is delicate but should allow easy movement; if stiffness occurs, seek advice. Pressure during delivery may temporarily deform the baby's head, but it will return to a rounded shape in a few weeks. The skull bones are not fully connected and are separated by fontanels—soft spots on the head. The anterior fontanel, located on the top of the head, is supple and may visibly beat with the heartbeat. Another smaller triangular fontanel is at the back. These fontanels are fragile but safe to touch and wash. The skull will knit together between 9 and 18 months, and the fontanels will disappear.",
+    "question_rw": "Ni gute wagombye kwita ku mutwe w'umwana wawe ukiri muto, kandi se ni ibihe bintu bihinduka mu bwonko n'ibikombe by'umubiri nyuma yo kuvuka?",
+    "answer_rw": "Umutsi w'umwana ukiri muto ni mwiza ariko ugomba kumwemerera gutambuka byoroshye; niba ubukana bubaho, ujye gushaka inama. Ingufu mu gihe cyo kubyara zishobora guhinduranya umutwe w'umwana by'agateganyo, ariko mu byumweru bike uzagaruka mu buryo bw'uburebure. Amagufa y'urusoro ntashyizwe hamwe mu buryo bwuzuye kandi atandukanywa n'ibice byoroheje ku mutwe. Fontanel yo imbere, iri hejuru y'umutwe, ni yoroheje kandi ishobora guhita igwa n'umutima."
+  },
+  {
+    "question_en": "Why do newborns sometimes have swollen breasts, and how should you handle this?",
+    "answer_en": "Both boy and girl babies may experience swollen breasts, which could even produce a small amount of milk. This condition is temporary and typically resolves on its own within a few days. It is important not to attempt to release the milk, as the issue will clear up naturally.",
+    "question_rw": "Kuki rimwe na rimwe ibibyara bishya biba byuzuye amabere, kandi se ibyo wagombye kubikemura ute?",
+    "answer_rw": "Abana b'abahungu n'abakobwa bashobora kugira ibyibuha by'amabere, bikaba bishobora gutuma haboneka n'amata make."
+  },
+  {
+    "question_en": "What should parents know about their newborn's genital development and care, and how should they handle potential issues?",
+    "answer_en": "In newborn girls, the labia minora may be swollen for the first few days after birth, with a whitish deposit present between the lips of the vulva, which should not be cleaned off as it serves as protection. A small amount of blood from the vagina may also occur due to maternal hormones, which is normal. In boys, the testicles are usually descended into the scrotum, but if not, medical advice should be sought. The foreskin should not be forcibly moved, as it will naturally dilate and descend by around age 3 in most boys. Circumcision is not recommended unless for cultural or religious reasons, as it serves no medical purpose.",
+    "question_rw": "Ni iki ababyeyi bagombye kumenya ku birebana n'imikorere y'imyanya ndangagitsina y'umwana wabo ukiri muto, kandi se ni gute bagombye guhangana n'ibibazo bashobora guhura na byo?",
+    "answer_rw": "Mu bana b'abakobwa bavutse vuba, iminwa minora ishobora kuba yuzuye mu minsi mike ya mbere nyuma yo kuvuka, aho hagati y'iminwa ya vulva hari icyuma cyera, kitagomba kwezwa kuko gikora nk'uburinzi. Amaraso make avuye mu nda ashobora no kuvamo bitewe n'ihormone za nyina, ibyo bikaba ari ibisanzwe. Mu bahungu, amagufa asanzwe amanuka muri scrotum, ariko niba atari ko bimeze, hagomba gushakirwa inama ya muganga."
+  },
+  {
+    "question_en": "What types of skin spots are common in newborns, and how should parents react to them?",
+    "answer_en": "Newborns may have small red spots between their eyes, on the eyelids, or along the back of the scalp, which turn white when lightly pressed and become more visible when the baby cries. These spots typically disappear within the first year. Additionally, some babies may have bluish spots on their buttocks or back, which usually fade by age 3. Other marks may be permanent, but there’s no need for concern with these temporary spots.",
+    "question_rw": "Ni ibihe bimenyetso biba mu mubiri w'umwana ukiri muto, kandi se ababyeyi bagombye kubyitwaramo bate?",
+    "answer_rw": "Abana bavutse bashya bashobora kuba bafite utugambo dutukura dutukura hagati y'amaso yabo, ku mpyiko z'amaso, cyangwa mu gice cy'inyuma cy'uruhu rw'umutwe, tugahinduka twera iyo dushyizwe hasi byoroheje kandi tukagaragara cyane iyo umwana arira."
+  },
+  {
+    "question_en": "Why do newborns sneeze, and should parents be concerned?",
+    "answer_en": "It's normal for newborns to sneeze frequently, often up to 12 times a day. This is because the hair inside their nose hasn't fully developed, and sneezing helps them clear secretions that may interfere with their breathing. Sneezing is not a sign that your baby has a cold.",
+    "question_rw": "Kuki abana bavutse bakiri bato bagwa, kandi se ni iki ababyeyi bagombye kwitaho?",
+    "answer_rw": "Ni ibisanzwe ko abana bakimara kuvuka bagwa mu kanwa kenshi, akenshi bakagwa mu kanwa incuro 12 ku munsi. Ibyo biterwa n'uko umusatsi uri mu mazuru yabo utarakura neza, kandi kubaga mu maso bibafasha gusukura imyirondoro ishobora kubabuza guhumeka."
+  },
+  {
+    "question_en": "Why do babies get hiccups, and is it a cause for concern?",
+    "answer_en": "It's common for babies to get hiccups, especially after feeding. This is not a serious issue and won’t hurt your baby. The hiccups usually stop on their own within a few minutes. If they persist, putting your baby back on the breast may help stop them.",
+    "question_rw": "Kuki abana bagira ikibazo cy'ihindagurika, kandi se, ibyo byaba bidutera impungenge?",
+    "answer_rw": "Ni ibisanzwe ko abana bagira intandara, cyane cyane nyuma yo kurya. Iki si ikibazo gikomeye kandi ntikibabaza umwana wawe. Intandara ubwabyo zihagarara mu minota mike. Niba zikomeje, kongera gushyira umwana wawe mu nda bishobora kumufasha kuzihagarika."
+  },
+  {
+    "question_en": "How can you ensure your newborn is warm without overheating, and what is the ideal room temperature?",
+    "answer_en": "Newborns need warmth, but it's important not to overdo it. They should not perspire, and if the room temperature is comfortable for you, it will likely be comfortable for your baby too. The ideal temperature is between 20°C (68°F) and 22°C (72°F). Use light blankets and adjust them based on the room temperature, ensuring your baby is not wrapped up too much.",
+    "question_rw": "Wakora iki kugira ngo umwana wawe ukiri muto agire ubushyuhe nta bwo aguteza ubushyuhe bwinshi, kandi se ni ikihe kintu cyiza cyatuma mu cyumba haba ubushyuhe?",
+    "answer_rw": "Abana bavutse bashya baba bakeneye ubushyuhe, ariko ni iby'ingenzi ko batabushyira mu gaciro. Ntibagomba gukara, kandi niba ubushyuhe bwo mu cyumba ari bwiza kuri wowe, birashoboka ko n'umwana wawe azaba ameze neza. Ubushyuhe bwiza ni hagati ya 20°C (68°F) na 22°C (72°F)."
+  },
+  {
+    "question_en": "How can you tell if your baby is drinking enough milk, and what should you do if you notice orange spots or changes in urine?",
+    "answer_en": "A baby who is drinking enough milk will urinate regularly, with pale yellow urine and no detectable smell. By day 5, they should wet at least 6 diapers a day. Orange spots (urate crystals) in the diaper during the first few days are normal, but if they persist beyond two days, it may indicate your baby is not drinking enough. If this continues after a week, consult a doctor. If your baby urinates less often, or if the urine appears darker and smells distinct, it could be a sign of dehydration, possibly due to overheating or being overdressed.",
+    "question_rw": "Wabwirwa n'iki ko umwana wawe anywa amata ahagije, kandi se wakora iki mu gihe ubonye ibibala by'umutuku cyangwa hari ibyo uhindura mu masazi?",
+    "answer_rw": "Umwana unywa amata ahagije, azasuka buri gihe, amagi ye akaba ari amarangi y'umuhondo, kandi nta kamaro kabonetse. Ku munsi wa 5, agomba gusuka nibura amagi y'imyenda 6 ku munsi. Amagi y'umweru (amabuye y'ubwoya) ari muri aya mazuru mu minsi mike ya mbere ni ibintu bisanzwe, ariko aramutse akomeje gusuka nyuma y'iminsi ibiri, bishobora kugaragaza ko umwana wawe atanywa bihagije."
+  },
+  {
+    "question_en": "What should you expect from your baby's stools, and when should you be concerned?",
+    "answer_en": "In the first 2 to 3 days, your baby will pass meconium, which is dark and sticky. After that, stools will become yellowish, greenish, or brownish, and should be soft or liquid if your baby is drinking enough milk. During the first 4 to 6 weeks, your baby may have 3 to 10 bowel movements per day. If there is less than one bowel movement per day, it could mean your baby is not getting enough milk. After 4 to 6 weeks, babies fed with breast milk may have fewer bowel movements (e.g., one every 3 to 7 days), and this is normal as long as the stools remain soft. The color, frequency, and consistency of stools can change based on your baby's diet. If your baby's stools become more liquid than usual, it might indicate a temporary issue, but if your baby is healthy, continue feeding normally. If you're concerned, contact a health professional.",
+    "question_rw": "Ni iki wagombye kwitega ku mbuto z'umwana wawe, kandi se ni ryari wagombye kubitekerezaho?",
+    "answer_rw": "Mu minsi 2 kugeza kuri 3 ya mbere, umwana wawe azajya anywa meconium, iyo ikaba ari iy'umwijima n'iy'umunyamwete. Nyuma y'iyo minsi, ibibyimba bizaba byarabyaye birahinduka byera, byarabyaye byarabyaye byarabyaye byarabyaye byarabyaye byarabyaye byarabyaye byarabyaye byarabyaye. Mu gihe cy'ibyumweru 4 kugeza kuri 6 bya mbere, umwana wawe ashobora gukora imyanya itatu kugeza ku icumi y'amaraso ku munsi. Niba hari imyanya itari myinshi ku munsi, bishobora kuba bisobanura ko umwana wawe atabona amata ahagije. Nyuma y'ibyumweru 4 kugeza kuri 6, abana bagaburirwa amata ya mama bashobora kugira imyanya mike y'amaraso (urugero, rimwe mu minsi 3 kugeza ku 7), kandi ibyo ni ibisanzwe igihe cyose ibibyimba bikomeza kuba byoroheje"
+  },
+  {
+    "question_en": "What does your baby's crying mean, and how should you respond?",
+    "answer_en": "Crying is a normal part of a baby's development and is their way of expressing needs. Babies may cry for reasons such as hunger, tiredness, needing a burp, wanting affection, or having a dirty diaper. Crying tends to increase from the second week of life, peaks around the sixth week, and usually decreases by the third or fourth month. While it can be difficult to understand why your baby is crying, you'll gradually learn to recognize the different meanings behind the cries. Sometimes, despite your best efforts, you may not know the cause. In those moments, staying calm and comforting your baby teaches them to trust you. It's important to respond quickly, as babies don't have a sense of time in the first few months. Comforting your baby will not spoil them; it shows them that their needs are being met and helps them feel loved. If you need a break, it's okay to place your baby in a safe space while you take some time for yourself.",
+    "question_rw": "Iyo umwana wawe arira bisobanura iki, kandi se wagombye kubyitwaramo ute?",
+    "answer_rw": "Kurira ni kimwe mu bintu bisanzwe mu buzima bw'umwana, kandi ni uburyo bwo kugaragaza ibyo akeneye. Abana bashobora kurira bitewe n'impamvu nk'inzara, umunaniro, gukena, kwifuza urukundo, cyangwa kugira indogobe zihumanye. Kurira akenshi byongera kuva mu cyumweru cya kabiri cy'ubuzima, bigera mu cyumweru cya gatandatu, kandi akenshi bigabanuka mu kwezi kwa gatatu cyangwa kwa kane. Nubwo bishobora kugorana gusobanukirwa impamvu umwana wawe arira, ugiye ukiga kumenya ibisobanuro bitandukanye biri inyuma y'ibyo arira. Rimwe na rimwe, nubwo ugerageza uko ushoboye kose, ushobora kutamenya impamvu yabyo. Muri ibyo bihe, kugumaho no guhumuriza umwana wawe bimwigisha kukugirira icyizere."
+  },
+  {
+    "question_en": "Why do babies cry excessively, and what can you do?",
+    "answer_en": "Some babies experience excessive crying, often referred to as colic, where they cry for more than three hours a day, particularly in the late afternoon or evening. During these episodes, the baby may appear to be in pain, with a red face, clenched fists, and curled-up legs. This may be due to gas, as crying can cause babies to swallow air. Colic is a common and normal phase in infancy and is not linked to any underlying health problems. While it can be distressing, it doesn't have any long-term consequences for the baby. As parents, it's important to remain calm during these times and try various soothing methods, such as gentle rocking, swaddling, or offering a pacifier, to comfort your baby. However, if you're concerned about the intensity or duration of the crying, or if other symptoms develop, consulting a healthcare provider is always a good idea.",
+    "question_rw": "Kuki abana barira cyane, kandi se ni iki wakora?",
+    "answer_rw": "Hari abana bagira amarira arenze urugero, bakunze kwitwa colic, aho barira amasaha arenga atatu ku munsi, cyane cyane mu masaha ya nyuma ya saa sita cyangwa nimugoroba. Muri ibi bihe, umwana ashobora kugaragara ko aba afite ububabare, afite mu maso he hatukura, imikoba y'amaboko, n'amaguru yaguye. Ibi bishobora guterwa na gazi, kuko kurira bishobora gutuma abana bamira umwuka. Colic ni ikintu gisanzwe kandi gisanzwe mu bwana kandi ntikifitanye isano n'ibibazo by'ubuzima. Nubwo ishobora kuba iteje agahinda, nta ngaruka z'igihe kirekire igira ku mwana. Nk'ababyeyi, ni ngombwa gukomeza gutuza muri ibi bihe no kugerageza uburyo butandukanye bwo kumuhumuriza, nko gukubita mu gituza, gukubita cyangwa guha umwana ikirenge, kugira ngo umuhumurize. Ariko niba uhangayikishijwe n"
+  },
+  {
+    "question_en": "How should you handle feeling overwhelmed when your baby is crying excessively? What can you do if you feel frustrated or tired? How can you ensure your baby's safety while taking a break?",
+    "answer_en": "If you're feeling overwhelmed by your baby's excessive crying, it's normal to feel frustrated or tired. It's helpful to have someone you trust who can take over for a while, allowing you to rest and regain calm. If no one is available, place your baby in a safe space like her crib, step away for a few minutes, and check on her every ten minutes to ensure her safety. Don’t pick her up until you’ve calmed down. Don’t hesitate to seek help from a babysitter, relative, or doctor if needed.",
+    "question_rw": "Ni iki wakora mu gihe umwana wawe arira cyane? Ni iki wakora mu gihe wumva wacitse intege cyangwa wananiwe? Ni iki wakora kugira ngo umwana wawe arusheho kuruhuka?",
+    "answer_rw": "Niba wumva uremerewe n'uko umwana wawe arira cyane, ni ibisanzwe ko wumva wacitse intege cyangwa wananiwe. Ni byiza ko umuntu wizera ashobora kugufasha igihe runaka, akakwemerera kuruhuka no kongera gutuza."
+  },
+  {
+    "question_en": "What is a breath-holding spell, and when might it occur? How should you respond if your baby experiences a breath-holding spell? When should you consult a doctor?",
+    "answer_en": "A breath-holding spell is when a baby cries until they stop breathing for several seconds and briefly lose consciousness, often turning blue or pale. This typically occurs around 6 months of age and is usually harmless. If this happens, remain calm, stay with your baby, and reassure her as she will start breathing again on her own. However, if the spell occurs before 6 months of age or lasts longer than one minute, it’s important to consult a doctor.",
+    "question_rw": "Ni iki kigaragaza ko umwana wawe atinda guhumeka, kandi se ni ryari ashobora guhumeka?",
+    "answer_rw": "Igihe umwana arira, areka guhumeka mu gihe cy'amasegonda menshi, agahita atakaza ubwenge, akenshi agahinduka ubururu cyangwa agapfa. Ibi bikunze kubaho ahagana ku mezi 6 y'amavuko kandi ubusanzwe nta cyo bitwaye."
+  },
+  {
+    "question_en": "Why do newborns have the reflex to suck, and what is the role of pacifiers? Should a baby use a pacifier constantly, and how can it affect their teeth? When should you encourage your child to stop using a pacifier, and how can it affect their speech?",
+    "answer_en": "Newborns naturally have the reflex to suck, with breastfeeding being the most satisfying option. While not all babies need a pacifier, some may use one for comfort, but it shouldn't be in their mouth all the time. If your baby sucks her thumb or fingers, consider offering a pacifier, as it's easier to control. Prolonged use of a pacifier can affect your child's teeth and pronunciation, so it's best to help them gradually stop around the age of 2 or 3, before adult teeth come in. Avoid using pacifiers to calm your baby too quickly, as it may mask her needs.",
+    "question_rw": "Kuki abana bavutse ari bo bakenera kumeza, kandi se ibyo bimarira iki? Ese umwana agomba kujya akoresha ibyo bimarira igihe cyose, kandi se ibyo bishobora kugira izihe ngaruka ku meno ye?",
+    "answer_rw": "Ubusanzwe, abana bavutse bashya bagira ubushobozi bwo kumeza, kandi kugaburira abana ni byo byiza cyane. Nubwo abana bose badafite amenyo, hari bamwe bashobora kuyakoresha mu rwego rwo guhumuriza, ariko ntibigomba kuba mu kanwa kabo igihe cyose. Niba umwana wawe amenya kumeza intoki cyangwa intoki, tekereza ku kumuhereza amenyo, kuko biroroshye kuyategeka. Gukoresha amenyo y'umwana igihe kirekire bishobora kugira ingaruka ku mazino ye no ku mvugo ye, bityo ni byiza kumufasha guhagarika buhoro buhoro afite imyaka 2 cyangwa 3, mbere y'uko amenyo y'abantu bakuru atangira. Irinde gukoresha amenyo kugira ngo umwana wawe ahumeke vuba cyane, kuko bishobora guhumuriza ibyo akeneye."
+  },
+  {
+    "question_en": "How should you choose a pacifier for your baby, and what safety precautions should be taken? What should you do if your baby uses the pacifier for chewing?",
+    "answer_en": "When choosing a pacifier for your baby, ensure it is appropriate for her age. Opt for either silicone or latex models. If your baby starts using the pacifier for chewing, it's better to offer a teething ring instead. Always ensure the pacifier's disk remains outside her mouth, as chewing on it could cause it to break, posing a choking hazard.",
+    "question_rw": "Ni gute wagombye guhitamo icyuma cy'amaraso cy'umwana wawe, kandi se ni izihe ngamba z'umutekano zagombye gufatwa?",
+    "answer_rw": "Mu gihe uhitamo umwana wawe, ujye ugenzura ko ari uw'imyaka ye. Ujye ugenzura ko ari uwa silicone cyangwa uwa latex. Niba umwana wawe atangiye gukoresha icyo gikombe cyo kumeza, byaba byiza ugiye umuhaye impeta yo kumeza amenyo. Jya uhora ugenzura ko disiki y'icyo gikombe cyo kumeza iguma hanze y'umunwa we, kuko kumezaho bishobora gutuma cyangirika, bigatuma umuntu ahunga."
+  },
+  {
+    "question_en": "How should you clean and maintain your baby's pacifier, and what safety precautions should be taken? What should you do if the pacifier shows signs of damage?",
+    "answer_en": "To clean your baby's pacifier, disinfect it according to the manufacturer's instructions before first use, and wash it in hot, soapy water every time your baby uses it. Avoid putting it in your mouth to prevent transferring cavity-causing bacteria. Always check the nipple for flexibility and ensure the disk is securely attached. If the nipple becomes discolored, sticky, cracked, or changes shape, dispose of it immediately to maintain safety.",
+    "question_rw": "Ni gute wagombye gusukura no kwita ku cyuma cy'agafu k'umwana wawe, kandi se ni izihe ngamba z'umutekano zagombye gufatwa?",
+    "answer_rw": "Kugira ngo ukoreshe neza igikarabiro cy'umwana wawe, ujye ugikoresha mu buryo buhuje n'amabwiriza yahawe n'ikigo cy'ubuvuzi mbere y'uko ugikoresha, kandi buri gihe ujye ugikoresha amazi ashyushye kandi afite isabune."
+  },
+  {
+    "question_en": "How does touch benefit your baby, and what are some ways to use it effectively? What are the benefits of massaging your baby, and how can you incorporate it into your routine?",
+    "answer_en": "Touch is a vital form of communication for newborns, providing comfort and reassurance, and helping them feel loved. Holding your baby close, rocking, and caressing her can calm her and foster a sense of security. Massaging your baby is a great way to bond and promote her physical and emotional well-being. Start by massaging her temples or soles of the feet, using gentle motions that she enjoys. Incorporating a massage during bath time with cream or lotion can enhance the experience and encourage relaxation. Baby massage also supports healthy growth and development.",
+    "question_rw": "Ni mu buhe buryo gukorakora bishobora kugirira umwana akamaro, kandi se ni ibihe bintu bishobora gutuma umukoresha neza?",
+    "answer_rw": "Guhumeka umwana ni uburyo bw'ingenzi cyane bwo gushyikirana n'umwana ukiri muto, butuma yumva yishimye kandi akumva akunzwe. Kumufata hafi, kumukubita, no kumushimira bishobora kumuhumuriza no gutuma yumva afite umutekano. Kumuhumeka ni uburyo bwiza bwo kumuhumuriza no gutuma agira imibereho myiza mu buryo bw'umubiri no mu byiyumvo. Tangira umuhumeka ku ntebe ze cyangwa ku maguru ye, ukoresheje imyitozo y'ubugwaneza yishimisha."
+  },
+  {
+    "question_en": "What are the steps for giving a baby massage, and what should you keep in mind to ensure it’s comfortable for your baby? How can you prepare for a baby massage and make the experience enjoyable for both you and your baby?",
+    "answer_en": "To give your baby a soothing massage, first choose a time when she is awake and receptive, but not too close to feeding. Ensure the room is warm and comfortable, and sit on the floor for ease of access. Use a firm yet gentle touch with your whole hand to avoid tickling, and apply a small amount of warmed vegetable oil, such as sunflower oil, after testing it on a small part of her skin to check for any allergic reactions. Stay relaxed and attentive, observing your baby’s responses to find what she enjoys most. This approach will help create a calming and bonding experience.",
+    "question_rw": "Ni izihe ntambwe ugomba gutera kugira ngo ukore masaje y'uruhinja, kandi se ni iki ugomba kuzirikana kugira ngo umwana wawe agire ibimushimisha?",
+    "answer_rw": "Kugira ngo uhe umwana wawe urutoki rushimishije, ujye ubanza uhitemo igihe azaba ari maso kandi yiteguye kurya, ariko atagombye kumwegera cyane. Jya ugenzura niba icyo cyumba ari cyiza kandi gisanzwe, kandi wicare ku butaka kugira ngo ugire icyo ugeraho. Jya ukoresha ukuboko kwawe kose ukoresheje uburyo bukomeye ariko butyoroye kugira ngo wirinde gukorakora, kandi ushyireho amavuta y'ibimera ashyushye, urugero nk'amavuta y'izuba, nyuma yo kuyagerageza ku gice gito cy'uruhu rwe kugira ngo urebe niba hari ibyago by'uburwayi. Jya utuza kandi witonze, witegereze uko umwana wawe asubiza kugira ngo umenye icyo akunda cyane."
+  },
+  {
+    "question_en": "How do newborns experience taste and smell, and how do these senses contribute to their bonding with parents? How does a baby recognize their mother or father through scent, and how does it impact their well-being?",
+    "answer_en": "Newborns have a developed sense of taste and smell from an early age. They can recognize their mother by her scent, which helps them find the nipple for feeding, providing comfort and satisfaction. The taste of breast milk can change based on the mother's diet. Additionally, when the father holds the baby for the first time, the baby will also recognize the father's scent, promoting early bonding. Skin-to-skin contact between father and child in the first hours after birth enhances this connection.",
+    "question_rw": "Ni mu buhe buryo abana bavutse bahura n'ibyokurya n'impumuro, kandi se ni mu buhe buryo ibyo bituma bagirana imishyikirano ya bugufi n'ababyeyi babo?",
+    "answer_rw": "Abana bavutse bashya baba bafite ibyiyumvo by'ibyokurya n'ibyokunywa kuva bakiri bato. Bashobora kumenya nyina ku bw'impumuro ze, ibyo bikabafasha kubona ibisebe byo kurya, bikabaha ihumure n'ibyishimo."
+  },
+  {
+    "question_en": "How does a baby hear at birth, and how does she react to familiar voices or loud noises? What should parents do if they suspect a hearing problem in their baby, and when is it necessary to seek professional help?",
+    "answer_en": "Newborns can hear from birth and are especially sensitive to their mother and father's voices, as they are familiar with these sounds from the womb. Familiar voices often calm the baby, while loud or sudden noises can startle and upset her. Most babies in Québec have normal hearing, but around six in 1,000 may experience hearing issues. Parents can observe if their baby responds to sounds, like a dog barking or a doorbell ringing, typically by 6 to 9 months. If there's no reaction, it's advisable to consult a doctor for further evaluation. Newborns may also have ears that stick out, but this usually resolves over time.",
+    "question_rw": "Ni gute umwana yumva igihe avutse, kandi se iyo yumvise amajwi amenyereye cyangwa akumva urusaku rwinshi, ni iki ababyeyi bagombye gukora niba batekereza ko umwana wabo afite ikibazo cyo kumva, kandi se ni ryari biba ngombwa ko ashakisha ubufasha bwa muganga?",
+    "answer_rw": "Abana bavutse vuba bashobora kumva kuva bavutse kandi cyane cyane bumva amajwi ya nyina na se, kuko bazi neza aya majwi ava mu nda. Amajwi asanzwe atuma umwana aruhuka, mu gihe amajwi akomeye cyangwa atunguranye ashobora kumutera ubwoba no kumurakaza. Abana benshi bo muri Québec bafite ubwumvikane busanzwe, ariko abagera kuri batandatu mu 1000 bashobora guhura n'ibibazo byo kumva. Ababyeyi bashobora kubona niba umwana wabo asubiza amajwi, urugero nk'imbwa ivuza induru cyangwa ikamba ry'umuryango, ubusanzwe mu mezi 6 kugeza ku 9. Niba nta kintu kibaho, birakwiriye ko ugisha inama umuganga kugira ngo urebwe neza."
+  },
+  {
+    "question_en": "What is the safest sleeping position for a newborn, and what conditions should the sleep environment meet? How can you ensure your baby is properly covered during sleep?",
+    "answer_en": "Newborns should always sleep on their back. Once they can turn over on their own, they can sleep in their preferred position without risk. The sleeping environment should include a firm mattress in a crib, cradle, or bassinet that meets Canadian safety standards. Avoid placing any objects such as pillows, comforters, or bumper pads in the crib. If your baby needs covering, use a light blanket or a sleep sack designed for safe sleep.",
+    "question_rw": "Ni iyihe mimerere umwana ukiri muto ashobora kuryamamo mu buryo butekanye cyane, kandi se ni iyihe mimerere umwana agomba kuba arimo, kandi se ni iki wakora kugira ngo umwana wawe agire aho aryama?",
+    "answer_rw": "Abana bavutse bashya bagombye kujya barara ku mugongo. Iyo bamaze guhindukira, bashobora kuryama aho bishakiye nta kaga bagira. Mu gihe baryamye, bagombye kuba bafite igitanda cyihariye mu gikari, mu gikari cyangwa mu gikari gihuye n'amahame y'umutekano yo muri Kanada."
+  },
+  {
+    "question_en": "Should you sleep with your baby? What are the risks of sleeping with your baby on certain surfaces or when you're impaired? How can you safely share your bed with your baby?",
+    "answer_en": "It’s not recommended to sleep with your baby, especially on couches or furniture like upholstered chairs, or if you’ve been drinking, taking medication that makes you drowsy, or are extremely tired. In these situations, it’s safer for your baby to sleep in her crib in your room. To safely share your bed, always place your baby on her back, use a firm mattress, remove soft bedding, and ensure there is enough space between the mattress and wall to prevent the baby from getting stuck. Never let your baby sleep alone in an adult bed.",
+    "question_rw": "Ese wagombye kuryamana n'umwana wawe? Ni akahe kaga gaterwa no kuryamana n'umwana wawe ahantu runaka cyangwa mu gihe ufite ubumuga?",
+    "answer_rw": "Si byiza kuryamana n'umwana wawe, cyane cyane ku ntebe cyangwa ku myambaro, urugero nk'intebe zisa n'aho zisa, cyangwa se niba warigeze kunywa, ukanywa imiti ituma ugira ibitotsi cyangwa ukumva unaniwe cyane. Muri ibi bihe, ni byiza ko umwana wawe asinzira mu buriri bwe mu cyumba cyawe. Kugira ngo ubane neza n'umwana wawe mu buriri bwawe, jya uhora umushyira ku mugongo, ukoreshe igitanda gikomeye, ukureho imyenda yoroheje, kandi wirinde ko haba umwanya uhagije hagati y'igitanda n'urukuta kugira ngo umwana ataguma mu buriri. Ntuzigere wemera ko umwana wawe asinzira wenyine mu buriri bw'abantu bakuru."
+  },
+  {
+    "question_en": "How should you ensure your baby sleeps safely while away from home? What are some alternatives to a crib when traveling? Is it safe to let your baby sleep in a car seat or carrier?",
+    "answer_en": "When away from home, always ensure your baby sleeps in a safe place. Never put your baby to bed alone in an adult bed or use pillows. If you don't have a crib, a blanket on the floor can be a temporary safe bed for babies under 6 months. A mattress on the floor or a playpen are other options, but avoid adding extra mattresses or padding to a playpen. A car seat or baby carrier is not a safe place for sleeping, especially if you are lying down while wearing the carrier. For walks, place your baby on her back in a stroller with a flat or almost flat backrest, ensuring she is properly strapped in. Baby carriers are also an option for walks but are not suitable for sleeping.",
+    "question_rw": "Ni iki wakora kugira ngo ureke umwana wawe aryame neza mu gihe atari mu rugo?",
+    "answer_rw": "Mu gihe uri kure y'iwawe, ujye uhora wemeza ko umwana wawe aryamye ahantu hatekanye. Ntuzigere uryamira wenyine mu gitanda cy'abantu bakuru cyangwa ngo ukoreshe imyenda. Niba udafite igitanda, igitambaro ku butaka gishobora kuba igitanda cy'abana bari munsi y'amezi atandatu."
+  },
+  {
+    "question_en": "What are the risk factors for Sudden Infant Death Syndrome (SIDS)? What recommendations help reduce the risk of SIDS?",
+    "answer_en": "The main risk factors for Sudden Infant Death Syndrome (SIDS) include exposure to maternal tobacco use or secondhand smoke, sleeping on the stomach, and blankets or bedding that could cover a baby’s face. To reduce the risk of SIDS, ensure your baby sleeps safely, avoid smoking during pregnancy and around the baby, and always put your baby to sleep on her back. Babies who are breastfed and properly vaccinated have a lower risk of SIDS. Additionally, make sure your baby is dressed appropriately for sleep, neither too warm nor too cold. Using a baby monitor does not replace these essential safety precautions.",
+    "question_rw": "Ni ibihe bintu bishobora gutuma umwana apfa mu buryo butunguranye, kandi se ni izihe nama zafasha umuntu kugabanya ibyago byo guhitanwa na byo?",
+    "answer_rw": "Mu bintu by'ingenzi bishobora gutuma umwana apfa mu buryo butunguranye (SIDS) harimo kunywa itabi cyangwa kunywa itabi rikoreshwa n'ababyeyi, kuryama mu nda, n'imyenda cyangwa imyenda y'ibitanda bishobora gupfuka uruhinja."
+  },
+  {
+    "question_en": "How can flat head syndrome be prevented in infants? What happens if a baby develops a flat head?",
+    "answer_en": "Flat head syndrome, or positional plagiocephaly, can occur if a baby remains in the same position, such as in a crib or car seat, for long periods. To prevent this, it’s important to vary the baby's position while awake, as the bones of their skull are still soft and can flatten with pressure. A slight flattening usually disappears on its own, while more pronounced flatness may become permanent, though it won't affect the baby’s brain or development.",
+    "question_rw": "Ni gute indwara y'umutwe utubutse ishobora kwirindwa mu bana bato?",
+    "answer_rw": "Imibereho y'umwana mu gihe ari mu buriri cyangwa mu ntebe y'imodoka, ishobora guterwa n'uko umwana aba ari mu mwanya umwe igihe kirekire. Ku bw'ibyo, ni ngombwa guhindura imiterere y'umwana mu gihe ari maso, kuko amagufwa y'urusoro rwe akiri yoroheje kandi ashobora gusenyuka bitewe n'imihangayiko."
+  },
+  {
+    "question_en": "What are the sleep patterns of a newborn in the first weeks? Should you wake your baby during agitated sleep?",
+    "answer_en": "In the first weeks, a newborn’s sleep pattern includes drowsiness, calm sleep, and agitated sleep. During agitated sleep, babies may exhibit movements like sucking, frowning, or even crying. This is normal, and there’s no need to wake them unless they need encouragement to feed. As the weeks pass, babies will stay awake for longer periods.",
+    "question_rw": "Ese mu byumweru bya mbere by'ubuzima bw'umwana uvutse, wagombye gukangura umwana wawe mu gihe asinziriye?",
+    "answer_rw": "Mu byumweru bya mbere, umwana uvutse asinziriye aba afite ikibazo cy'ibitotsi, akumva aruhutse, akumva aruhutse."
+  },
+  {
+    "question_en": "How much sleep does a baby need at 4 months? Will your baby need to feed at night at this age?",
+    "answer_en": "At 4 months, babies typically sleep 14 to 15 hours per day and start sleeping longer through the night. Around this time, they begin to develop a more predictable routine and learn to comfort themselves by sucking their hand. Some babies may stop needing nighttime feedings between 4 and 6 months, while others may still need to feed during the night.",
+    "question_rw": "Ese umwana w'amezi 4 akeneye gusinzira igihe kingana iki?",
+    "answer_rw": "Mu gihe cy'amezi ane, abana basinziriye amasaha 14 kugeza ku 15 ku munsi, maze bakamara ijoro ryose baryama igihe kirekire. Muri icyo gihe, batangira kugira gahunda ihoraho kandi bakamenya kwihumuriza binyuriye mu kumeza intoki zabo."
+  },
+  {
+    "question_en": "How can you establish a bedtime routine for your baby? Should you help your baby fall asleep or let her learn to fall asleep on her own?",
+    "answer_en": "Establishing a bedtime routine with consistent actions, like a warm bath, a quiet game, a story, and soft music, helps your baby understand when it’s time for bed. There’s no one right way to do it, but sticking to a routine can make bedtime easier. You can choose to rock your baby to sleep or allow her to fall asleep on her own. The key is to feel comfortable with the routine, and once your baby learns to fall asleep on her own, she will be able to self-soothe if she wakes up during the night.",
+    "question_rw": "Ese wagombye gufasha umwana wawe gusinzira, cyangwa ukamureka akigendera?",
+    "answer_rw": "Gushyiraho gahunda y'igihe cyo kuryama ukoresheje ibikorwa bihamye, urugero nk'isuku, umukino utuje, inkuru n'umuziki utuje, bifasha umwana wawe gusobanukirwa igihe cyo kuryama. Nta buryo bumwe rukumbi bwiza bwo kubikora, ariko iyo ukomeje kuryama ushobora gutuma kuryama birushaho koroha."
+  },
+  {
+    "question_en": "How long do babies typically sleep through the night? What can you do to help your baby distinguish between day and night?",
+    "answer_en": "Babies’ sleep patterns vary, but \"sleeping through the night\" generally refers to five or six hours of sleep between 11 p.m. and 8 a.m. About 70% of 3-month-olds sleep for five hours at night, increasing to 90% by 10 months. To help your baby distinguish between day and night, follow her natural sleep rhythm and keep nighttime feedings calm and quiet by dimming the lights and avoiding conversation.",
+    "question_rw": "Ubusanzwe abana baryama igihe kingana iki mu ijoro?",
+    "answer_rw": "Abana baba bafite amasaha atandukanye yo gusinzira, ariko ijambo \"gusinzira ijoro ryose\" ryerekeza ku masaha atanu cyangwa atandatu y'ibitotsi hagati y'amanywa 11 n'amanywa 8. Hafi 70% by'abana bafite amezi atatu basinzira amasaha atanu mu ijoro, bikazamuka bigera kuri 90% mu mezi 10. Kugira ngo ufashe umwana wawe gutandukanya umunsi n'ijoro, jya ukurikiza uburyo kamere umwana wawe akunda gusinzira, kandi ukomeze gutuza mu gihe cyo kuryama."
+  },
+  {
+    "question_en": "How much sleep do babies need between 6 and 12 months? Why might a baby start waking up at night, and how can you reassure them?",
+    "answer_en": "Babies between 6 and 12 months typically sleep 8 to 10 hours at night, totaling around 15 hours of sleep per day. During this period, it is common for babies to start waking up at night due to separation anxiety. When this happens, you can reassure your baby with your voice and touch, which often helps them feel better. It's normal for babies to have wakeful periods, and they can gradually learn to fall asleep on their own.",
+    "question_rw": "Ni iki gishobora gutuma umwana atangira gukanguka nijoro, kandi se ni gute wahumuriza abana bawe?",
+    "answer_rw": "Ubusanzwe abana bafite amezi ari hagati ya 6 na 12 barara amasaha 8 kugeza ku 10 ku mugoroba, ibyo bikaba byibura amasaha 15 ku munsi. Muri iki gihe, ni ibisanzwe ko abana batangira kubyuka nijoro kubera imihangayiko yo gutandukana. Iyo ibyo bibaye, ushobora guhumuriza umwana wawe ukoresheje ijwi ryawe n'ikiganza cyawe, akenshi bikaba bifasha kumva bamerewe neza. Ni ibisanzwe ko abana bagira ibihe byo kuba maso, kandi buhoro buhoro bashobora kwigira gusinzira bonyine."
+  },
+  {
+    "question_en": "What should you do if your baby wakes up in the middle of the night and needs help going back to sleep? How can you help your baby learn to go to sleep on her own? What should you do if your baby cries a lot at night?",
+    "answer_en": "If your baby wakes up in the middle of the night and needs help going back to sleep, she will likely need the same comfort she requires to fall asleep initially, such as breastfeeding, bottle-feeding, or being rocked. To help her learn to go to sleep on her own, you should teach her to fall asleep independently at bedtime by gradually decreasing the amount of time you stay with her each night. If your baby cries frequently at night, check for health issues like fever, and if it's a recurring concern, consult your doctor. If there are no health problems, consider adjusting her bedtime routine to encourage better sleep.",
+    "question_rw": "Ni iki wakora niba umwana wawe abyutse mu gicuku akeneye umuntu wo kumufasha gusinzira?",
+    "answer_rw": "Niba umwana wawe abyutse mu gicuku akeneye ko bamufasha gusinzira, ashobora kuba akeneye ihumure nk'iryo yari akeneye mbere, urugero nko kumwonsa, kumufungurira amacupa cyangwa kumuhindisha ibitotsi. Kugira ngo umufashe kwitoza kujya kuryama wenyine, wagombye kumwigisha gusinzira mu buryo bwigenga, ukagenda ugabanya igihe umarana na we buri joro."
+  },
+  {
+    "question_en": "How does a child develop confidence? What are some ways to help a baby gain confidence? Why is it important to respond to a baby’s signals? What can happen when a child feels confident in their caregiver? How does separation affect a child’s confidence?",
+    "answer_en": "A child develops confidence by forming a bond of trust with caregivers who are sensitive to their needs, offering comfort and reassurance, especially when the child is afraid. To help your baby gain confidence, it's important to hold them often, play with them, and learn their personality. Responding to their signals, such as crying or movement, in a prompt and reassuring way will make them feel secure. When a baby has confidence in their caregiver, they feel more secure to explore their surroundings. Sensitive children may take longer to feel confident. Separation from parents may cause anxiety, but once reunited, the child will regain confidence after spending time with their parents.",
+    "question_rw": "Ni gute umwana atangira kwigirira icyizere? Ni ubuhe buryo bumwe na bumwe bwo gufasha umwana kwigirira icyizere? Kuki ari iby'ingenzi kwitabira ibimenyetso by'umwana?",
+    "answer_rw": "Umwana agira icyizere binyuze mu kugirana ubucuti n'abamufasha kumenya ibyo bakeneye, bagatanga ihumure n'ihumure, cyane cyane iyo umwana afite ubwoba. Kugira ngo umwana wawe agire icyizere, ni iby'ingenzi kumufata kenshi, gukina na we, no kumenya kamere ye. Kwitabira ibimenyetso bye, urugero nko kurira cyangwa gutambuka, mu buryo bwihuse kandi buhumuriza, bizatuma yumva afite umutekano. Iyo umwana yizeye uwamufasha, yumva afite umutekano wo gusesengura ibimukikije."
+  },
+  {
+    "question_en": "How can you understand your baby’s temperament? What are the different types of babies based on temperament? How should you handle a sensitive baby or one who is more cautious? What should you do to help a baby focus and learn?",
+    "answer_en": "Understanding your baby’s temperament involves observing their unique character and behaviors, such as their energy levels, reactions to new experiences, and sensitivity to light, noise, and texture. Babies can be categorized as \"easy,\" \"sensitive,\" or \"cautious.\" \"Easy\" babies follow a regular routine and adapt well to changes. \"Sensitive\" babies may cry a lot and need more care and patience, as they don’t easily adapt to new things. \"Cautious\" babies are calm, take time to adjust, and seem more independent. Regardless of their temperament, it’s essential to provide consistent care and engage with your child at their pace, whether that means helping them focus with quiet activities or encouraging their exploration through physical play.",
+    "question_rw": "Ni gute ushobora kumenya imyifatire y'umwana wawe? Ni ibihe bimera bitandukanye bishingiye ku mitekerereze ye? Ni gute wagombye gufata umwana ufite ibyiyumvo cyangwa ufite ubwitonzi? Ni iki wagombye gukora kugira ngo umufashe kwibanda no kwiga?",
+    "answer_rw": "Kumenya imyitwarire y'umwana wawe bikubiyemo kugenzura imyitwarire ye n'imyifatire ye, urugero nk'ingingo z'imbaraga ze, uko yitwara ku bintu bishya, n'uko yumva umucyo, urusaku n'imiterere y'umubiri. Abana bashobora gushyirwa mu byiciro byitwa \"byoroshye\", \"byoroshye\", cyangwa \"bafite ubwitonzi\". Abana \"byoroshye\" bakurikiza gahunda isanzwe kandi bakagira ibyo bahindura. Abana \"byoroshye\" bashobora kurira cyane kandi bakenera kwitabwaho no kwihangana, kuko badakora ibintu bishya mu buryo bworoshye."
+  }
+]
