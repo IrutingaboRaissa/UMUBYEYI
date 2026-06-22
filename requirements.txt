@@ -1,8 +1,22 @@
-# Umubyeyi - app runtime (deployable on Streamlit Community Cloud free tier)
-# The live NLLB translator (transformers + torch, ~2.4GB) is intentionally NOT pinned here:
-# it exceeds the free-tier ~1GB RAM limit, and src/app.py degrades gracefully without it.
-# To run the translation layer locally, also: pip install transformers torch
-streamlit==1.48.1
+# Umubyeyi runtime.
+# Product = grounded generation (RAG): retrieve validated MOTHER+KB snippets, then an LLM
+# (Gemini) answers in the user's language. Backend: FastAPI. Frontend: Streamlit.
+# The LLM key is read from .env (GEMINI_API_KEY) and never committed.
+
+# retrieval / grounding
 scikit-learn==1.9.0
 joblib==1.5.2
 numpy==2.4.6
+
+# generation
+google-genai>=1.0
+python-dotenv>=1.0
+
+# backend + frontend
+fastapi>=0.115
+uvicorn[standard]>=0.30
+streamlit==1.48.1
+
+# pilot feedback -> Google Sheet
+gspread>=6.0
+google-auth>=2.30
