@@ -14,6 +14,15 @@ import streamlit as st
 
 import rag  # src/ is on sys.path when run via `streamlit run src/app.py`
 
+# On Streamlit Community Cloud secrets live in st.secrets, not env vars -> bridge them so
+# rag.py (which reads os.environ) picks up the Gemini key and feedback credentials.
+try:
+    for _k in ("GEMINI_API_KEY", "GEMINI_MODEL", "GCP_SERVICE_ACCOUNT", "FEEDBACK_SHEET_ID"):
+        if _k in st.secrets:
+            os.environ[_k] = str(st.secrets[_k])
+except Exception:
+    pass
+
 st.set_page_config(page_title="Umubyeyi", layout="centered")
 
 # ----------------------------------------------------------------- theme (CSS)
