@@ -1,8 +1,8 @@
 {
   "Logistic Regression": {
-    "accuracy": 0.6069,
-    "precision_macro": 0.6343,
-    "recall_macro": 0.5871,
-    "f1_macro": 0.602
+    "accuracy": 0.6621,
+    "precision_macro": 0.7028,
+    "recall_macro": 0.6189,
+    "f1_macro": 0.6483
   }
 }
