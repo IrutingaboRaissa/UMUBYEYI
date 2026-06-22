@@ -1,3 +1,16 @@
+<!-- Hugging Face Space config (read by HF when this repo is deployed as a Space; GitHub ignores it). -->
+---
+title: Umubyeyi
+emoji: 🌷
+colorFrom: pink
+colorTo: purple
+sdk: streamlit
+sdk_version: 1.48.1
+app_file: src/app.py
+pinned: false
+short_description: Kinyarwanda maternal mental-wellness chatbot (research pilot)
+---
+
 # Umubyeyi 🌷
 
 **A Kinyarwanda AI chatbot supporting maternal mental wellbeing for first-time mothers in Rwanda.**
