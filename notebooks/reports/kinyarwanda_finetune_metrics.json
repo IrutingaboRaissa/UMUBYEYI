@@ -1,0 +1,8 @@
+{
+  "Model 3: AfroXLMR fine-tune (Kinyarwanda)": {
+    "accuracy": 0.3241,
+    "precision_macro": 0.2699,
+    "recall_macro": 0.2423,
+    "f1_macro": 0.2412
+  }
+}

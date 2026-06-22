@@ -1,0 +1,11 @@
+{
+  "english": {
+    "accuracy": 0.6423,
+    "f1_macro": 0.6334
+  },
+  "kinyarwanda_mt": {
+    "accuracy": 0.5551,
+    "f1_macro": 0.5256
+  },
+  "delta_f1_macro": 0.1078
+}
