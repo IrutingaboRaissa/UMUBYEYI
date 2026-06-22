@@ -1,41 +1,18 @@
 """
-Umubyeyi — Streamlit MVP, "Peach & Lavender" theme.
-A soft, warm maternal-wellness chat — made with care, for new mothers.
+Umubyeyi - Streamlit frontend (grounded generation).
+A gentle postpartum (0-6mo) companion for first-time mothers in Rwanda.
 
-Run:  streamlit run src/app.py
-
-Pipeline status: intent classification + per-intent response templates are live.
-The NLLB Kinyarwanda<->English translation layer is the next hook (responses
-below are the English template text until it's wired) — marked TODO inline.
+Type a question in Kinyarwanda or English -> answered in the same language, grounded on
+validated maternal knowledge (see src/rag.py). Run:  streamlit run src/app.py
 """
+import csv
+import datetime
 import json
-from pathlib import Path
+import os
 
-import joblib
 import streamlit as st
 
-ROOT = Path(__file__).resolve().parents[1]
-clf = joblib.load(ROOT / "models" / "intent_classifier.joblib")
-tfidf = joblib.load(ROOT / "models" / "tfidf_vectorizer.joblib")
-KB = json.loads((ROOT / "data" / "knowledge_base" / "mental_wellness_kb.json").read_text(encoding="utf-8"))
-KB_BY_INTENT = {e["intent"]: e for e in KB["entries"]}  # first entry per intent
-
-CONF_GATE = 0.40  # below this -> gentle general fallback (per design §3.5.6)
-DISCLAIMER = "Aya ni amakuru rusange, si inama z'ubuvuzi. Vugana n'umuganga niba ufite impungenge."
-GREETING = "Muraho, mama. Ndi hano kugufasha. Nshobora kugufasha gute uyu munsi?"
-
-# danger-sign override -> bypass classification, escalate gently (per safety design)
-DANGER = ["kill myself", "end my life", "suicide", "hurt myself", "hurt my baby",
-          "harm my baby", "kwiyahura", "kwiyica", "guhotora"]
-
-INTENT_META = {
-    "sadness_low_mood":     "low mood",
-    "anxiety_worry":        "anxiety",
-    "sleep":                "sleep",
-    "overwhelmed_identity": "feeling overwhelmed",
-    "relationship_support": "relationships & support",
-    "self_care_coping":     "self-care",
-}
+import rag  # src/ is on sys.path when run via `streamlit run src/app.py`
 
 st.set_page_config(page_title="Umubyeyi", layout="centered")
 
@@ -43,136 +20,122 @@ st.set_page_config(page_title="Umubyeyi", layout="centered")
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
-
-[data-testid="stAppViewContainer"]{
-  background: linear-gradient(160deg,#FBEFFb 0%, #F6F2FB 45%, #FFF1EA 100%);
-}
-[data-testid="stHeader"]{background:transparent;}
-#MainMenu, footer{visibility:hidden;}
-.block-container{max-width:560px;padding-top:1.2rem;padding-bottom:6rem;
-  font-family:'Quicksand',Segoe UI,sans-serif;}
-
-/* header card */
-.umu-header{
-  background:linear-gradient(120deg,#FFB59E 0%, #E6A6D9 55%, #C9B6F2 100%);
-  color:#fff;border-radius:26px;padding:20px 24px;margin-bottom:18px;
-  box-shadow:0 10px 28px rgba(201,182,242,.45);}
-.umu-header .title{font-size:23px;font-weight:700;letter-spacing:.2px;}
-.umu-header .sub{font-size:13.5px;font-weight:500;opacity:.95;margin-top:2px;}
-
-/* bubbles */
-.row{display:flex;margin-bottom:13px;}
-.row.me{justify-content:flex-end;}
-.bubble{max-width:84%;padding:12px 16px;font-size:14.5px;line-height:1.5;
-  font-family:'Quicksand',sans-serif;box-shadow:0 3px 12px rgba(150,120,180,.14);}
+[data-testid="stAppViewContainer"]{background:linear-gradient(160deg,#FBEFFb 0%,#F6F2FB 45%,#FFF1EA 100%);}
+[data-testid="stHeader"]{background:transparent;} #MainMenu, footer{visibility:hidden;}
+.block-container{max-width:560px;padding-top:1.2rem;padding-bottom:6rem;font-family:'Quicksand',Segoe UI,sans-serif;}
+.umu-header{background:linear-gradient(120deg,#FFB59E 0%,#E6A6D9 55%,#C9B6F2 100%);color:#fff;
+  border-radius:26px;padding:20px 24px;margin-bottom:18px;box-shadow:0 10px 28px rgba(201,182,242,.45);}
+.umu-header .title{font-size:23px;font-weight:700;} .umu-header .sub{font-size:13.5px;font-weight:500;opacity:.95;margin-top:2px;}
+.row{display:flex;margin-bottom:13px;} .row.me{justify-content:flex-end;}
+.bubble{max-width:84%;padding:12px 16px;font-size:14.5px;line-height:1.55;font-family:'Quicksand',sans-serif;
+  box-shadow:0 3px 12px rgba(150,120,180,.14);white-space:pre-wrap;}
 .bubble.bot{background:#fff;color:#4A3B57;border-radius:20px 20px 20px 7px;}
-.bubble.me{background:linear-gradient(120deg,#FFCBB0,#FFB59E);color:#5B3A52;
-  font-weight:500;border-radius:20px 20px 7px 20px;}
-
-/* intent pill */
-.pill{display:inline-block;background:#ECE3FB;color:#7A5AA8;font-weight:600;
-  font-size:12.5px;padding:4px 12px;border-radius:999px;margin-bottom:9px;}
-
-/* answer pieces */
-.empathy{color:#8A5A86;font-weight:600;margin-bottom:6px;}
-.seek{background:#FFF0E8;border-left:3px solid #FFB59E;border-radius:10px;
-  padding:9px 13px;margin-top:10px;font-size:13px;color:#9A5C44;}
-.disclaimer{margin-top:11px;padding-top:8px;border-top:1px dashed #E7DBF7;
-  font-size:11.5px;color:#A99CB8;}
-.danger{background:#FFE9EC;border-left:4px solid #F2839A;border-radius:12px;
-  padding:12px 15px;color:#A33D54;font-weight:500;}
-
-/* chat input -> soft peach pill */
-[data-testid="stChatInput"]{background:transparent;}
-[data-testid="stChatInput"] > div{
-  border-radius:24px !important;border:1.5px solid #F0CFE9 !important;
-  background:#fff !important;box-shadow:0 4px 16px rgba(201,182,242,.25);}
-[data-testid="stChatInput"] textarea{font-family:'Quicksand',sans-serif;}
-[data-testid="stChatInputSubmitButton"]{color:#C9719E !important;}
+.bubble.me{background:linear-gradient(120deg,#FFCBB0,#FFB59E);color:#5B3A52;font-weight:500;border-radius:20px 20px 7px 20px;}
+.danger{background:#FFE9EC;border-left:4px solid #F2839A;border-radius:12px;padding:12px 15px;color:#A33D54;font-weight:500;}
+.stButton button,[data-testid="stButton"] button,button[data-testid^="stBaseButton"]{
+  background:linear-gradient(120deg,#FFB59E 0%,#E6A6D9 55%,#C9B6F2 100%) !important;border:none !important;
+  border-radius:18px !important;font-weight:600;font-family:'Quicksand',sans-serif;padding:12px 18px;}
+.stButton button,.stButton button *,button[data-testid^="stBaseButton"],button[data-testid^="stBaseButton"] *{
+  color:#fff !important;-webkit-text-fill-color:#fff !important;}
+[data-testid="stChatInput"] > div{border-radius:24px !important;border:1.5px solid #C9B6F2 !important;
+  background:#4A3B57 !important;box-shadow:0 4px 16px rgba(201,182,242,.25);}
+textarea{color:#fff !important;-webkit-text-fill-color:#fff !important;caret-color:#FFD9C2 !important;opacity:1 !important;}
+[data-testid="stChatInput"] textarea::placeholder{color:#D9C9F2 !important;-webkit-text-fill-color:#D9C9F2 !important;opacity:1 !important;}
+[data-testid="stChatInputSubmitButton"],[data-testid="stChatInputSubmitButton"] svg{color:#FFC9B0 !important;fill:#FFC9B0 !important;}
+[data-testid="stSpinner"],[data-testid="stSpinner"] p{color:#7A5AA8 !important;font-weight:600;}
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown(
-    '<div class="umu-header"><div class="title">Umubyeyi</div>'
-    '<div class="sub">umufasha wawe · a gentle companion for new mothers</div></div>',
-    unsafe_allow_html=True)
+st.markdown('<div class="umu-header"><div class="title">Umubyeyi</div>'
+            '<div class="sub">umufasha wawe nyuma yo kubyara · a companion for the first 6 months</div></div>',
+            unsafe_allow_html=True)
+
+GREETING = ("Muraho, mama. Ndi hano kugufasha mu mezi 6 ya mbere nyuma yo kubyara. "
+            "Wambaza icyo ushaka ku buzima bwawe cyangwa ubw'umwana — mu Kinyarwanda cyangwa Icyongereza.")
+
+# ----------------------------------------------------------------- consent gate
+if not st.session_state.get("consented"):
+    st.markdown(
+        '<div class="bubble bot" style="max-width:100%">'
+        '<div style="color:#8A5A86;font-weight:600;margin-bottom:6px;">Mbere yo gutangira</div>'
+        "<div>Iyi ni porogaramu y'ubushakashatsi bw'umunyeshuri, si serivisi y'ubuvuzi cyangwa "
+        "iy'ubutabazi bwihutirwa. Amakuru itanga ni rusange, ntabwo asimbura inama y'umuganga.</div>"
+        f'<div style="background:#FFF0E8;border-left:3px solid #FFB59E;border-radius:10px;padding:9px 13px;margin-top:10px;color:#9A5C44;">'
+        f"Niba ufite ibitekerezo byo kwigirira nabi cyangwa kwangiza umwana, hamagara ako kanya: <b>{rag.CRISIS_LINE}</b>.</div>"
+        "<div style=\"margin-top:10px\">Ntukandike amazina cyangwa amakuru akuranga.</div></div>",
+        unsafe_allow_html=True)
+    if st.button("Ndabyumvise kandi ndabyemeye — Komeza", use_container_width=True):
+        st.session_state.consented = True
+        st.rerun()
+    st.stop()
 
 # ----------------------------------------------------------------- state
 if "msgs" not in st.session_state:
-    st.session_state.msgs = [{"role": "bot", "kind": "text", "text": GREETING}]
+    st.session_state.msgs = [{"role": "bot", "text": GREETING, "danger": False}]
+if "logged" not in st.session_state:
+    st.session_state.logged = set()
 
 
-@st.cache_resource(show_spinner="Gukanura umusemuzi (NLLB)...")
-def _translator():
-    from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-    tok = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M")
-    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M").eval()
-    return tok, model
-
-
-def kin_to_eng(text: str) -> str:
-    """Kinyarwanda -> English for the classifier (NLLB). Degrades to raw text if unavailable."""
+# ----------------------------------------------------------------- feedback -> Google Sheet (CSV fallback)
+@st.cache_resource(show_spinner=False)
+def _sheet():
+    raw, sid = os.environ.get("GCP_SERVICE_ACCOUNT"), os.environ.get("FEEDBACK_SHEET_ID")
+    if not raw or not sid:
+        return None
     try:
-        import torch
-        tok, model = _translator()
-        tok.src_lang = "kin_Latn"
-        with torch.no_grad():
-            enc = tok(text, return_tensors="pt", truncation=True, max_length=128)
-            gen = model.generate(**enc, forced_bos_token_id=tok.convert_tokens_to_ids("eng_Latn"),
-                                 max_length=128, num_beams=4)
-        return tok.batch_decode(gen, skip_special_tokens=True)[0]
+        import gspread
+        from google.oauth2.service_account import Credentials
+        creds = Credentials.from_service_account_info(
+            json.loads(raw), scopes=["https://www.googleapis.com/auth/spreadsheets"])
+        return gspread.authorize(creds).open_by_key(sid).sheet1
     except Exception:
-        return text
+        return None
 
 
-def respond(text: str) -> dict:
-    """Translate -> classify -> return the intent's response template (safety + confidence gates)."""
-    en = kin_to_eng(text)                       # NLLB: Kinyarwanda -> English
-    if any(k in f"{text} {en}".lower() for k in DANGER):
-        return {"role": "bot", "kind": "danger"}
+def log_feedback(user_text, bot, score):
+    row = [datetime.datetime.utcnow().isoformat(timespec="seconds"), user_text,
+           bot.get("language", ""), "danger" if bot.get("danger") else "answer",
+           "up" if score == 1 else "down"]
+    sh = _sheet()
+    if sh is not None:
+        try:
+            sh.append_row(row); return
+        except Exception:
+            pass
+    from pathlib import Path
+    p = Path(__file__).resolve().parents[1] / "feedback_local.csv"
+    new = not p.exists()
+    with open(p, "a", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        if new:
+            w.writerow(["timestamp", "message", "language", "kind", "vote"])
+        w.writerow(row)
 
-    proba = clf.predict_proba(tfidf.transform([en]))[0]
-    i = proba.argmax()
-    intent, conf = clf.classes_[i], float(proba[i])
 
-    gated = conf < CONF_GATE
-    if gated:
-        intent = "self_care_coping"             # gentle general fallback when unsure
-    entry = KB_BY_INTENT.get(intent, KB_BY_INTENT.get("self_care_coping"))
-    label = INTENT_META.get(intent, intent)
-    return {"role": "bot", "kind": "answer", "label": label,
-            "conf": conf, "gated": gated, "entry": entry, "en": en}
-
-
-def render(m: dict) -> str:
+def render(m):
     if m["role"] == "user":
         return f'<div class="row me"><div class="bubble me">{m["text"]}</div></div>'
-    if m["kind"] == "text":
-        return f'<div class="row"><div class="bubble bot">{m["text"]}</div></div>'
-    if m["kind"] == "danger":
-        return ('<div class="row"><div class="bubble bot"><div class="danger">'
-                "Ndumva ko ubu uri kunyura mu bihe bikomeye cyane. Ntabwo uri wenyine. "
-                "Nyamuneka vugana n'umuntu wizeye cyangwa umukozi w'ubuzima nonaha, cyangwa "
-                "uhamagare serivisi z'ubutabazi. Ubuzima bwawe burafite agaciro."
-                "</div></div></div>")
-    e = m["entry"]
-    # Pre-translated Kinyarwanda (human-validated); fall back to English if not yet translated.
-    empathy = e.get("empathy_rw") or e["empathy"]
-    guidance = e.get("guidance_rw") or e["guidance"]
-    seek_txt = e.get("when_to_seek_help_rw") or e.get("when_to_seek_help")
-    pill = f'<div class="pill">{m["label"]} · {m["conf"]:.2f}</div>'
-    note = ('<div class="empathy">Sinabashije kumva neza, ariko ndi hano.</div>'
-            if m["gated"] else f'<div class="empathy">{empathy}</div>')
-    seek = f'<div class="seek">{seek_txt}</div>' if seek_txt else ""
-    return (f'<div class="row"><div class="bubble bot">{pill}{note}'
-            f'<div>{guidance}</div>{seek}'
-            f'<div class="disclaimer">{DISCLAIMER}</div></div></div>')
+    inner = f'<div class="danger">{m["text"]}</div>' if m.get("danger") else m["text"]
+    return f'<div class="row"><div class="bubble bot">{inner}</div></div>'
 
 
-# ----------------------------------------------------------------- handle input
-if prompt := st.chat_input("Andika hano..."):
+# ----------------------------------------------------------------- chat
+if prompt := st.chat_input("Andika hano... / Type here..."):
     st.session_state.msgs.append({"role": "user", "text": prompt})
-    st.session_state.msgs.append(respond(prompt))
+    with st.spinner("Tegereza gato, ndategura igisubizo..."):
+        try:
+            res = rag.answer(prompt)
+            st.session_state.msgs.append({"role": "bot", "text": res["answer"],
+                                          "danger": res.get("danger", False),
+                                          "language": res.get("language", "en")})
+        except Exception as e:
+            st.session_state.msgs.append({"role": "bot",
+                "text": f"Mbabarira, hari ikibazo cya tekiniki. ({e})", "danger": False})
 
-# ----------------------------------------------------------------- render chat
-st.markdown("".join(render(m) for m in st.session_state.msgs), unsafe_allow_html=True)
+for i, m in enumerate(st.session_state.msgs):
+    st.markdown(render(m), unsafe_allow_html=True)
+    if i > 0 and m["role"] == "bot" and not m.get("danger"):
+        score = st.feedback("thumbs", key=f"fb_{i}")
+        if score is not None and i not in st.session_state.logged:
+            log_feedback(st.session_state.msgs[i - 1].get("text", ""), m, score)
+            st.session_state.logged.add(i)
