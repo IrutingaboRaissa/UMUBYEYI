@@ -9,6 +9,10 @@ venv/
 .DS_Store
 Thumbs.db
 
+# Secrets - never commit API keys
+.env
+*.key
+
 # Large external models (not part of the repo)
 *.bin
 cc.rw.300*
