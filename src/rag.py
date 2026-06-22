@@ -48,13 +48,17 @@ GREET_PHRASES = ("good morning", "good afternoon", "good evening", "how are you"
 
 
 def is_greeting(text: str) -> bool:
+    """True only for a PURE greeting -- if a real question follows, let it be answered."""
     t = re.sub(r"[^\w\s]", " ", text.lower()).strip()
     if not t:
         return False
-    if len(t.split()) <= 5 and any(p in t for p in GREET_PHRASES):
-        return True
-    words = t.split()
-    return len(words) <= 4 and any(w in GREET_WORDS for w in words)
+    had_greet = any(p in t for p in GREET_PHRASES) or any(w in GREET_WORDS for w in t.split())
+    if not had_greet:
+        return False
+    for p in GREET_PHRASES:                       # strip greeting phrases, then words
+        t = t.replace(p, " ")
+    remaining = [w for w in t.split() if w not in (GREET_WORDS | {"mama", "neza"})]
+    return len(remaining) == 0                    # greeting only if nothing substantive is left
 
 
 def _greeting_reply(lang: str) -> str:
