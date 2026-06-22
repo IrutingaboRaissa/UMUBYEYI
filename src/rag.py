@@ -129,7 +129,7 @@ def _has_key() -> bool:
 def _gemini(prompt: str) -> str:
     from google import genai
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    model = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+    model = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
     resp = client.models.generate_content(model=model, contents=prompt)
     return (resp.text or "").strip()
 
