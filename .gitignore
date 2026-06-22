@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Secrets - never commit API keys
+.env
+*.key
+
+# Private docs (capstone report, slides) - keep local, off the public repo
+docs/
+
+# Large external models (not part of the repo)
+*.bin
+cc.rw.300*
+afroxlmr-kinyarwanda-intent/
