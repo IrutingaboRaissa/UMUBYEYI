@@ -1,4 +1,0 @@
-,Accuracy,F1
-Baseline (Naive Bayes),0.3862,0.2211
-Model 1: TF-IDF + LogReg (English),0.6069,0.602
-Model 2: MiniLM + MLP (Kinyarwanda),0.4207,0.4004
