@@ -29,9 +29,12 @@ st.set_page_config(page_title="Umubyeyi", layout="centered")
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+html, body, [data-testid="stAppViewContainer"], [data-testid="stAppViewContainer"] *,
+[data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] *{
+  font-family:'Quicksand', sans-serif !important;}
 [data-testid="stAppViewContainer"]{background:linear-gradient(160deg,#FBEFFb 0%,#F6F2FB 45%,#FFF1EA 100%);}
 [data-testid="stHeader"]{background:transparent;} #MainMenu, footer{visibility:hidden;}
-.block-container{max-width:560px;padding-top:1.2rem;padding-bottom:6rem;font-family:'Quicksand',Segoe UI,sans-serif;}
+.block-container{max-width:560px;padding-top:4rem;padding-bottom:6rem;font-family:'Quicksand',Segoe UI,sans-serif;}
 .umu-header{background:linear-gradient(120deg,#FFB59E 0%,#E6A6D9 55%,#C9B6F2 100%);color:#fff;
   border-radius:26px;padding:20px 24px;margin-bottom:18px;box-shadow:0 10px 28px rgba(201,182,242,.45);}
 .umu-header .title{font-size:23px;font-weight:700;} .umu-header .sub{font-size:13.5px;font-weight:500;opacity:.95;margin-top:2px;}
