@@ -36,8 +36,7 @@ DISCLAIMER = {
     "rw": "Aya ni amakuru rusange, si inama z'ubuvuzi. Vugana n'umuganga niba ufite impungenge.",
     "en": "This is general information, not medical advice. Please talk to a health worker if you are worried.",
 }
-# TODO(Raissa): replace with a VERIFIED Rwandan crisis/helpline number before the pilot.
-CRISIS_LINE = "[ADD VERIFIED HELPLINE]"
+CRISIS_LINE = "114"  # Rwanda health emergency line
 DANGER = ["kill myself", "end my life", "suicide", "hurt myself", "hurt my baby", "harm my baby",
           "kwiyahura", "kwiyica", "guhotora", "kwica umwana"]
 
