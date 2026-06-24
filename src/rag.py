@@ -145,10 +145,11 @@ def _no_match_message(lang: str) -> str:
             "or health worker who can help you.")
 
 
-def answer(query: str) -> dict:
+def answer(query: str, force_lang: str = None) -> dict:
     """Return {answer, language, danger, grounded, mode, sources}.
-    Generative (Gemini) if a key is set; otherwise extractive (returns the validated answer)."""
-    lang = detect_language(query)
+    Generative (Gemini) if a key is set; otherwise extractive (returns the validated answer).
+    force_lang ('en'/'rw') overrides auto-detection."""
+    lang = force_lang if force_lang in ("en", "rw") else detect_language(query)
     if is_danger(query):
         return {"answer": _crisis_message(lang), "language": lang, "danger": True,
                 "grounded": False, "mode": "safety", "sources": []}
