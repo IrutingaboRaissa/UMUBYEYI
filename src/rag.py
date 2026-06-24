@@ -138,10 +138,12 @@ def _gemini(prompt: str) -> str:
 
 def _no_match_message(lang: str) -> str:
     if lang == "rw":
-        return ("Mbabarira, nta makuru ahagije mfite kuri icyo kibazo. Nyamuneka ganira "
-                "n'umuforomokazi cyangwa umukozi w'ubuzima kugira ngo agufashe.")
-    return ("Sorry, I don't have specific information on that. Please talk to a nurse, midwife, "
-            "or health worker who can help you.")
+        return ("Mbabarira — nakorewe gusa gufasha ababyeyi mu mezi 6 ya mbere nyuma yo kubyara, "
+                "ku bw'ibyo sinshobora kugufasha kuri icyo. Wambaza ku bijyanye no gukira kwawe, "
+                "kwita ku mwana, cyangwa uko wiyumva. Ku bindi bibazo, ganira n'umukozi w'ubuzima.")
+    return ("Sorry — I'm made only to help mothers in the first 6 months after giving birth, so I "
+            "can't help with that. Please ask me about your recovery, caring for your baby, or how "
+            "you're feeling. For other concerns, talk to a health worker.")
 
 
 def answer(query: str, force_lang: str = None) -> dict:
