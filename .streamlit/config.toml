@@ -1,8 +1,8 @@
-# Dashboard theme — dark, serif (Times New Roman enforced in app CSS).
+# Clean, mother-facing theme — deep green, serif (Times New Roman enforced in app CSS).
 [theme]
 base = "dark"
-primaryColor = "#3FA66A"
-backgroundColor = "#141310"
-secondaryBackgroundColor = "#1f1d18"
+primaryColor = "#2E7D52"
+backgroundColor = "#13211a"
+secondaryBackgroundColor = "#19281f"
 textColor = "#E8E4DA"
 font = "serif"
