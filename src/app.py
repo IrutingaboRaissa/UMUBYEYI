@@ -92,9 +92,10 @@ if "msgs" not in st.session_state:
 
 
 def ask(text, force=None):
+    history = [{"role": m["role"], "text": m["text"]} for m in st.session_state.msgs]  # prior turns for context
     st.session_state.msgs.append({"role": "user", "text": text})
     try:
-        r = rag.answer(text, force_lang=force)
+        r = rag.answer(text, force_lang=force, history=history)
         st.session_state.msgs.append({"role": "bot", "text": r["answer"], "danger": r.get("danger", False)})
     except Exception as e:
         st.session_state.msgs.append({"role": "bot", "text": f"Mbabarira, hari ikibazo. ({e})", "danger": False})
