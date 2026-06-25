@@ -36,8 +36,7 @@ DISCLAIMER = {
     "rw": "Aya ni amakuru rusange, si inama z'ubuvuzi. Vugana n'umuganga niba ufite impungenge.",
     "en": "This is general information, not medical advice. Please talk to a health worker if you are worried.",
 }
-# TODO(Raissa): replace with a VERIFIED Rwandan crisis/helpline number before the pilot.
-CRISIS_LINE = "[ADD VERIFIED HELPLINE]"
+CRISIS_LINE = "114"  # Rwanda health emergency line
 DANGER = ["kill myself", "end my life", "suicide", "hurt myself", "hurt my baby", "harm my baby",
           "kwiyahura", "kwiyica", "guhotora", "kwica umwana"]
 
@@ -130,25 +129,41 @@ def _has_key() -> bool:
 
 
 def _gemini(prompt: str) -> str:
+    """Generate, resilient to transient 503/429: retry with backoff across a few models."""
+    import time
     from google import genai
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    model = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
-    resp = client.models.generate_content(model=model, contents=prompt)
-    return (resp.text or "").strip()
+    models, seen = [], set()
+    for m in (os.environ.get("GEMINI_MODEL", "gemini-flash-latest"), "gemini-2.5-flash", "gemini-2.0-flash"):
+        if m not in seen:
+            seen.add(m); models.append(m)
+    last = None
+    for attempt in range(3):
+        for m in models:
+            try:
+                txt = (client.models.generate_content(model=m, contents=prompt).text or "").strip()
+                if txt:
+                    return txt
+            except Exception as e:
+                last = e
+        time.sleep(1.2 * (attempt + 1))
+    raise last if last else RuntimeError("empty response")
 
 
-def _no_match_message(lang: str) -> str:
+def _unavailable_message(lang: str) -> str:
+    # shown only if the generative model is not configured — we never serve raw translation drafts
     if lang == "rw":
-        return ("Mbabarira, nta makuru ahagije mfite kuri icyo kibazo. Nyamuneka ganira "
-                "n'umuforomokazi cyangwa umukozi w'ubuzima kugira ngo agufashe.")
-    return ("Sorry, I don't have specific information on that. Please talk to a nurse, midwife, "
-            "or health worker who can help you.")
+        return ("Mbabarira, serivisi ntiboneka neza ubu. Ongera ugerageze nyuma gato. "
+                "Niba bihutirwa, hamagara 114 cyangwa ugane umukozi w'ubuzima.")
+    return ("Sorry, the assistant is not available right now. Please try again shortly. "
+            "If it is urgent, call 114 or see a health worker.")
 
 
-def answer(query: str) -> dict:
+def answer(query: str, force_lang: str = None) -> dict:
     """Return {answer, language, danger, grounded, mode, sources}.
-    Generative (Gemini) if a key is set; otherwise extractive (returns the validated answer)."""
-    lang = detect_language(query)
+    Generative (Gemini) if a key is set; otherwise extractive (returns the validated answer).
+    force_lang ('en'/'rw') overrides auto-detection."""
+    lang = force_lang if force_lang in ("en", "rw") else detect_language(query)
     if is_danger(query):
         return {"answer": _crisis_message(lang), "language": lang, "danger": True,
                 "grounded": False, "mode": "safety", "sources": []}
@@ -160,19 +175,18 @@ def answer(query: str) -> dict:
     top, sim = snippets[0] if snippets else (None, 0.0)
     grounded = top is not None and sim >= SIM_GATE
 
-    def _extractive():
-        return (top["answer_rw"] if lang == "rw" else top["answer_en"]) if grounded else _no_match_message(lang)
-
-    if _has_key():                                   # generative, grounded -> falls back if the call fails
-        try:
-            body = _gemini(_build_prompt(query, lang, snippets if grounded else []))
-            mode = "generative"
-        except Exception:
-            body, mode = _extractive(), "retrieval-fallback"
-    else:                                            # no key -> return the validated answer directly
-        body, mode = _extractive(), "retrieval"
+    # The generalizing model (Gemini) is the ONLY responder. We never serve the raw machine-
+    # translation drafts (that was the source of "butterflies"). If it is unavailable, say so.
+    if not _has_key():
+        return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
+                "grounded": grounded, "mode": "unavailable", "sources": []}
+    try:
+        body = _gemini(_build_prompt(query, lang, snippets if grounded else []))
+    except Exception:
+        return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
+                "grounded": grounded, "mode": "unavailable", "sources": []}
 
     text = f"{body}\n\n{DISCLAIMER.get(lang, DISCLAIMER['en'])}"
-    return {"answer": text, "language": lang, "danger": False, "grounded": grounded, "mode": mode,
+    return {"answer": text, "language": lang, "danger": False, "grounded": grounded, "mode": "generative",
             "sources": [{"topic": b["topic"], "source": b["source"], "sim": round(s, 2)}
                         for b, s in snippets]}
