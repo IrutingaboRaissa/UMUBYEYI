@@ -129,21 +129,34 @@ def _has_key() -> bool:
 
 
 def _gemini(prompt: str) -> str:
+    """Generate, resilient to transient 503/429: retry with backoff across a few models."""
+    import time
     from google import genai
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    model = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
-    resp = client.models.generate_content(model=model, contents=prompt)
-    return (resp.text or "").strip()
+    models, seen = [], set()
+    for m in (os.environ.get("GEMINI_MODEL", "gemini-flash-latest"), "gemini-2.5-flash", "gemini-2.0-flash"):
+        if m not in seen:
+            seen.add(m); models.append(m)
+    last = None
+    for attempt in range(3):
+        for m in models:
+            try:
+                txt = (client.models.generate_content(model=m, contents=prompt).text or "").strip()
+                if txt:
+                    return txt
+            except Exception as e:
+                last = e
+        time.sleep(1.2 * (attempt + 1))
+    raise last if last else RuntimeError("empty response")
 
 
-def _no_match_message(lang: str) -> str:
+def _unavailable_message(lang: str) -> str:
+    # shown only if the generative model is not configured — we never serve raw translation drafts
     if lang == "rw":
-        return ("Mbabarira — nakorewe gusa gufasha ababyeyi mu mezi 6 ya mbere nyuma yo kubyara, "
-                "ku bw'ibyo sinshobora kugufasha kuri icyo. Wambaza ku bijyanye no gukira kwawe, "
-                "kwita ku mwana, cyangwa uko wiyumva. Ku bindi bibazo, ganira n'umukozi w'ubuzima.")
-    return ("Sorry — I'm made only to help mothers in the first 6 months after giving birth, so I "
-            "can't help with that. Please ask me about your recovery, caring for your baby, or how "
-            "you're feeling. For other concerns, talk to a health worker.")
+        return ("Mbabarira, serivisi ntiboneka neza ubu. Ongera ugerageze nyuma gato. "
+                "Niba bihutirwa, hamagara 114 cyangwa ugane umukozi w'ubuzima.")
+    return ("Sorry, the assistant is not available right now. Please try again shortly. "
+            "If it is urgent, call 114 or see a health worker.")
 
 
 def answer(query: str, force_lang: str = None) -> dict:
@@ -162,19 +175,18 @@ def answer(query: str, force_lang: str = None) -> dict:
     top, sim = snippets[0] if snippets else (None, 0.0)
     grounded = top is not None and sim >= SIM_GATE
 
-    def _extractive():
-        return (top["answer_rw"] if lang == "rw" else top["answer_en"]) if grounded else _no_match_message(lang)
-
-    if _has_key():                                   # generative, grounded -> falls back if the call fails
-        try:
-            body = _gemini(_build_prompt(query, lang, snippets if grounded else []))
-            mode = "generative"
-        except Exception:
-            body, mode = _extractive(), "retrieval-fallback"
-    else:                                            # no key -> return the validated answer directly
-        body, mode = _extractive(), "retrieval"
+    # The generalizing model (Gemini) is the ONLY responder. We never serve the raw machine-
+    # translation drafts (that was the source of "butterflies"). If it is unavailable, say so.
+    if not _has_key():
+        return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
+                "grounded": grounded, "mode": "unavailable", "sources": []}
+    try:
+        body = _gemini(_build_prompt(query, lang, snippets if grounded else []))
+    except Exception:
+        return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
+                "grounded": grounded, "mode": "unavailable", "sources": []}
 
     text = f"{body}\n\n{DISCLAIMER.get(lang, DISCLAIMER['en'])}"
-    return {"answer": text, "language": lang, "danger": False, "grounded": grounded, "mode": mode,
+    return {"answer": text, "language": lang, "danger": False, "grounded": grounded, "mode": "generative",
             "sources": [{"topic": b["topic"], "source": b["source"], "sim": round(s, 2)}
                         for b, s in snippets]}
