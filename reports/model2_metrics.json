@@ -1,9 +1,0 @@
-{
-  "Model 2: MiniLM + MLP (Kinyarwanda)": {
-    "accuracy": 0.4207,
-    "precision_macro": 0.4022,
-    "recall_macro": 0.4054,
-    "f1_macro": 0.4004,
-    "_embedding": "paraphrase-multilingual-MiniLM-L12-v2"
-  }
-}
