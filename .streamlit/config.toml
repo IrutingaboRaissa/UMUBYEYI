@@ -1,9 +1,8 @@
-# Pin a light theme so the UI (and button hover) renders the same for every tester,
-# independent of their OS / browser dark-mode setting.
+# Clean, mother-facing theme — deep green, serif (Times New Roman enforced in app CSS).
 [theme]
-base = "light"
-primaryColor = "#C9719E"
-backgroundColor = "#FBEFFB"
-secondaryBackgroundColor = "#F6F2FB"
-textColor = "#4A3B57"
-font = "sans serif"
+base = "dark"
+primaryColor = "#2E7D52"
+backgroundColor = "#13211a"
+secondaryBackgroundColor = "#19281f"
+textColor = "#E8E4DA"
+font = "serif"
