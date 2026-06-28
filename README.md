@@ -41,6 +41,10 @@ You type a question in **Kinyarwanda or English**, and Umubyeyi replies **in the
 
 A **layered, retrieval-augmented-generation (RAG)** design. Safety-critical logic is deterministic and kept independent of the language model.
 
+![Umubyeyi layered system architecture](assets/system_architecture_layered.png)
+
+*Layered system architecture — tiers, components, technologies, and inter-layer protocols.*
+
 ```
 User message (Kinyarwanda or English)
    │
