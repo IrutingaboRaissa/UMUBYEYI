@@ -73,29 +73,6 @@ EXAMPLES = [
     ("Iyumva", "Numva mfite agahinda kuva nabyaye."),
 ]
 
-# --- TEMPORARY diagnostics banner (remove before final submission); shown BEFORE consent so it is always visible ---
-_in_secrets = False
-try:
-    _in_secrets = "GEMINI_API_KEY" in st.secrets
-except Exception:
-    pass
-_key = os.environ.get("GEMINI_API_KEY", "")
-try:
-    from google import genai  # noqa: F401
-    _genai_ok = True
-except Exception:
-    _genai_ok = False
-st.info(
-    f"DIAGNOSTICS · key in secrets: {_in_secrets} · key in environment: {bool(_key)} "
-    f"({'len ' + str(len(_key)) if _key else 'none'}) · google-genai import: {'OK' if _genai_ok else 'FAILED'}"
-)
-if st.button("Run test generation"):
-    try:
-        _out = rag.answer("hello")
-        st.success(f"mode: {_out.get('mode')} — {_out.get('answer','')[:200]}")
-    except Exception as _e:
-        st.error(f"test FAILED: {str(_e)[:200]}")
-
 # ---------------- consent gate ----------------
 if not st.session_state.get("consented"):
     st.markdown('<div class="apphead"><div class="t">Umubyeyi</div>'
