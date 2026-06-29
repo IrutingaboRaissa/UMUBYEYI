@@ -114,30 +114,28 @@ with st.sidebar:
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
     view = st.radio("nav", ["Ikiganiro · Chat", "Ingero · Examples", "Ibyerekeye · About"], label_visibility="collapsed")
 
-    # --- TEMPORARY diagnostics (remove before final submission) ---
-    with st.expander("Diagnostics"):
-        in_secrets = False
-        try:
-            in_secrets = "GEMINI_API_KEY" in st.secrets
-        except Exception as _e:
-            st.write(f"st.secrets error: {_e}")
-        key = os.environ.get("GEMINI_API_KEY", "")
-        st.write("key in st.secrets:", in_secrets)
-        st.write("key in environment:", bool(key))
-        if key:
-            st.write("key length:", len(key), "· starts:", key[:4])
-        try:
-            from google import genai  # noqa: F401
-            st.write("google-genai import: OK")
-        except Exception as _e:
-            st.write("google-genai import FAILED:", str(_e)[:120])
-        if st.button("Test generation"):
-            try:
-                out = rag.answer("hello")
-                st.write("mode:", out.get("mode"))
-                st.write(out.get("answer", "")[:200])
-            except Exception as _e:
-                st.write("test FAILED:", str(_e)[:200])
+# --- TEMPORARY diagnostics banner at the TOP of the page (remove before final submission) ---
+_in_secrets = False
+try:
+    _in_secrets = "GEMINI_API_KEY" in st.secrets
+except Exception:
+    pass
+_key = os.environ.get("GEMINI_API_KEY", "")
+try:
+    from google import genai  # noqa: F401
+    _genai_ok = True
+except Exception:
+    _genai_ok = False
+st.info(
+    f"DIAGNOSTICS · key in secrets: {_in_secrets} · key in environment: {bool(_key)} "
+    f"({'len ' + str(len(_key)) if _key else 'none'}) · google-genai import: {'OK' if _genai_ok else 'FAILED'}"
+)
+if st.button("Run test generation"):
+    try:
+        _out = rag.answer("hello")
+        st.success(f"mode: {_out.get('mode')} — {_out.get('answer','')[:200]}")
+    except Exception as _e:
+        st.error(f"test FAILED: {str(_e)[:200]}")
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
