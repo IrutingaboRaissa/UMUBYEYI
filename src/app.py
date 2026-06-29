@@ -21,6 +21,10 @@ st.markdown("""
 <style>
 html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="stSidebar"] *{
   font-family:'Times New Roman', Times, serif !important;}
+/* keep Streamlit's icon font on icon elements, or icon names render as raw text (e.g. "keyboard_double_arrow_right") */
+[data-testid="stIconMaterial"], span.material-icons, span.material-icons-outlined,
+.material-symbols-outlined, [class*="material-icons"], [class*="material-symbols"], i.material-icons{
+  font-family:'Material Symbols Outlined','Material Symbols Rounded','Material Icons' !important;}
 [data-testid="stAppViewContainer"]{background:#13211a;}
 .block-container{max-width:760px;padding-top:2rem;padding-bottom:5rem;}
 [data-testid="stSidebar"]{background:#102017;border-right:1px solid #1d3528;}
@@ -60,6 +64,22 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 .about{background:#19281f;border:1px solid #29412f;border-radius:14px;padding:18px 20px;color:#D8E6DD;
   font-size:15px;line-height:1.7;}
 .about b{color:#fff;} .about .h{color:#E9C46A;font-size:13px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+
+/* ---- responsive: phones & small screens ---- */
+@media (max-width:640px){
+  .block-container{max-width:100%;padding-left:0.8rem;padding-right:0.8rem;padding-top:1rem;padding-bottom:4rem;}
+  .apphead{margin-bottom:14px;}
+  .apphead .t{font-size:23px;}
+  .apphead .s{font-size:13px;}
+  .bubble{max-width:92%;font-size:15px;padding:11px 14px;line-height:1.55;}
+  .about{padding:14px 15px;font-size:14px;line-height:1.6;}
+  .exhint{font-size:13px;}
+  .stTextInput input{font-size:16px !important;}  /* >=16px stops iOS Safari auto-zoom on focus */
+}
+@media (max-width:380px){
+  .apphead .t{font-size:20px;}
+  .bubble{font-size:14.5px;}
+}
 </style>
 """, unsafe_allow_html=True)
 
