@@ -142,8 +142,9 @@ def _gemini(prompt: str) -> str:
     from google import genai
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     models, seen = [], set()
-    for m in (os.environ.get("GEMINI_MODEL", "gemini-flash-latest"), "gemini-2.5-flash", "gemini-2.0-flash"):
-        if m not in seen:
+    for m in (os.environ.get("GEMINI_MODEL", "gemini-2.5-flash"), "gemini-2.5-flash",
+              "gemini-flash-lite-latest", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-2.0-flash"):
+        if m and m not in seen:
             seen.add(m); models.append(m)
     last = None
     for attempt in range(3):
