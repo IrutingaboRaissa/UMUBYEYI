@@ -114,29 +114,6 @@ with st.sidebar:
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
     view = st.radio("nav", ["Ikiganiro · Chat", "Ingero · Examples", "Ibyerekeye · About"], label_visibility="collapsed")
 
-# --- TEMPORARY diagnostics banner at the TOP of the page (remove before final submission) ---
-_in_secrets = False
-try:
-    _in_secrets = "GEMINI_API_KEY" in st.secrets
-except Exception:
-    pass
-_key = os.environ.get("GEMINI_API_KEY", "")
-try:
-    from google import genai  # noqa: F401
-    _genai_ok = True
-except Exception:
-    _genai_ok = False
-st.info(
-    f"DIAGNOSTICS · key in secrets: {_in_secrets} · key in environment: {bool(_key)} "
-    f"({'len ' + str(len(_key)) if _key else 'none'}) · google-genai import: {'OK' if _genai_ok else 'FAILED'}"
-)
-if st.button("Run test generation"):
-    try:
-        _out = rag.answer("hello")
-        st.success(f"mode: {_out.get('mode')} — {_out.get('answer','')[:200]}")
-    except Exception as _e:
-        st.error(f"test FAILED: {str(_e)[:200]}")
-
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
     st.markdown('<div class="apphead"><div class="t">Umubyeyi</div>'
