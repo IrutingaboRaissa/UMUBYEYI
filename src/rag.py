@@ -86,9 +86,16 @@ def retrieve(text: str, k: int = TOP_K):
     return [(BANK[i], float(sims[i])) for i in idx]
 
 
-def _build_prompt(query: str, lang: str, snippets) -> str:
+def _build_prompt(query: str, lang: str, snippets, history=None) -> str:
     lang_name = "Kinyarwanda" if lang == "rw" else "English"
     facts = "\n".join(f"- {b['answer_en']}" for b, _ in snippets) or "(no specific validated information for this question)"
+    convo = ""
+    if history:
+        turns = [("Mother" if h.get("role") == "user" else "Assistant", (h.get("text") or "").strip())
+                 for h in history[-6:] if (h.get("text") or "").strip()]
+        if turns:
+            convo = ("Conversation so far (most recent last) — use it for context, do not repeat yourself:\n"
+                     + "\n".join(f"{who}: {t}" for who, t in turns) + "\n\n")
     return (
         "You are Umubyeyi, a warm, friendly assistant for first-time mothers in Rwanda, focused on "
         "the first 6 months (0-6mo) after giving birth: newborn care, feeding, physical recovery, "
@@ -110,7 +117,8 @@ def _build_prompt(query: str, lang: str, snippets) -> str:
         "health centre or a local health worker.\n"
         f"- Be brief (1-4 sentences), kind, and reply in {lang_name}.\n\n"
         f"Validated information:\n{facts}\n\n"
-        f"Mother's question: {query}\n\n"
+        f"{convo}"
+        f"The mother now says: {query}\n\n"
         f"Your answer (in {lang_name}):"
     )
 
@@ -134,8 +142,9 @@ def _gemini(prompt: str) -> str:
     from google import genai
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     models, seen = [], set()
-    for m in (os.environ.get("GEMINI_MODEL", "gemini-flash-latest"), "gemini-2.5-flash", "gemini-2.0-flash"):
-        if m not in seen:
+    for m in (os.environ.get("GEMINI_MODEL", "gemini-2.5-flash"), "gemini-2.5-flash",
+              "gemini-flash-lite-latest", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-2.0-flash"):
+        if m and m not in seen:
             seen.add(m); models.append(m)
     last = None
     for attempt in range(3):
@@ -151,27 +160,24 @@ def _gemini(prompt: str) -> str:
 
 
 def _unavailable_message(lang: str) -> str:
-    # shown only if the generative model is not configured — we never serve raw translation drafts
+    # temporary generation hiccup (e.g. model busy) — honest, not a policy refusal, not raw drafts
     if lang == "rw":
-        return ("Mbabarira, serivisi ntiboneka neza ubu. Ongera ugerageze nyuma gato. "
-                "Niba bihutirwa, hamagara 114 cyangwa ugane umukozi w'ubuzima.")
-    return ("Sorry, the assistant is not available right now. Please try again shortly. "
-            "If it is urgent, call 114 or see a health worker.")
+        return ("Mbabarira, sinabashije gutegura igisubizo kuri ubu. Ongera ugerageze nyuma y'akanya gato. "
+                "Niba bihutirwa cyangwa ufite impungenge, hamagara 114 cyangwa ugane umukozi w'ubuzima.")
+    return ("Sorry, I couldn't put together an answer just now — please try again in a moment. "
+            "If it's urgent or you're worried, call 114 or see a health worker.")
 
 
-def answer(query: str, force_lang: str = None) -> dict:
+def answer(query: str, force_lang: str = None, history=None) -> dict:
     """Return {answer, language, danger, grounded, mode, sources}.
-    Generative (Gemini) if a key is set; otherwise extractive (returns the validated answer).
-    force_lang ('en'/'rw') overrides auto-detection."""
+    The generalizing model (Gemini) is the responder; `history` (recent turns) gives it context so
+    it stays coherent and does not loop. force_lang ('en'/'rw') overrides auto-detection."""
     lang = force_lang if force_lang in ("en", "rw") else detect_language(query)
-    if is_danger(query):
+    if is_danger(query):                             # deterministic safety path, independent of the model
         return {"answer": _crisis_message(lang), "language": lang, "danger": True,
                 "grounded": False, "mode": "safety", "sources": []}
-    if is_greeting(query):                           # warm hello (works in any mode, no disclaimer)
-        return {"answer": _greeting_reply(lang), "language": lang, "danger": False,
-                "grounded": False, "mode": "greeting", "sources": []}
 
-    snippets = retrieve(query)
+    snippets = retrieve(query)                       # greetings/small talk fall through to the model (with history)
     top, sim = snippets[0] if snippets else (None, 0.0)
     grounded = top is not None and sim >= SIM_GATE
 
@@ -181,7 +187,7 @@ def answer(query: str, force_lang: str = None) -> dict:
         return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
                 "grounded": grounded, "mode": "unavailable", "sources": []}
     try:
-        body = _gemini(_build_prompt(query, lang, snippets if grounded else []))
+        body = _gemini(_build_prompt(query, lang, snippets if grounded else [], history))
     except Exception:
         return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
                 "grounded": grounded, "mode": "unavailable", "sources": []}
