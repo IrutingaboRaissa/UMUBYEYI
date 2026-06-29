@@ -114,6 +114,31 @@ with st.sidebar:
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
     view = st.radio("nav", ["Ikiganiro · Chat", "Ingero · Examples", "Ibyerekeye · About"], label_visibility="collapsed")
 
+    # --- TEMPORARY diagnostics (remove before final submission) ---
+    with st.expander("Diagnostics"):
+        in_secrets = False
+        try:
+            in_secrets = "GEMINI_API_KEY" in st.secrets
+        except Exception as _e:
+            st.write(f"st.secrets error: {_e}")
+        key = os.environ.get("GEMINI_API_KEY", "")
+        st.write("key in st.secrets:", in_secrets)
+        st.write("key in environment:", bool(key))
+        if key:
+            st.write("key length:", len(key), "· starts:", key[:4])
+        try:
+            from google import genai  # noqa: F401
+            st.write("google-genai import: OK")
+        except Exception as _e:
+            st.write("google-genai import FAILED:", str(_e)[:120])
+        if st.button("Test generation"):
+            try:
+                out = rag.answer("hello")
+                st.write("mode:", out.get("mode"))
+                st.write(out.get("answer", "")[:200])
+            except Exception as _e:
+                st.write("test FAILED:", str(_e)[:200])
+
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
     st.markdown('<div class="apphead"><div class="t">Umubyeyi</div>'
