@@ -10,6 +10,7 @@ Used by both the Streamlit app and the FastAPI backend (src/api.py).
 """
 import json
 import os
+import sys
 import re
 from pathlib import Path
 
@@ -184,11 +185,13 @@ def answer(query: str, force_lang: str = None, history=None) -> dict:
     # The generalizing model (Gemini) is the ONLY responder. We never serve the raw machine-
     # translation drafts (that was the source of "butterflies"). If it is unavailable, say so.
     if not _has_key():
+        print("[umubyeyi] GEMINI_API_KEY missing in environment -> fallback", file=sys.stderr, flush=True)
         return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
                 "grounded": grounded, "mode": "unavailable", "sources": []}
     try:
         body = _gemini(_build_prompt(query, lang, snippets if grounded else [], history))
-    except Exception:
+    except Exception as e:
+        print(f"[umubyeyi] generation failed -> {type(e).__name__}: {str(e)[:300]}", file=sys.stderr, flush=True)
         return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
                 "grounded": grounded, "mode": "unavailable", "sources": []}
 
