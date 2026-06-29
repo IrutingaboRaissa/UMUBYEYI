@@ -116,7 +116,9 @@ def _build_prompt(query: str, lang: str, snippets, history=None) -> str:
         "- This assistant is for mothers in Rwanda. Do not reference other countries. For anything "
         "location-specific (helplines, clinics, services), advise her to contact her nearest Rwandan "
         "health centre or a local health worker.\n"
-        f"- Be brief (1-4 sentences), kind, and reply in {lang_name}.\n\n"
+        f"- Be brief (1-4 sentences), kind, and reply in {lang_name}.\n"
+        "- Do NOT add your own disclaimer or 'this is general information / not medical advice' note; "
+        "a disclaimer is appended automatically.\n\n"
         f"Validated information:\n{facts}\n\n"
         f"{convo}"
         f"The mother now says: {query}\n\n"
@@ -160,6 +162,24 @@ def _gemini(prompt: str) -> str:
     raise last if last else RuntimeError("empty response")
 
 
+_DISCLAIMER_MARKERS = (
+    "general information", "not medical advice", "talk to a health worker",
+    "amakuru rusange", "si inama z'ubuvuzi", "vugana n'umuganga",
+)
+
+
+def _strip_disclaimer(text: str) -> str:
+    """Remove a trailing disclaimer the model may have added, so we don't show it twice."""
+    lines = [ln for ln in text.strip().splitlines()]
+    while lines:
+        low = lines[-1].lower()
+        if low.strip() and any(m in low for m in _DISCLAIMER_MARKERS):
+            lines.pop()
+        else:
+            break
+    return "\n".join(lines).strip()
+
+
 def _unavailable_message(lang: str) -> str:
     # temporary generation hiccup (e.g. model busy) — honest, not a policy refusal, not raw drafts
     if lang == "rw":
@@ -195,6 +215,7 @@ def answer(query: str, force_lang: str = None, history=None) -> dict:
         return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
                 "grounded": grounded, "mode": "unavailable", "sources": []}
 
+    body = _strip_disclaimer(body)                    # drop any disclaimer the model added; we append the canonical one
     text = f"{body}\n\n{DISCLAIMER.get(lang, DISCLAIMER['en'])}"
     return {"answer": text, "language": lang, "danger": False, "grounded": grounded, "mode": "generative",
             "sources": [{"topic": b["topic"], "source": b["source"], "sim": round(s, 2)}
