@@ -83,14 +83,15 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 </style>
 """, unsafe_allow_html=True)
 
-GREETING = ("Muraho, mama. Ndi hano kugufasha mu mezi 6 ya mbere nyuma yo kubyara — "
-            "ku buzima bwawe n'ubw'umwana. Wambaza icyo ushaka, mu Kinyarwanda cyangwa Icyongereza.")
+GREETING = ("Muraho, mama. Ndi hano kugufasha ku byo wiyumva mu mezi 6 ya mbere nyuma yo kubyara — "
+            "agahinda, guhangayika, kunanirwa, cyangwa kumva uri wenyine. Wambwira uko umeze uyu munsi, "
+            "mu Kinyarwanda cyangwa Icyongereza.")
 
 EXAMPLES = [
-    ("Umwana", "Umwana wanjye ararira cyane nijoro, nakora iki?"),
-    ("Konsa", "Nkonsa umwana wanjye inshuro zingahe?"),
-    ("Gukira", "Nshobora gutangira kugenda ryari nyuma yo kubagwa?"),
-    ("Iyumva", "Numva mfite agahinda kuva nabyaye."),
+    ("Agahinda", "Numva mfite agahinda kuva nabyaye."),
+    ("Guhangayika", "Mfite ubwoba n'guhangayika ku kuba mama bushya."),
+    ("Kunanirwa", "Numva nananiwe cyane kandi ndi wenyine."),
+    ("Kudasinzira", "Sinshobora gusinzira nubwo umwana asinziriye."),
 ]
 
 # ---------------- consent gate ----------------
@@ -98,8 +99,11 @@ if not st.session_state.get("consented"):
     st.markdown('<div class="apphead"><div class="t">Umubyeyi</div>'
                 '<div class="s">Umufasha wawe nyuma yo kubyara · a companion after birth</div></div>', unsafe_allow_html=True)
     st.markdown('<div class="about"><div class="h">Mbere yo gutangira · Before you start</div>'
-                'Iyi ni porogaramu y\'ubushakashatsi, si serivisi y\'ubuvuzi. Amakuru ni rusange. '
-                '<i>This is a research prototype, not medical care; information is general.</i><br><br>'
+                'Umubyeyi akugufasha ku byo wiyumva nyuma yo kubyara (agahinda, guhangayika, kunanirwa). '
+                'Si serivisi y\'ubuvuzi, kandi ntiyita ku bibazo by\'umubiri cyangwa byo kwita ku mwana — '
+                'ku byo, ganira n\'umukozi w\'ubuzima. <i>Umubyeyi supports how you feel after birth. It is '
+                'not medical care and does not cover physical or baby-care questions — please see a health '
+                'worker for those.</i><br><br>'
                 f'Niba uri mu kaga, hamagara: <b style="color:#E9C46A">{rag.CRISIS_LINE}</b>. '
                 'Ntukandike amazina cyangwa amakuru akuranga.</div>', unsafe_allow_html=True)
     st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
@@ -160,21 +164,21 @@ elif view.startswith("Ingero"):
     st.markdown('<div class="apphead"><div class="t">Ingero z\'ibibazo</div>'
                 '<div class="s">Example questions you can ask</div></div>', unsafe_allow_html=True)
     groups = {
-        "Kwita ku mwana · Newborn care": [
-            "Umwana wanjye ararira cyane nijoro, nakora iki?",
-            "Umwana wanjye afite umuriro, nkore iki?",
-            "Nita nte ku rugingo rw'umwana (cord)?"],
-        "Konsa · Breastfeeding": [
-            "Nkonsa umwana inshuro zingahe ku munsi?",
-            "Numva amata yanjye ntahagije, nakora iki?"],
-        "Gukira kwawe · Your recovery": [
-            "Kuva nyuma yo kubyara bisanzwe ni bingahe?",
-            "Nshobora gutangira imyitozo ryari nyuma yo kubagwa?"],
-        "Uko wiyumva · How you feel": [
+        "Agahinda · Sadness & low mood": [
             "Numva mfite agahinda kuva nabyaye.",
-            "Numva ndushye cyane kandi ndi wenyine."],
-        "Kuboneza urubyaro · Family planning": [
-            "Nshobora gutangira kuboneza urubyaro ryari nyuma yo kubyara?"],
+            "Sinkunda ibyo nakundaga, kandi ndarira kenshi."],
+        "Guhangayika · Anxiety & worry": [
+            "Mfite ubwoba n'guhangayika ku kuba mama bushya.",
+            "Ntekereza cyane ko ntazabasha kwita ku mwana."],
+        "Kunanirwa · Feeling overwhelmed": [
+            "Numva nananiwe cyane kandi ndi wenyine.",
+            "Byose biranyemera, sinzi aho ngomba gutangirira."],
+        "Kudasinzira · Exhaustion & sleep": [
+            "Sinshobora gusinzira nubwo umwana asinziriye.",
+            "Kubura ibitotsi biri kunyangiza umutwe."],
+        "Guhangana · Coping & support": [
+            "Nakora iki ngo niyumve neza gato?",
+            "Numva ndi wenyine, nta wundi mfite."],
     }
     html = '<div class="about">'
     for g, qs in groups.items():
@@ -186,11 +190,13 @@ else:  # About
     st.markdown('<div class="apphead"><div class="t">Ibyerekeye Umubyeyi</div>'
                 '<div class="s">About</div></div>', unsafe_allow_html=True)
     st.markdown('<div class="about">'
-                '<b>Umubyeyi</b> ni umufasha uvuga Ikinyarwanda n\'Icyongereza, ufasha ababyeyi '
-                'mu mezi 6 ya mbere nyuma yo kubyara — ku buzima bwabo n\'ubw\'abana babo.<br><br>'
-                '<i>Umubyeyi is a bilingual (Kinyarwanda / English) companion for first-time mothers during '
-                'the first 6 months after birth. It answers your questions with safe, general information and '
-                'always reminds you to see a health worker when needed.</i>'
+                '<b>Umubyeyi</b> ni umufasha uvuga Ikinyarwanda n\'Icyongereza, witeguye kugufasha ku byo '
+                'wiyumva mu mezi 6 ya mbere nyuma yo kubyara — agahinda, guhangayika, kunanirwa, kumva uri '
+                'wenyine, no guhangana. Ntiyita ku bibazo by\'umubiri cyangwa byo kwita ku mwana.<br><br>'
+                '<i>Umubyeyi is a bilingual (Kinyarwanda / English) companion for the emotional wellbeing of '
+                'first-time mothers in the first 6 months after birth — sadness, anxiety, feeling overwhelmed, '
+                'loneliness, and coping. It does not cover medical or baby-care questions, and always reminds '
+                'you to see a health worker when needed.</i>'
                 f'<div class="disc" style="color:#9FBCA8;border-color:#29412f">Si serivisi y\'ubuvuzi. '
                 f'Niba uri mu kaga, hamagara {rag.CRISIS_LINE}. · Not medical care; in a crisis call {rag.CRISIS_LINE}.</div>'
                 '</div>', unsafe_allow_html=True)
