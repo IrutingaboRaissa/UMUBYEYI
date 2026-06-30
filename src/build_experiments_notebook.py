@@ -9,24 +9,30 @@ import nbformat as nbf
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "notebooks" / "umubyeyi_experiments.ipynb"
+OUT = ROOT / "notebooks" / "umubyeyi.ipynb"
 nb = nbf.v4.new_notebook()
 cells = []
 def md(t): cells.append(nbf.v4.new_markdown_cell(t))
 def code(t): cells.append(nbf.v4.new_code_cell(t))
 
-md("""# Umubyeyi — Classification Experiments (Analysis)
+md("""# Umubyeyi — Analysis & Experiments (single notebook)
 
-A systematic sweep over **hyperparameters and optimization techniques** for the 6-intent
-postpartum **emotional-wellbeing** classification task, on the labelled Amod data, plus a
-retrieval check on the updated 859-pair grounding bank used by the product.
+The complete analysis for the Umubyeyi postpartum **emotional-wellbeing** assistant, in one
+runnable notebook:
+
+1. **Data exploration** of the 6-intent labelled set
+2. A systematic **hyperparameter + optimization sweep** (10 experiments) with **loss curves**
+   and rich visuals — regularization, features, resampling, boosting, optimizer behaviour,
+   calibration/selective prediction, cross-validation
+3. **Cross-lingual degradation** — English vs machine-translated Kinyarwanda (the contribution)
+4. *(Optional)* a **transformer fine-tune** arm (needs a GPU runtime; skips cleanly otherwise)
+5. **Retrieval coverage** on the updated 859-pair grounding bank used by the product
 
 **Goal:** not to "win" a metric (the ceiling is the weak keyword labels, shown across every
-model) but to demonstrate rigorous ML methodology — regularization, feature engineering,
-resampling, boosting, optimizer/learning-rate behaviour (with **loss curves**), calibration,
-and proper cross-validation — and to isolate the bottleneck.
+model) but to demonstrate rigorous ML methodology and isolate the bottleneck.
 
-Runs top-to-bottom on **Google Colab** (CPU). `Runtime -> Run all`.""")
+Runs top-to-bottom on **Google Colab** (CPU is enough; set GPU only for the optional
+transformer cell). `Runtime -> Run all`.""")
 
 md("## 0. Dependencies")
 code("""import subprocess, sys
@@ -325,6 +331,78 @@ ConfusionMatrixDisplay(confusion_matrix(yte, pred, labels=rf.classes_),
                        display_labels=rf.classes_).plot(ax=ax, xticks_rotation=45, cmap="Greens", colorbar=False)
 plt.title("Confusion matrix — Random Forest"); plt.tight_layout(); plt.show()
 print(classification_report(yte, pred))""")
+
+md("""## Cross-lingual degradation — English vs machine-translated Kinyarwanda
+
+The project's central contribution: the **same model and labels**, trained and tested on the
+original English questions vs their machine-translated Kinyarwanda (`context_rw`). The drop is
+the measured cost of translation in this low-resource setting.""")
+code("""deg = {}
+for lang, col in [("English", "Context"), ("Kinyarwanda (MT)", "context_rw")]:
+    Xl = df[col].astype(str).str.strip().values
+    Xtr_l, Xte_l, ytr_l, yte_l = train_test_split(Xl, y, test_size=0.2, stratify=y, random_state=SEED)
+    pipe = Pipeline([("vec", make_vec()),
+                     ("clf", LinearSVC(C=1, class_weight="balanced"))]).fit(Xtr_l, ytr_l)
+    p = pipe.predict(Xte_l)
+    deg[lang] = (accuracy_score(yte_l, p), f1_score(yte_l, p, average="macro"))
+    record("Degradation", lang, deg[lang][0], deg[lang][1])
+dF1 = deg["English"][1] - deg["Kinyarwanda (MT)"][1]
+print(f"\\nDelta macro-F1 (EN - RW) = {dF1:.3f}  ({dF1/deg['English'][1]*100:.0f}% relative drop)")
+plt.figure(figsize=(5.5, 3.8))
+sns.barplot(x=list(deg), y=[deg[l][1] for l in deg], palette=["#2E7D52", "#C75B45"])
+plt.ylabel("macro-F1"); plt.title("Cross-lingual degradation (EN vs RW-MT)")
+plt.tight_layout(); plt.show()""")
+
+md("""## (Optional) Transformer fine-tune — needs a GPU runtime
+
+A negative-result arm: fine-tune a small multilingual transformer on the same task. Set
+**Runtime -> Change runtime type -> GPU** first. This cell is fully guarded — on CPU (or if
+anything is unavailable) it prints a message and skips, so it can never break a `Run all`.
+
+*Prior runs (for reference): AfroXLMR fine-tune macro-F1 ~0.24, AfriBERTa ~0.45 — both below
+the classical models, because transformers overfit ~580 weakly-labelled examples.*""")
+code("""try:
+    import subprocess, sys
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q",
+                    "transformers", "torch", "datasets", "accelerate"], check=False)
+    import numpy as np, torch
+    if not torch.cuda.is_available():
+        print("No GPU detected -> skipping transformer fine-tune (Runtime -> GPU to enable).")
+    else:
+        from datasets import Dataset
+        from sklearn.preprocessing import LabelEncoder
+        from transformers import (AutoTokenizer, AutoModelForSequenceClassification,
+                                  TrainingArguments, Trainer, DataCollatorWithPadding)
+        MODEL = "Davlan/afro-xlmr-mini"
+        le = LabelEncoder().fit(y)
+        Xtr2, Xte2, ytr2, yte2 = train_test_split(X, le.transform(y), test_size=0.2,
+                                                  stratify=y, random_state=SEED)
+        tok = AutoTokenizer.from_pretrained(MODEL)
+        def mk(texts, labels):
+            d = Dataset.from_dict({"text": list(texts), "label": list(labels)})
+            return d.map(lambda b: tok(b["text"], truncation=True, max_length=64), batched=True)
+        dtr, dte = mk(Xtr2, ytr2), mk(Xte2, yte2)
+        model = AutoModelForSequenceClassification.from_pretrained(MODEL, num_labels=len(le.classes_))
+        args = TrainingArguments(output_dir="/tmp/tf", num_train_epochs=4,
+                                 per_device_train_batch_size=16, per_device_eval_batch_size=32,
+                                 learning_rate=2e-5, logging_steps=10, report_to=[],
+                                 eval_strategy="epoch", save_strategy="no")
+        import numpy as _np
+        def metrics(ep):
+            logits, labels = ep
+            pred = _np.argmax(logits, axis=1)
+            return {"accuracy": accuracy_score(labels, pred),
+                    "macro_f1": f1_score(labels, pred, average="macro")}
+        tr = Trainer(model=model, args=args, train_dataset=dtr, eval_dataset=dte,
+                     tokenizer=tok, data_collator=DataCollatorWithPadding(tok),
+                     compute_metrics=metrics)
+        tr.train()
+        m = tr.evaluate()
+        record("Transformer", MODEL, m.get("eval_accuracy", 0), m.get("eval_macro_f1", 0),
+               "fine-tuned")
+        print("transformer:", m)
+except Exception as e:
+    print("Transformer arm skipped:", repr(e)[:200])""")
 
 md("## Product tie-in — retrieval coverage on the updated 859-pair grounding bank")
 code("""import json
