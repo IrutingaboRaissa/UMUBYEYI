@@ -92,6 +92,13 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 .bubble.me{background:linear-gradient(135deg,#2E7D52,#276b45);color:#fff;border-bottom-right-radius:6px;}
 .bubble.danger{background:#F7E6E1;color:#7A2E22;border-left:4px solid #C75B45;}
 .disc{margin-top:9px;padding-top:8px;border-top:1px dashed #d9cfa8;font-size:12px;color:#9a8f6f;}
+/* translation shown under the answer, in a distinct colour so either-language speakers follow */
+.trans{margin-top:10px;padding-top:9px;border-top:1px solid #e3d9c4;color:#2f6d80;font-size:14px;line-height:1.55;}
+.trans .tl{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#9aa79b;
+  margin-bottom:3px;font-weight:700;}
+/* wellness-scope note under the header */
+.scopebar{background:#16261d;border:1px solid #243c2d;border-radius:12px;padding:9px 13px;margin:-4px 0 16px;
+  font-size:12.5px;line-height:1.5;color:#9FBCA8;}
 
 /* suggestion chips */
 .exhint{color:#8FB09C;font-size:13.5px;margin:4px 0 10px;font-weight:500;}
@@ -172,8 +179,8 @@ if not st.session_state.get("consented"):
         st.session_state.consented = True; st.rerun()
     st.stop()
 
-# ---------- on-device memory (browser localStorage only; nothing leaves the device) ----------
-STORE_KEY = "umubyeyi_thread_v1"
+# ---------- on-device history (browser localStorage only; nothing leaves the device) ----------
+STORE_KEY = "umubyeyi_threads_v1"
 GREETING_MSG = {"role": "bot", "text": GREETING, "danger": False}
 _localS = None
 if PERSIST:
@@ -183,12 +190,16 @@ if PERSIST:
         _localS = None
 
 
+def _new_thread():
+    return {"id": uuid.uuid4().hex[:12], "title": "", "ts": int(time.time()), "msgs": [dict(GREETING_MSG)]}
+
+
 def _persist():
-    """Write the current thread to the browser, only when it changed."""
+    """Write all chats to the browser, only when they changed (nothing goes to a server)."""
     if not _localS:
         return
     try:
-        payload = json.dumps(st.session_state.msgs, ensure_ascii=False)
+        payload = json.dumps(st.session_state.threads, ensure_ascii=False)
         if st.session_state.get("_saved") != payload:
             _localS.setItem(STORE_KEY, payload, key="ls_set")
             st.session_state._saved = payload
@@ -196,52 +207,72 @@ def _persist():
         pass
 
 
-if "msgs" not in st.session_state:
-    st.session_state.msgs = [GREETING_MSG]
-    st.session_state._restored = not bool(_localS)   # nothing to restore without persistence
+if "threads" not in st.session_state:
+    st.session_state.threads = [_new_thread()]
+    st.session_state.current_id = st.session_state.threads[0]["id"]
+    st.session_state._hydrated = not bool(_localS)
 
-# a returning user's saved thread loads once (the browser resolves it on the first rerun)
-if _localS and not st.session_state.get("_restored"):
+# a returning user's saved chats load once (the browser resolves them on the first rerun)
+if _localS and not st.session_state.get("_hydrated"):
     try:
         raw = _localS.getItem(STORE_KEY)
         if raw is not None:
             data = json.loads(raw)
             if isinstance(data, list) and data:
-                st.session_state.msgs = data
-            st.session_state._restored = True
+                st.session_state.threads = data
+                st.session_state.current_id = data[0]["id"]
+            st.session_state._hydrated = True
     except Exception:
-        st.session_state._restored = True
-
+        st.session_state._hydrated = True
 
 if "sid" not in st.session_state:
     st.session_state.sid = uuid.uuid4().hex[:16]   # anonymous per-session id (not tied to any identity)
 
 
-def ask(text, force=None):
-    st.session_state._restored = True   # once she interacts, stop trying to restore old state
-    history = [{"role": m["role"], "text": m["text"]} for m in st.session_state.msgs]  # prior turns for context
-    st.session_state.msgs.append({"role": "user", "text": text})
+def _cur():
+    for t in st.session_state.threads:
+        if t["id"] == st.session_state.current_id:
+            return t
+    return st.session_state.threads[0]
+
+
+def ask(text):
+    t = _cur()
+    msgs = t["msgs"]
+    history = [{"role": m["role"], "text": m["text"]} for m in msgs]   # prior turns for context
+    msgs.append({"role": "user", "text": text})
+    if not t["title"]:
+        t["title"] = text.strip()[:36]
     try:
         t0 = time.time()
-        r = rag.answer(text, force_lang=force, history=history)
+        r = rag.answer(text, history=history)
         latency = int((time.time() - t0) * 1000)
-        st.session_state.msgs.append({"role": "bot", "text": r["answer"], "danger": r.get("danger", False)})
-        # anonymous analytics only — NO message text is stored
-        if db:
+        msgs.append({"role": "bot", "text": r["answer"], "danger": r.get("danger", False),
+                     "translation": r.get("translation"), "tlang": r.get("translation_language")})
+        if db:   # anonymous analytics only — NO message text is stored
             top = r.get("sources") or []
             db.log_event(st.session_state.sid, r.get("language"), r.get("mode"),
                          r.get("grounded"), (top[0]["sim"] if top else 0.0), latency)
         st.session_state._last = {"lang": r.get("language"), "mode": r.get("mode")}
         st.session_state._rated = False
     except Exception as e:
-        st.session_state.msgs.append({"role": "bot", "text": f"Mbabarira, hari ikibazo. ({e})", "danger": False})
+        msgs.append({"role": "bot", "text": f"Mbabarira, hari ikibazo. ({e})", "danger": False})
+    # bring the active chat to the top of the recent list
+    st.session_state.threads = [t] + [x for x in st.session_state.threads if x["id"] != t["id"]]
+
+
+TLABEL = {"en": "English", "rw": "Kinyarwanda"}
 
 
 def bubble(m):
     if m["role"] == "user":
         return f'<div class="row me"><div class="bubble me">{m["text"]}</div></div>'
     cls = "bubble bot danger" if m.get("danger") else "bubble bot"
-    return f'<div class="row"><div class="av">U</div><div class="{cls}">{m["text"]}</div></div>'
+    inner = m["text"]
+    if m.get("translation"):
+        inner += (f'<div class="trans"><span class="tl">{TLABEL.get(m.get("tlang"), "")}</span>'
+                  f'{m["translation"]}</div>')
+    return f'<div class="row"><div class="av">U</div><div class="{cls}">{inner}</div></div>'
 
 
 with st.sidebar:
@@ -254,14 +285,22 @@ with st.sidebar:
     if admin:
         nav_items.append("Imibare · Insights")
     view = st.radio("nav", nav_items, label_visibility="collapsed")
-    st.markdown('<div class="sblbl">Ururimi · Language</div>', unsafe_allow_html=True)
-    pref = st.selectbox("lang", ["Auto", "RW", "EN"], label_visibility="collapsed")
     st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
     if st.button("＋ Ikiganiro gishya · New chat", use_container_width=True):
-        st.session_state.msgs = [GREETING_MSG]
-        st.session_state._restored = True
-        st.session_state._saved = None      # force the stored thread to be overwritten
+        nt = _new_thread()
+        st.session_state.threads = [nt] + st.session_state.threads
+        st.session_state.current_id = nt["id"]
+        st.session_state._saved = None      # force the store to be rewritten
         st.rerun()
+    # recent chats (on-device history) — click one to reopen it
+    _has_history = len(st.session_state.threads) > 1 or bool(st.session_state.threads[0]["title"])
+    if _has_history:
+        st.markdown('<div class="sblbl">Ibiganiro · Recent</div>', unsafe_allow_html=True)
+        for t in st.session_state.threads[:25]:
+            title = t["title"] or "Ikiganiro gishya · New chat"
+            mark = "•  " if t["id"] == st.session_state.current_id else ""
+            if st.button(mark + title, key=f"th_{t['id']}", use_container_width=True):
+                st.session_state.current_id = t["id"]; st.rerun()
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
@@ -269,12 +308,16 @@ if view.startswith("Ikiganiro"):
                 '<div class="t">Umubyeyi</div>'
                 '<div class="s"><span class="dot"></span>Wellness chat · Kinyarwanda / English</div></div></div>',
                 unsafe_allow_html=True)
-    for m in st.session_state.msgs:
+    st.markdown('<div class="scopebar">Umufasha ku byo wiyumva. Ku kuva amaraso, umwana, cyangwa ibibazo '
+                "by'umubiri — ganira n'umukozi w'ubuzima. · A wellness companion for how you feel — for "
+                'bleeding, the baby, or physical concerns, please see a health worker.</div>',
+                unsafe_allow_html=True)
+    msgs = _cur()["msgs"]
+    for m in msgs:
         st.markdown(bubble(m), unsafe_allow_html=True)
 
     # subtle thumbs feedback on the latest answer (feeds anonymous analytics; no text stored)
-    last = st.session_state.msgs[-1]
-    if db and last["role"] == "bot" and len(st.session_state.msgs) > 1 and not st.session_state.get("_rated"):
+    if db and msgs[-1]["role"] == "bot" and len(msgs) > 1 and not st.session_state.get("_rated"):
         st.markdown('<div class="exhint">Iki gisubizo cyagufashije? · Was this helpful?</div>', unsafe_allow_html=True)
         fc1, fc2, _ = st.columns([1.3, 1.6, 3])
         meta = st.session_state.get("_last", {})
@@ -285,16 +328,16 @@ if view.startswith("Ikiganiro"):
             db.log_feedback(st.session_state.sid, -1, meta.get("lang"), meta.get("mode"))
             st.session_state._rated = True; st.rerun()
 
-    if len(st.session_state.msgs) <= 1:   # suggestion chips on a fresh chat
+    if len(msgs) <= 1:   # suggestion chips on a fresh chat
         st.markdown('<div class="exhint">Wagerageza kubaza · You could ask:</div>', unsafe_allow_html=True)
         cols = st.columns(2)
         for i, (lbl, q) in enumerate(EXAMPLES):
             if cols[i % 2].button(q, key=f"ex{i}", use_container_width=True):
-                ask(q, {"RW": "rw", "EN": "en"}.get(pref)); st.rerun()
+                ask(q); st.rerun()
 
     prompt = st.chat_input("Andika uko wiyumva... · Type how you feel...")
     if prompt and prompt.strip():
-        ask(prompt.strip(), {"RW": "rw", "EN": "en"}.get(pref)); st.rerun()
+        ask(prompt.strip()); st.rerun()
 
 elif view.startswith("Ingero"):
     st.markdown('<div class="apphead"><div class="logo">U</div><div>'
