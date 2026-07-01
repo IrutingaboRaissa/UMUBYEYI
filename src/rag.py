@@ -125,7 +125,8 @@ def _build_prompt(query: str, lang: str, snippets, history=None) -> str:
         "- This companion is for mothers in Rwanda. Do not reference other countries. For anything "
         "location-specific (helplines, clinics, services), advise her to contact her nearest Rwandan "
         "health centre or a local health worker.\n"
-        f"- Be brief (1-4 sentences), warm, and reply in {lang_name}.\n"
+        f"- Be brief (1-4 sentences), warm, and reply ONLY in {lang_name} — use no other language, "
+        "not even in the greeting.\n"
         "- Do NOT add your own disclaimer or 'this is general information / not medical advice' note; "
         "a disclaimer is appended automatically.\n\n"
         f"Validated counselling information:\n{facts}\n\n"
@@ -198,27 +199,14 @@ def _unavailable_message(lang: str) -> str:
             "If it's urgent or you're worried, call 114 or see a health worker.")
 
 
-def _other(lang: str) -> str:
-    return "en" if lang == "rw" else "rw"
-
-
-def _translate(text: str, to_lang: str) -> str:
-    """Translate an already-generated answer into the other language, preserving the warm tone."""
-    to_name = "Kinyarwanda" if to_lang == "rw" else "English"
-    return _gemini(f"Translate the message below into {to_name}. Keep the same warm, caring, "
-                   f"non-clinical tone and meaning. Return ONLY the translation, nothing else.\n\n{text}")
-
-
 def answer(query: str, force_lang: str = None, history=None) -> dict:
-    """Return {answer, translation, translation_language, language, danger, grounded, mode, sources}.
-    Gemini answers in the user's detected language, then we add a translation in the OTHER language
-    so a mother who speaks only one of the two can still follow. `history` keeps it coherent."""
+    """Return {answer, language, danger, grounded, mode, sources}.
+    Gemini answers in the language the mother used; `history` keeps it coherent. The disclaimer
+    is matched to the language the answer actually came out in, so the two never disagree."""
     lang = force_lang if force_lang in ("en", "rw") else detect_language(query)
-    other = _other(lang)
 
     if is_danger(query):                             # deterministic safety path, independent of the model
-        return {"answer": _crisis_message(lang), "translation": _crisis_message(other),
-                "translation_language": other, "language": lang, "danger": True,
+        return {"answer": _crisis_message(lang), "language": lang, "danger": True,
                 "grounded": False, "mode": "safety", "sources": []}
 
     snippets = retrieve(query)                       # greetings/small talk fall through to the model (with history)
@@ -226,8 +214,7 @@ def answer(query: str, force_lang: str = None, history=None) -> dict:
     grounded = top is not None and sim >= SIM_GATE
 
     def _unavail():
-        return {"answer": _unavailable_message(lang), "translation": _unavailable_message(other),
-                "translation_language": other, "language": lang, "danger": False,
+        return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
                 "grounded": grounded, "mode": "unavailable", "sources": []}
 
     # Gemini is the ONLY responder. We never serve raw machine-translation drafts. If unavailable, say so.
@@ -241,13 +228,8 @@ def answer(query: str, force_lang: str = None, history=None) -> dict:
         return _unavail()
 
     body = _strip_disclaimer(body)                    # drop any disclaimer the model added; we append the canonical one
-    text = f"{body}\n\n{DISCLAIMER.get(lang, DISCLAIMER['en'])}"
-    try:                                              # translation into the other language (accessibility)
-        tbody = _strip_disclaimer(_translate(body, other))
-        translation = f"{tbody}\n\n{DISCLAIMER.get(other, DISCLAIMER['en'])}"
-    except Exception:
-        translation = None
-    return {"answer": text, "translation": translation, "translation_language": other,
-            "language": lang, "danger": False, "grounded": grounded, "mode": "generative",
+    reply_lang = detect_language(body) or lang        # match the disclaimer to the language actually produced
+    text = f"{body}\n\n{DISCLAIMER.get(reply_lang, DISCLAIMER['en'])}"
+    return {"answer": text, "language": reply_lang, "danger": False, "grounded": grounded, "mode": "generative",
             "sources": [{"topic": b["topic"], "source": b["source"], "sim": round(s, 2)}
                         for b, s in snippets]}
