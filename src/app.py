@@ -247,8 +247,7 @@ def ask(text):
         t0 = time.time()
         r = rag.answer(text, history=history)
         latency = int((time.time() - t0) * 1000)
-        msgs.append({"role": "bot", "text": r["answer"], "danger": r.get("danger", False),
-                     "translation": r.get("translation"), "tlang": r.get("translation_language")})
+        msgs.append({"role": "bot", "text": r["answer"], "danger": r.get("danger", False)})
         if db:   # anonymous analytics only — NO message text is stored
             top = r.get("sources") or []
             db.log_event(st.session_state.sid, r.get("language"), r.get("mode"),
@@ -261,18 +260,11 @@ def ask(text):
     st.session_state.threads = [t] + [x for x in st.session_state.threads if x["id"] != t["id"]]
 
 
-TLABEL = {"en": "English", "rw": "Kinyarwanda"}
-
-
 def bubble(m):
     if m["role"] == "user":
         return f'<div class="row me"><div class="bubble me">{m["text"]}</div></div>'
     cls = "bubble bot danger" if m.get("danger") else "bubble bot"
-    inner = m["text"]
-    if m.get("translation"):
-        inner += (f'<div class="trans"><span class="tl">{TLABEL.get(m.get("tlang"), "")}</span>'
-                  f'{m["translation"]}</div>')
-    return f'<div class="row"><div class="av">U</div><div class="{cls}">{inner}</div></div>'
+    return f'<div class="row"><div class="av">U</div><div class="{cls}">{m["text"]}</div></div>'
 
 
 with st.sidebar:
