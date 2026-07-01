@@ -20,3 +20,7 @@ docs/
 *.bin
 cc.rw.300*
 afroxlmr-kinyarwanda-intent/
+
+# local analytics DB (SQLite dev fallback)
+umubyeyi_analytics.db
+*.db
