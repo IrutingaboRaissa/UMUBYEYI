@@ -62,6 +62,14 @@ try:
         mode = Column(String(20))
         created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
 
+    class Action(Base):
+        """An anonymous chat-management action: new_chat | rename | delete (no content)."""
+        __tablename__ = "actions"
+        id = Column(Integer, primary_key=True)
+        session_id = Column(String(40), index=True)
+        action = Column(String(20))
+        created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
+
     Base.metadata.create_all(_engine)
     _Session = sessionmaker(bind=_engine, expire_on_commit=False)
     DB_OK = True
@@ -92,6 +100,18 @@ def log_feedback(session_id, rating, language, mode):
         pass
 
 
+def log_action(session_id, action):
+    """Record an anonymous chat-management action (new_chat | rename | delete). No content stored."""
+    if not DB_OK:
+        return
+    try:
+        s = _Session()
+        s.add(Action(session_id=session_id, action=str(action)[:20]))
+        s.commit(); s.close()
+    except Exception:
+        pass
+
+
 def insights():
     """Aggregate metrics for the in-app dashboard (returns None if the db is unavailable)."""
     if not DB_OK:
@@ -106,6 +126,7 @@ def insights():
         fb_total = s.query(func.count(Feedback.id)).scalar() or 0
         fb_pos = s.query(func.count(Feedback.id)).filter(Feedback.rating > 0).scalar() or 0
         sessions = s.query(func.count(func.distinct(Event.session_id))).scalar() or 0
+        by_action = dict(s.query(Action.action, func.count(Action.id)).group_by(Action.action).all())
         s.close()
         return {
             "backend": BACKEND,
@@ -117,6 +138,7 @@ def insights():
             "avg_latency_ms": int(avg_latency) if avg_latency else 0,
             "feedback_total": fb_total,
             "feedback_positive_rate": (fb_pos / fb_total) if fb_total else None,
+            "by_action": by_action,
         }
     except Exception:
         return None
