@@ -47,10 +47,21 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   font-family:'Material Symbols Outlined','Material Symbols Rounded','Material Icons' !important;}
 
 [data-testid="stAppViewContainer"]{background:radial-gradient(1200px 600px at 50% -10%, #1a3325 0%, #13211a 55%);}
-.block-container{max-width:720px;padding-top:1.4rem;padding-bottom:6.5rem;}
+.block-container{max-width:700px;padding-top:5rem;padding-bottom:6.5rem;}
 [data-testid="stSidebar"]{background:#0f1d15;border-right:1px solid #1d3528;}
 [data-testid="stSidebar"] *{color:#DCEFE3 !important;}
-#MainMenu, footer, [data-testid="stToolbar"]{visibility:hidden;}
+#MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"]{display:none !important;}
+
+/* centered welcome (consent screen) — warm, minimal, human */
+.hero{text-align:center;padding:14px 0 6px;}
+.hero .logo{width:64px;height:64px;border-radius:20px;margin:0 auto 16px;
+  background:linear-gradient(135deg,#E9C46A,#d8a83f);color:#102017;display:flex;align-items:center;
+  justify-content:center;font-size:30px;font-weight:800;box-shadow:0 8px 24px rgba(233,196,106,.28);}
+.hero h1{font-size:28px;font-weight:700;color:#F3EFE3;margin:0 0 4px;letter-spacing:.2px;}
+.hero .tag{font-size:15px;color:#9FBCA8;margin-bottom:20px;}
+.hero .lead{font-size:16.5px;line-height:1.65;color:#E7F2EB;max-width:440px;margin:0 auto 18px;}
+.hero .fine{font-size:12.5px;line-height:1.6;color:#7FA090;max-width:440px;margin:0 auto;}
+.hero .fine b{color:#E9C46A;}
 
 /* sidebar brand */
 .brand{display:flex;align-items:center;gap:11px;margin:2px 0 4px;}
@@ -88,6 +99,13 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   border-radius:22px !important;font-size:14px !important;font-weight:500 !important;padding:9px 16px !important;
   text-align:left !important;transition:all .15s ease;}
 .stButton button:hover{border-color:#3a6b4c !important;transform:translateY(-1px);background:#22392b !important;}
+/* primary CTA (Start) — prominent, centered, green */
+.stButton button[kind="primary"], [data-testid="stBaseButton-primary"]{
+  background:linear-gradient(135deg,#2E7D52,#2a744c) !important;color:#fff !important;border:none !important;
+  text-align:center !important;font-size:15.5px !important;font-weight:600 !important;padding:13px 18px !important;
+  box-shadow:0 8px 22px rgba(46,125,82,.32) !important;}
+.stButton button[kind="primary"]:hover, [data-testid="stBaseButton-primary"]:hover{
+  background:linear-gradient(135deg,#33885a,#2E7D52) !important;transform:translateY(-1px);}
 
 /* sticky chat input */
 [data-testid="stChatInput"]{background:#18291f !important;border:1px solid #2c4636 !important;border-radius:26px !important;}
@@ -108,9 +126,19 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   margin:4px 6px 4px 0;font-size:14px;color:#DCEFE3;}
 
 @media (max-width:640px){
-  .block-container{max-width:100%;padding-left:0.7rem;padding-right:0.7rem;padding-bottom:6rem;}
-  .apphead .t{font-size:18px;} .bubble{max-width:88%;font-size:15px;} .card{font-size:14px;}
+  .block-container{max-width:100%;padding-top:4rem;padding-left:0.8rem;padding-right:0.8rem;padding-bottom:5.5rem;}
+  .apphead{gap:10px;padding-bottom:12px;margin-bottom:14px;}
+  .apphead .logo{width:38px;height:38px;font-size:19px;}
+  .apphead .t{font-size:17px;} .apphead .s{font-size:11.5px;}
+  .bubble{max-width:90%;font-size:15px;padding:11px 14px;}
+  .av{width:26px;height:26px;font-size:12px;}
+  .card{font-size:14px;padding:15px 16px;}
+  .hero .logo{width:56px;height:56px;font-size:26px;}
+  .hero h1{font-size:24px;} .hero .lead{font-size:15.5px;} .hero .tag{font-size:14px;}
   [data-testid="stChatInput"] textarea{font-size:16px !important;}  /* >=16px stops iOS zoom */
+}
+@media (max-width:380px){
+  .hero h1{font-size:21px;} .bubble{font-size:14.5px;}
 }
 </style>
 """, unsafe_allow_html=True)
@@ -126,26 +154,21 @@ EXAMPLES = [
     ("Kudasinzira", "Sinshobora gusinzira nubwo umwana asinziriye."),
 ]
 
-# ---------------- consent gate ----------------
+# ---------------- welcome / consent (minimal, human) ----------------
 if not st.session_state.get("consented"):
-    st.markdown('<div class="apphead"><div class="logo">U</div><div>'
-                '<div class="t">Umubyeyi</div>'
-                '<div class="s">Umufasha wawe nyuma yo kubyara · a companion after birth</div></div></div>',
-                unsafe_allow_html=True)
-    st.markdown('<div class="card"><div class="h">Mbere yo gutangira · Before you start</div>'
-                'Umubyeyi akugufasha ku byo wiyumva nyuma yo kubyara (agahinda, guhangayika, kunanirwa). '
-                'Si serivisi y\'ubuvuzi, kandi ntiyita ku bibazo by\'umubiri cyangwa byo kwita ku mwana — '
-                'ku byo, ganira n\'umukozi w\'ubuzima. <i>Umubyeyi supports how you feel after birth. It is '
-                'not medical care and does not cover physical or baby-care questions — please see a health '
-                'worker for those.</i><br><br>'
-                f'Niba uri mu kaga, hamagara: <b style="color:#E9C46A">{rag.CRISIS_LINE}</b>. '
-                'Ntukandike amazina cyangwa amakuru akuranga.<br><br>'
-                '<span style="color:#8FB09C;font-size:13px">Ikiganiro cyawe kibikwa gusa muri iyi telefone/mudasobwa '
-                '(muri iyi browser), ntikibikwa ku byuma byacu. Koresha “Ikiganiro gishya” kugira usibe. '
-                '<i>Your conversation is saved only on this device (in your browser), never on our servers. '
-                'Use “New chat” to clear it.</i></span></div>', unsafe_allow_html=True)
-    st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
-    if st.button("Ndabyumvise, ngwino dutangire  →", use_container_width=True):
+    st.markdown(
+        '<div class="hero">'
+        '<div class="logo">U</div>'
+        '<h1>Muraho, mama</h1>'
+        '<div class="tag">Umufasha wawe nyuma yo kubyara · a companion after birth</div>'
+        '<div class="lead">Ndi hano kukwitaho ku byo wiyumva — agahinda, guhangayika cyangwa kunanirwa. '
+        'Vugana nanjye mu Kinyarwanda cyangwa Icyongereza.</div>'
+        f'<div class="fine">Si serivisi y\'ubuvuzi. Niba uri mu kaga, hamagara <b>{rag.CRISIS_LINE}</b>.<br>'
+        'Ibiganiro bibikwa kuri iyi telefone yawe gusa · your chats stay on your device.</div>'
+        '</div>', unsafe_allow_html=True)
+    st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+    _, mid, _ = st.columns([1, 2.4, 1])
+    if mid.button("Tangira ikiganiro  ·  Start  →", use_container_width=True, type="primary"):
         st.session_state.consented = True; st.rerun()
     st.stop()
 
