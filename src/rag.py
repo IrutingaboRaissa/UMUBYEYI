@@ -116,9 +116,9 @@ def _build_prompt(query: str, lang: str, snippets, history=None) -> str:
         "she trusts.\n"
         "- CLINICAL or baby-care questions (feeding, breastfeeding, the baby's health, fever, crying, "
         "the cord, bleeding, wounds, stitches, physical recovery, medicines, doses): do NOT answer "
-        "these. Warmly explain that you focus on how she is feeling emotionally, and that for medical "
-        "or baby-care questions she should see a nurse, midwife, or health worker. Then invite her "
-        "back to how she is coping.\n"
+        "these. Warmly say clearly that Umubyeyi is a WELLNESS companion for how she is feeling, and "
+        "does NOT handle bleeding, the baby, or other physical concerns — for those she should see a "
+        "nurse, midwife, or health worker. Then gently invite her back to how she is coping.\n"
         "- OFF-TOPIC questions (malaria, COVID, farming, politics, school, math, news, anything not "
         "about a postpartum mother's emotional wellbeing): politely say that is outside what you help "
         "with, and steer back to how she is feeling. Do not answer them.\n"
@@ -198,34 +198,56 @@ def _unavailable_message(lang: str) -> str:
             "If it's urgent or you're worried, call 114 or see a health worker.")
 
 
+def _other(lang: str) -> str:
+    return "en" if lang == "rw" else "rw"
+
+
+def _translate(text: str, to_lang: str) -> str:
+    """Translate an already-generated answer into the other language, preserving the warm tone."""
+    to_name = "Kinyarwanda" if to_lang == "rw" else "English"
+    return _gemini(f"Translate the message below into {to_name}. Keep the same warm, caring, "
+                   f"non-clinical tone and meaning. Return ONLY the translation, nothing else.\n\n{text}")
+
+
 def answer(query: str, force_lang: str = None, history=None) -> dict:
-    """Return {answer, language, danger, grounded, mode, sources}.
-    The generalizing model (Gemini) is the responder; `history` (recent turns) gives it context so
-    it stays coherent and does not loop. force_lang ('en'/'rw') overrides auto-detection."""
+    """Return {answer, translation, translation_language, language, danger, grounded, mode, sources}.
+    Gemini answers in the user's detected language, then we add a translation in the OTHER language
+    so a mother who speaks only one of the two can still follow. `history` keeps it coherent."""
     lang = force_lang if force_lang in ("en", "rw") else detect_language(query)
+    other = _other(lang)
+
     if is_danger(query):                             # deterministic safety path, independent of the model
-        return {"answer": _crisis_message(lang), "language": lang, "danger": True,
+        return {"answer": _crisis_message(lang), "translation": _crisis_message(other),
+                "translation_language": other, "language": lang, "danger": True,
                 "grounded": False, "mode": "safety", "sources": []}
 
     snippets = retrieve(query)                       # greetings/small talk fall through to the model (with history)
     top, sim = snippets[0] if snippets else (None, 0.0)
     grounded = top is not None and sim >= SIM_GATE
 
-    # The generalizing model (Gemini) is the ONLY responder. We never serve the raw machine-
-    # translation drafts (that was the source of "butterflies"). If it is unavailable, say so.
+    def _unavail():
+        return {"answer": _unavailable_message(lang), "translation": _unavailable_message(other),
+                "translation_language": other, "language": lang, "danger": False,
+                "grounded": grounded, "mode": "unavailable", "sources": []}
+
+    # Gemini is the ONLY responder. We never serve raw machine-translation drafts. If unavailable, say so.
     if not _has_key():
         print("[umubyeyi] GEMINI_API_KEY missing in environment -> fallback", file=sys.stderr, flush=True)
-        return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
-                "grounded": grounded, "mode": "unavailable", "sources": []}
+        return _unavail()
     try:
         body = _gemini(_build_prompt(query, lang, snippets if grounded else [], history))
     except Exception as e:
         print(f"[umubyeyi] generation failed -> {type(e).__name__}: {str(e)[:300]}", file=sys.stderr, flush=True)
-        return {"answer": _unavailable_message(lang), "language": lang, "danger": False,
-                "grounded": grounded, "mode": "unavailable", "sources": []}
+        return _unavail()
 
     body = _strip_disclaimer(body)                    # drop any disclaimer the model added; we append the canonical one
     text = f"{body}\n\n{DISCLAIMER.get(lang, DISCLAIMER['en'])}"
-    return {"answer": text, "language": lang, "danger": False, "grounded": grounded, "mode": "generative",
+    try:                                              # translation into the other language (accessibility)
+        tbody = _strip_disclaimer(_translate(body, other))
+        translation = f"{tbody}\n\n{DISCLAIMER.get(other, DISCLAIMER['en'])}"
+    except Exception:
+        translation = None
+    return {"answer": text, "translation": translation, "translation_language": other,
+            "language": lang, "danger": False, "grounded": grounded, "mode": "generative",
             "sources": [{"topic": b["topic"], "source": b["source"], "sim": round(s, 2)}
                         for b, s in snippets]}
