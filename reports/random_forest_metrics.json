@@ -1,0 +1,8 @@
+{
+  "Model 3: Random Forest (English)": {
+    "accuracy": 0.7172,
+    "precision_macro": 0.8038,
+    "recall_macro": 0.6582,
+    "f1_macro": 0.7045
+  }
+}
