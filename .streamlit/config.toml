@@ -1,8 +1,8 @@
-# Clean, mother-facing theme — deep green, serif (Times New Roman enforced in app CSS).
+# Light "cream & plum" theme (mother-facing). App CSS layers the gradient + accents on top.
 [theme]
-base = "dark"
-primaryColor = "#2E7D52"
-backgroundColor = "#13211a"
-secondaryBackgroundColor = "#19281f"
-textColor = "#E8E4DA"
-font = "serif"
+base = "light"
+primaryColor = "#5E4A5E"
+backgroundColor = "#F2E8E4"
+secondaryBackgroundColor = "#FBF5EC"
+textColor = "#3B2E39"
+font = "sans serif"
