@@ -118,12 +118,16 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   margin:4px 6px 4px 0;font-size:14px;color:#5b4f56;}
 
 /* welcome / consent */
-.hero{text-align:center;padding:6px 0 2px;}
-.hero .logo{width:56px;height:56px;border-radius:50%;margin:0 auto 12px;
-  background:radial-gradient(circle at 32% 30%, #9A7C9D 0%, #5E4A5E 75%);box-shadow:0 10px 26px rgba(94,74,94,.3);}
+.hero{text-align:center;padding:4px 0 2px;}
+.hero .ill{width:132px;height:132px;margin:0 auto 8px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:66px;background:radial-gradient(circle at 50% 35%,#EFE1E7 0%,#F6EFE5 72%);
+  box-shadow:0 14px 34px rgba(94,74,94,.14);}
+.hero .ill img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .hero h1{font-size:27px;font-weight:700;color:#3B2E39;margin:0 0 3px;}
 .hero .tag{font-size:14.5px;color:#A08E97;margin-bottom:12px;}
-.hero .lead{font-size:15.5px;line-height:1.6;color:#5b4f56;max-width:440px;margin:0 auto 12px;}
+.hero .lead{font-size:15.5px;line-height:1.6;color:#5b4f56;max-width:440px;margin:0 auto 2px;}
+.hero .leadEn{font-size:13px;line-height:1.5;color:#A99BA3;max-width:420px;margin:0 auto 12px;}
+.subtext{margin-top:7px;color:#8FA0A6;font-size:13.5px;line-height:1.5;}
 .hero .fine{font-size:12.5px;line-height:1.6;color:#A08E97;max-width:440px;margin:0 auto;}
 .hero .fine b{color:#5E4A5E;}
 .wcard{max-width:460px;margin:4px auto 0;text-align:left;background:#FCF8F2;border:1px solid #EFE6D8;
@@ -143,14 +147,17 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 """, unsafe_allow_html=True)
 
 GREETING = "Muraho, mama. Wambwira uko umeze uyu munsi?"
+GREETING_SUB = "Hello, mama. Tell me how you're feeling today."
 
-EXAMPLES = [
-    ("Agahinda", "Numva mfite agahinda kuva nabyaye."),
-    ("Guhangayika", "Mfite ubwoba n'guhangayika ku kuba mama bushya."),
-    ("Kunanirwa", "Numva nananiwe cyane kandi ndi wenyine."),
-    ("Kudasinzira", "Sinshobora gusinzira nubwo umwana asinziriye."),
+# mood shortcuts: (emoji, Kinyarwanda · English, message sent on tap)
+MOODS = [
+    ("😔", "Agahinda · Sad", "Numva mfite agahinda."),
+    ("😟", "Guhangayika · Anxious", "Mfite guhangayika kwinshi."),
+    ("😩", "Nananiwe · Tired", "Numva nananiwe cyane."),
+    ("🌧️", "Ndi ngenyine · Alone", "Numva ndi ngenyine, nta wundi mfite."),
+    ("🙂", "Meze neza · Okay", "Numva meze neza uyu munsi."),
 ]
-GREETING_MSG = {"role": "bot", "text": GREETING, "danger": False}
+GREETING_MSG = {"role": "bot", "text": GREETING, "sub": GREETING_SUB, "danger": False}
 
 
 # ---------------- Breathe & Help dialogs ----------------
@@ -195,11 +202,23 @@ def _help():
 # ---------------- welcome / consent ----------------
 if not st.session_state.get("consented"):
     st.markdown('<style>.block-container{padding-top:1.8rem !important;}</style>', unsafe_allow_html=True)
+    # illustration: drop a picture at assets/welcome.png (or .jpg) to use it; otherwise a placeholder shows
+    import base64
+    _ill = '<div class="ill">🤱</div>'
+    _adir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
+    for _n in ("welcome.png", "welcome.jpg", "hero.png"):
+        _p = os.path.join(_adir, _n)
+        if os.path.exists(_p):
+            _mime = "jpeg" if _n.endswith("jpg") else "png"
+            _b64 = base64.b64encode(open(_p, "rb").read()).decode()
+            _ill = f'<div class="ill"><img src="data:image/{_mime};base64,{_b64}"></div>'
+            break
     st.markdown(
-        '<div class="hero"><div class="logo"></div>'
-        '<h1>Muraho, mama</h1>'
+        f'<div class="hero">{_ill}'
+        '<h1>Muraho, mama.</h1>'
         '<div class="tag">Ntabwo uri wenyine · you\'re not alone</div>'
-        '<div class="lead">Ndi hano kukwitaho uko wiyumva. Vugana nanjye mu Kinyarwanda cyangwa Icyongereza.</div></div>',
+        '<div class="lead">Ndi hano kukwitaho uko wiyumva. Vugana nanjye mu Kinyarwanda cyangwa Icyongereza.</div>'
+        '<div class="leadEn">I\'m here to care for how you feel. Talk with me in Kinyarwanda or English.</div></div>',
         unsafe_allow_html=True)
     st.markdown(
         '<div class="wcard">'
@@ -264,6 +283,7 @@ if _localS and not st.session_state.get("_hydrated"):
 for _t in st.session_state.threads:
     if _t.get("msgs") and _t["msgs"][0]["role"] == "bot":
         _t["msgs"][0]["text"] = GREETING
+        _t["msgs"][0]["sub"] = GREETING_SUB
 
 if "sid" not in st.session_state:
     st.session_state.sid = uuid.uuid4().hex[:16]   # anonymous per-session id (not tied to any identity)
@@ -303,7 +323,10 @@ def bubble(m):
     if m["role"] == "user":
         return f'<div class="row me"><div class="bubble me">{m["text"]}</div></div>'
     cls = "bubble bot danger" if m.get("danger") else "bubble bot"
-    return f'<div class="row"><div class="{cls}">{m["text"]}</div></div>'
+    inner = m["text"]
+    if m.get("sub"):   # a fixed English rendering under the Kinyarwanda (used for the greeting)
+        inner += f'<div class="subtext">{m["sub"]}</div>'
+    return f'<div class="row"><div class="{cls}">{inner}</div></div>'
 
 
 # ---------------- sidebar (Claude-style: brand + collapse, New chat, nav, Recents) ----------------
@@ -351,7 +374,7 @@ if _cd:
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
-    hc1, hc2, hc3 = st.columns([5.2, 1.5, 1.3])
+    hc1, hc2, hc3, hc4 = st.columns([4.1, 1.5, 1.3, 1.2])
     hc1.markdown('<div class="topbar"><div class="av"></div><div>'
                  '<div class="t">Umubyeyi</div>'
                  '<div class="s">Umufasha w\'imibereho myiza yo mu mutima · a mental-wellbeing companion</div>'
@@ -360,6 +383,9 @@ if view.startswith("Ikiganiro"):
         _breathe()
     if hc3.button("Ubufasha · Help", use_container_width=True):
         _help()
+    with hc4:   # optional language pin; leave unset for auto-detect
+        _lang = st.segmented_control("lang", ["RW", "EN"], label_visibility="collapsed", key="langpref")
+    force = {"RW": "rw", "EN": "en"}.get(_lang)
 
     msgs = _cur()["msgs"]
     for m in msgs:
@@ -377,18 +403,18 @@ if view.startswith("Ikiganiro"):
             db.log_feedback(st.session_state.sid, -1, meta.get("lang"), meta.get("mode"))
             st.session_state._rated = True; st.rerun()
 
-    if len(msgs) <= 1:
-        cols = st.columns(2)
-        for i, (lbl, q) in enumerate(EXAMPLES):
-            if cols[i % 2].button(q, key=f"ex{i}", use_container_width=True):
-                ask(q); st.rerun()
+    if len(msgs) <= 1:   # mood shortcuts on a fresh chat
+        cols = st.columns(3)
+        for i, (emo, lbl, q) in enumerate(MOODS):
+            if cols[i % 3].button(f"{emo}  {lbl}", key=f"mood{i}", use_container_width=True):
+                ask(q, force); st.rerun()
 
     st.markdown('<div class="foot">Umufasha w\'imibereho myiza gusa · si uw\'ibindi bibazo · '
                 'mu kaga hamagara 114  ·  a wellness companion only — not for other challenges · '
                 'in a crisis call 114</div>', unsafe_allow_html=True)
     prompt = st.chat_input("Andika uko wiyumva... · Type how you feel...")
     if prompt and prompt.strip():
-        ask(prompt.strip()); st.rerun()
+        ask(prompt.strip(), force); st.rerun()
 
 elif view.startswith("Ingero"):
     st.markdown('<div class="topbar"><div class="av"></div><div>'
@@ -399,10 +425,10 @@ elif view.startswith("Ingero"):
                                           "Sinkunda ibyo nakundaga, kandi ndarira kenshi."],
         "Guhangayika · Anxiety & worry": ["Mfite ubwoba n'guhangayika ku kuba mama bushya.",
                                           "Ntekereza cyane ko ntazabasha kwita ku mwana."],
-        "Kunanirwa · Feeling overwhelmed": ["Numva nananiwe cyane kandi ndi wenyine.",
+        "Kunanirwa · Feeling overwhelmed": ["Numva nananiwe cyane kandi ndi ngenyine.",
                                             "Byose biranyemera, sinzi aho ngomba gutangirira."],
         "Guhangana · Coping & support": ["Nakora iki ngo niyumve neza gato?",
-                                         "Numva ndi wenyine, nta wundi mfite."],
+                                         "Numva ndi ngenyine, nta wundi mfite."],
     }
     html = '<div class="card">'
     for g, qs in groups.items():
