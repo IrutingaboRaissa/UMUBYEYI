@@ -195,7 +195,9 @@ Informational only, never diagnostic. A one-time **consent screen**, a **danger-
 
 ## Limitations and future work
 
-The grounding bank is mostly general (non-maternal, non-Rwandan) counselling content plus a small Ugandan-sourced maternal subset, so it needs **Rwandan clinician / native-speaker validation and maternal-specific counselling content**; Kinyarwanda phrasing is available for the questions but answers are generated at request time; the product depends on an external LLM API; the evaluation is small. Future work: a Rwanda-validated, maternal-specific counselling knowledge base, clinician sign-off, a larger user study, and WhatsApp/SMS or offline channels.
+The grounding bank is mostly general (non-maternal, non-Rwandan) counselling content plus a small Ugandan-sourced maternal subset, so it needs **Rwandan clinician / native-speaker validation and maternal-specific counselling content**; Kinyarwanda phrasing is available for the questions but answers are generated at request time; the product depends on an external LLM API; the evaluation is small. Conversation history is currently **on-device only** (per-browser) — a deliberate privacy choice; cross-device continuity would require accounts.
+
+Future work: a Rwanda-validated, maternal-specific counselling knowledge base, clinician sign-off, a larger user study, WhatsApp/SMS or offline channels, and **optional accounts for cross-device history** — only with encrypted, consented storage of conversations and a clinician/ethics review, given how sensitive the data is.
 
 ## Disclaimer
 
