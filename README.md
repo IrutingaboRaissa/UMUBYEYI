@@ -15,6 +15,8 @@ short_description: Bilingual emotional-wellbeing companion for postpartum mother
 
 **A bilingual (Kinyarwanda / English) companion for the emotional wellbeing of first-time mothers in Rwanda during the 0–6 month postpartum window — responding to how they feel with warm, grounded, language-matched support.**
 
+### Live app — **https://umubyeyi-assistant1.streamlit.app/**
+
 Author: **Raissa IRUTINGABO** · Supervisor: **Samiratu Ntohsi** · BSc Software Engineering, African Leadership University
 
 ---
@@ -32,8 +34,10 @@ You type how you feel in **Kinyarwanda or English**, and Umubyeyi replies **in t
 - **Bilingual and auto-detected** — no language switch; each message is detected and answered in its own language.
 - **Emotional focus** — sadness and low mood, anxiety and worry, feeling overwhelmed, loneliness, stress, adjustment, exhaustion and sleep-related distress, coping, and relationship strain.
 - **Grounded answers** — responses are drawn from validated counselling content, not invented.
-- **Stays in its lane** — clinical and baby-care questions (feeding, fever, the cord, recovery, medicines) are **warmly referred to a nurse, midwife, or health worker**, not answered.
+- **Stays in its lane** — clinical and baby-care questions (feeding, fever, bleeding, the baby's health, medicines) are **warmly referred to a nurse, midwife, or health worker**, not answered.
 - **Safety first** — a danger-sign override surfaces a crisis referral (Rwanda's 114 line); every answer carries a disclaimer; off-topic questions are politely declined.
+- **Chat history, on your device** — start new chats, browse, rename, and delete past conversations from a collapsible side panel. History is stored only in the browser (never on a server).
+- **A moment to breathe** — a Breathe action offers a short guided breathing exercise, and a Help action surfaces crisis and support contacts.
 - **Scoped** — strictly the emotional wellbeing of mothers 0–6 months postpartum, informational only (never diagnostic).
 
 ---
@@ -50,7 +54,7 @@ Umubyeyi is built as a **layered, retrieval-augmented-generation (RAG)** system.
 
 | Layer | Responsibility | Key modules / functions | Technology | Input → Output |
 |---|---|---|---|---|
-| **Presentation** | Render the chat, gate consent, collect input, hold per-session history | `src/app.py` (Streamlit) | Streamlit 1.48, HTML/CSS (responsive) | user text → `rag.answer()` call |
+| **Presentation** | Welcome page, chat, collapsible history panel (new / rename / delete), Breathe & Help dialogs | `src/app.py` (Streamlit) | Streamlit 1.48, HTML/CSS, browser `localStorage` | user text → `rag.answer()` call |
 | **Application / Orchestration** | Drive the pipeline; decide the response *mode* | `rag.answer()` | Python 3 | query + history → response dict |
 | **Safety (cross-cutting)** | Deterministic danger detection, disclaimer, domain bounding (emotional scope) | `is_danger()`, `_crisis_message()`, `DISCLAIMER`, prompt guardrails | keyword match + rules | query → crisis short-circuit / appended disclaimer |
 | **Language** | Detect EN vs RW to choose the reply language | `detect_language()`, `models/lang_detector.joblib` | char n-gram TF-IDF + Logistic Regression (99.95% acc.) | text → `"en"`/`"rw"` |
@@ -99,8 +103,9 @@ The bank blends **831 Amod counselling pairs** (mental-health Q&A, in-scope inte
 
 - **Resilience** — `_gemini()` iterates a fallback chain (`gemini-2.5-flash` → `flash-lite` → `flash-latest` → `2.0-flash`) across 3 retry rounds with backoff, so transient `503`/`429` errors degrade to "try again" rather than a crash. Failures are logged to stderr for diagnosis.
 - **Configuration / secrets** — the key is read from `.env` locally and from `st.secrets` in deployment, bridged into `os.environ` at startup; it is never committed.
-- **State** — the app is stateless server-side; conversation history lives in Streamlit `session_state` and is passed into each call, so horizontal restarts lose nothing critical.
-- **No PII** — the consent screen asks users not to enter identifying information; nothing personal is stored.
+- **On-device history** — conversations live only in the user's browser (`localStorage` via `streamlit-local-storage`), so a returning mother continues where she left off. Nothing is stored on a server; the server stays stateless.
+- **Privacy-by-design analytics** — an optional database (`src/db.py`, Postgres in production via `DATABASE_URL`, SQLite locally) records only **anonymous** signals — detected language, response mode, whether the answer was grounded, retrieval similarity, latency, thumbs feedback, and chat actions (new / rename / delete). It **never** stores message text or identity. A `?admin=1` insights dashboard surfaces the aggregates.
+- **No PII** — the consent screen asks users not to enter identifying information; no personal data is collected server-side.
 
 ### Deployment topology
 
@@ -116,13 +121,13 @@ Single Streamlit process on **Streamlit Community Cloud**, serving `src/app.py` 
 
 | Model | Role | Macro-F1 |
 |---|---|---|
-| ComplementNB | Baseline | 0.45 |
-| Logistic Regression | Standalone | 0.64 |
-| Linear SVM | Standalone | 0.66 |
+| ComplementNB | Baseline | 0.47 |
+| Logistic Regression | Standalone | 0.65 |
+| Linear SVM | Standalone | 0.67 |
 | **Random Forest** | **Best (classical)** | **0.71** |
-| AfroXLMR / AfriBERTa | Fine-tuned transformers — *negative result* | 0.24 / 0.45 |
+| AfriBERTa | Fine-tuned transformer — *negative result* | 0.44 |
 
-**Key findings:** simple classical models **beat fine-tuned transformers** in this low-resource, weakly-labelled setting (transformers overfit ~580 examples); and **machine translation measurably degrades performance** — English macro-F1 ≈ 0.72 to Kinyarwanda ≈ 0.56 (**ΔF1 0.16, a 22% relative drop**). Together these justify retrieving validated content and generating from it, rather than training a classifier for the product.
+**Key findings:** simple classical models **beat the fine-tuned transformer** in this low-resource, weakly-labelled setting (it overfits ~580 examples); and **machine translation measurably degrades performance** — English macro-F1 0.72 to Kinyarwanda 0.56 (**ΔF1 0.16, a 22% relative drop**). Together these justify retrieving validated content and generating from it, rather than training a classifier for the product. A systematic sweep (regularization, features, resampling, boosting, optimizer/learning-rate/early-stopping — with loss curves) confirms the macro-F1 plateau near 0.73, isolating the bottleneck as label quality, not the model or tuning.
 
 ---
 
@@ -130,22 +135,23 @@ Single Streamlit process on **Streamlit Community Cloud**, serving `src/app.py` 
 
 ```
 src/
-  app.py            Streamlit frontend (consent gate, bilingual chat, responsive UI)
+  app.py            Streamlit frontend: welcome page, chat, collapsible history panel, dialogs
   rag.py            core: language detect -> safety -> retrieve -> Gemini -> disclaimer
+  db.py             anonymous analytics/feedback datastore (Postgres or SQLite)
 data/
-  grounding_bank.json          158 validated postpartum Q&A (the answer bank)
+  grounding_bank.json          859 validated counselling Q&A (the answer bank)
   grounding_bank.clinical.bak.json  previous clinical bank (kept for reference)
   mother/                       MOTHER source data + postpartum subset (+ Kinyarwanda)
   raw/amod_full.csv            Amod counselling corpus (grounding source + analysis)
 notebooks/
-  umubyeyi.ipynb    full analysis: data prep -> model comparison -> degradation -> retrieval
+  umubyeyi.ipynb    full analysis: data prep -> models -> experiments -> degradation -> demo
   amod_kinyarwanda.csv         translated/labelled modelling data
 models/
   lang_detector.joblib         English/Kinyarwanda detector (used by the app)
-  intent_classifier.joblib     classifier from the analysis (not used by the product)
+reports/                       metrics + figures from the analysis notebook
 assets/
   system_architecture_layered.png   the architecture figure shown above
-docs/                          capstone report, slides, pilot pack (kept local)
+.streamlit/config.toml         light theme
 .env.example                   template for the Gemini key (copy to .env)
 ```
 
@@ -165,11 +171,13 @@ streamlit run src/app.py
 
 ## Deployment
 
-Deploys on **Streamlit Community Cloud** from this repo (`src/app.py`). Add the key under **Settings → Secrets** (TOML):
+Live at **https://umubyeyi-assistant1.streamlit.app/**, deployed on **Streamlit Community Cloud** from this repo (`src/app.py`). Add the key under **Settings → Secrets** (TOML):
 
 ```toml
 GEMINI_API_KEY = "your-key"
 GEMINI_MODEL = "gemini-2.5-flash"
+# optional: a Postgres URL turns on the analytics database (otherwise a local SQLite file is used)
+DATABASE_URL = "postgresql://user:pass@host/dbname"
 ```
 
 The app is lightweight (scikit-learn + a small index; no translation model at runtime), so it fits the free tier.
@@ -183,7 +191,7 @@ The grounding bank (859 pairs) blends two sources, with mixed validation status 
 
 ## Safety and ethics
 
-Informational only, never diagnostic. A one-time **consent screen**, a **danger-sign crisis referral**, a per-answer **disclaimer**, **domain bounding**, and **no collection of personal/identifying data**. Intended for testing with proxy users / consenting volunteers, not as deployed clinical care.
+Informational only, never diagnostic. A one-time **consent screen**, a **danger-sign crisis referral**, a per-answer **disclaimer**, **domain bounding**, and **privacy-by-design**: conversations stay on the mother's own device (browser), and only anonymous, non-identifying analytics reach the server. Intended for testing with proxy users / consenting volunteers, not as deployed clinical care.
 
 ## Limitations and future work
 
