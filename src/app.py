@@ -201,10 +201,13 @@ if not st.session_state.get("consented"):
         unsafe_allow_html=True)
     st.markdown(
         '<div class="wcard">'
-        '<div class="wrow"><b>Umufasha ku byiyumviro, si muganga.</b><br>'
-        '<span>Emotional support, not a doctor — for bleeding, fever or the baby, see a health worker.</span></div>'
-        f'<div class="wrow"><b>Niba uri mu kaga, hamagara {rag.CRISIS_LINE}.</b><br>'
-        f'<span>In a crisis call {rag.CRISIS_LINE} · your chats stay on this device.</span></div></div>',
+        '<div class="wrow"><b>Umufasha w\'imibereho myiza yo mu mutima gusa.</b><br>'
+        '<span>A wellness companion for your mental wellbeing only — not for medical, baby-care, '
+        'or other challenges.</span></div>'
+        '<div class="wrow"><b>Ku bibazo by\'umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara '
+        f'{rag.CRISIS_LINE}.</b><br>'
+        f'<span>For physical or baby concerns, see a health worker; in a crisis call {rag.CRISIS_LINE} '
+        '· chats stay on this device.</span></div></div>',
         unsafe_allow_html=True)
     st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
     _, mid, _ = st.columns([1, 2.4, 1])
@@ -364,7 +367,8 @@ if view.startswith("Ikiganiro"):
         st.rerun()
     hc1.markdown('<div class="topbar"><div class="av"></div><div>'
                  '<div class="t">Umubyeyi</div>'
-                 '<div class="s">Ntabwo uri wenyine · you\'re not alone</div></div></div>', unsafe_allow_html=True)
+                 '<div class="s">Umufasha w\'imibereho myiza yo mu mutima · a mental-wellbeing companion</div>'
+                 '</div></div>', unsafe_allow_html=True)
     if hc2.button("Guhumeka · Breathe", use_container_width=True):
         _breathe()
     if hc3.button("Ubufasha · Help", use_container_width=True):
@@ -392,8 +396,9 @@ if view.startswith("Ikiganiro"):
             if cols[i % 2].button(q, key=f"ex{i}", use_container_width=True):
                 ask(q); st.rerun()
 
-    st.markdown('<div class="foot">Umufasha ku byiyumviro · niba bihutirwa hamagara 114  ·  '
-                'emotional support · call 114 if urgent</div>', unsafe_allow_html=True)
+    st.markdown('<div class="foot">Umufasha w\'imibereho myiza gusa · si uw\'ibindi bibazo · '
+                'mu kaga hamagara 114  ·  a wellness companion only — not for other challenges · '
+                'in a crisis call 114</div>', unsafe_allow_html=True)
     prompt = st.chat_input("Andika uko wiyumva... · Type how you feel...")
     if prompt and prompt.strip():
         ask(prompt.strip()); st.rerun()
