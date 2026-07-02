@@ -48,9 +48,11 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 #MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"]{display:none !important;}
 [data-testid="stSidebar"]{background:#FBF5EC;border-right:1px solid #EADFCF;}
 [data-testid="stSidebar"] *{color:#4A3F47 !important;}
-/* hide Streamlit's native sidebar collapse control (its icon renders as raw text; we use our own « button) */
-[data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"],
-[data-testid="stSidebarHeader"]{display:none !important;}
+/* native sidebar collapse control (« to hide, » to show) — force the Material font so the arrow
+   icon renders instead of raw "keyboard_double_arrow_left" text, and tint it on-brand */
+[data-testid="stSidebarCollapseButton"] *, [data-testid="stSidebarCollapsedControl"] *{
+  font-family:'Material Symbols Outlined','Material Symbols Rounded','Material Icons Outlined','Material Icons' !important;}
+[data-testid="stSidebarCollapseButton"] button, [data-testid="stSidebarCollapsedControl"] button{color:#5E4A5E !important;}
 .sblbl{color:#A08E97 !important;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:10px 0 2px;}
 .sbrand{font-size:19px;font-weight:700;color:#3B2E39;padding:2px 0 2px;}
 
@@ -266,16 +268,6 @@ for _t in st.session_state.threads:
 if "sid" not in st.session_state:
     st.session_state.sid = uuid.uuid4().hex[:16]   # anonymous per-session id (not tied to any identity)
 
-# custom show/hide for the left panel — our flag is the single source of truth, forced via CSS
-# (Streamlit remembers its own collapse state across reruns, so we override it either way)
-st.session_state.setdefault("show_panel", True)
-if st.session_state.show_panel:
-    st.markdown('<style>[data-testid="stSidebar"]{display:flex !important;visibility:visible !important;'
-                'transform:none !important;margin-left:0 !important;width:16rem !important;min-width:16rem !important;}'
-                '</style>', unsafe_allow_html=True)
-else:
-    st.markdown('<style>[data-testid="stSidebar"]{display:none !important;}</style>', unsafe_allow_html=True)
-
 
 def _cur():
     for t in st.session_state.threads:
@@ -359,12 +351,7 @@ if _cd:
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
-    # ONE persistent toggle, always in the same spot: « to hide the panel, ☰ to bring it back
-    mc, hc1, hc2, hc3 = st.columns([0.9, 4.3, 1.5, 1.3])
-    if mc.button("«" if st.session_state.show_panel else "☰", key="panel_toggle",
-                 use_container_width=True, help="Erekana / hisha ibiganiro · show or hide chats"):
-        st.session_state.show_panel = not st.session_state.show_panel
-        st.rerun()
+    hc1, hc2, hc3 = st.columns([5.2, 1.5, 1.3])
     hc1.markdown('<div class="topbar"><div class="av"></div><div>'
                  '<div class="t">Umubyeyi</div>'
                  '<div class="s">Umufasha w\'imibereho myiza yo mu mutima · a mental-wellbeing companion</div>'
