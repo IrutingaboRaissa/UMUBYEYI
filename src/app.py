@@ -48,11 +48,8 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 #MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"]{display:none !important;}
 [data-testid="stSidebar"]{background:#FBF5EC;border-right:1px solid #EADFCF;}
 [data-testid="stSidebar"] *{color:#4A3F47 !important;}
-/* native sidebar collapse control (« to hide, » to show) — force the Material font so the arrow
-   icon renders instead of raw "keyboard_double_arrow_left" text, and tint it on-brand */
-[data-testid="stSidebarCollapseButton"] *, [data-testid="stSidebarCollapsedControl"] *{
-  font-family:'Material Symbols Outlined','Material Symbols Rounded','Material Icons Outlined','Material Icons' !important;}
-[data-testid="stSidebarCollapseButton"] button, [data-testid="stSidebarCollapsedControl"] button{color:#5E4A5E !important;}
+/* hide the native collapse control (unreliable on mobile) — we provide our own ✕ / ☰ toggle */
+[data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"]{display:none !important;}
 .sblbl{color:#A08E97 !important;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:10px 0 2px;}
 .sbrand{font-size:19px;font-weight:700;color:#3B2E39;padding:2px 0 2px;}
 
@@ -288,6 +285,11 @@ for _t in st.session_state.threads:
 if "sid" not in st.session_state:
     st.session_state.sid = uuid.uuid4().hex[:16]   # anonymous per-session id (not tied to any identity)
 
+# explicit show/hide of the left panel — visible on mobile too (no force-CSS, just hide when closed)
+st.session_state.setdefault("show_panel", True)
+if not st.session_state.show_panel:
+    st.markdown('<style>[data-testid="stSidebar"]{display:none !important;}</style>', unsafe_allow_html=True)
+
 
 def _cur():
     for t in st.session_state.threads:
@@ -331,7 +333,10 @@ def bubble(m):
 
 # ---------------- sidebar (Claude-style: brand + collapse, New chat, nav, Recents) ----------------
 with st.sidebar:
-    st.markdown('<div class="sbrand">Umubyeyi</div>', unsafe_allow_html=True)
+    bc1, bc2 = st.columns([3.3, 1])
+    bc1.markdown('<div class="sbrand">Umubyeyi</div>', unsafe_allow_html=True)
+    if bc2.button("✕", key="close_panel", help="Hisha urutonde · hide panel"):
+        st.session_state.show_panel = False; st.rerun()
     if st.button("＋  Ikiganiro gishya · New chat", use_container_width=True, key="newchat"):
         nt = _new_thread()
         st.session_state.threads = [nt] + st.session_state.threads
@@ -374,7 +379,12 @@ if _cd:
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
-    hc1, hc2, hc3, hc4 = st.columns([4.1, 1.5, 1.3, 1.2])
+    if not st.session_state.show_panel:   # reopen control (visible on desktop & mobile)
+        mc, hc1, hc2, hc3, hc4 = st.columns([0.8, 3.3, 1.5, 1.3, 1.2])
+        if mc.button("☰", key="open_panel", use_container_width=True, help="Erekana ibiganiro · show chats"):
+            st.session_state.show_panel = True; st.rerun()
+    else:
+        hc1, hc2, hc3, hc4 = st.columns([4.1, 1.5, 1.3, 1.2])
     hc1.markdown('<div class="topbar"><div class="av"></div><div>'
                  '<div class="t">Umubyeyi</div>'
                  '<div class="s">Umufasha w\'imibereho myiza yo mu mutima · a mental-wellbeing companion</div>'
