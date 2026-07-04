@@ -1262,5 +1262,149 @@
   "answer_en": "Remind yourself and others, 'There's no one 'right' way to be a mom.' Prioritize your own well-being and seek support when you need it!",
   "question_rw": "",
   "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "baby blues",
+  "question_en": "I keep crying and feeling down since my baby was born",
+  "answer_en": "In the first days and weeks after birth it's very common to feel tearful, low or easily upset - often called the 'baby blues', and it usually eases within about two weeks. Be gentle with yourself, rest when you can, and share how you feel with someone you trust. If the sadness stays longer or feels heavy, please talk to a health worker.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "sadness",
+  "question_en": "I feel sad all the time and can't enjoy anything",
+  "answer_en": "Feeling low and losing enjoyment in things you used to like can happen after birth, and you don't have to carry it alone. Try to talk to someone close to you about how you feel, and let others help with daily tasks. If this low mood lasts more than two weeks or feels too much, reaching out to a health worker can really help - these feelings can get better.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "PSI",
+  "topic": "anxiety",
+  "question_en": "I'm anxious and worried all the time about being a mother",
+  "answer_en": "Constant worry, racing thoughts and feeling on edge are common experiences for new mothers. Try slowing your breathing and sharing your worries with someone you trust - naming them out loud often makes them lighter. If the anxiety keeps you from resting or coping, a health worker can support you; you are not alone in this.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "overwhelmed",
+  "question_en": "Everything feels like too much and I can't cope",
+  "answer_en": "Feeling overwhelmed, like you can't cope, is something many new mothers feel - it does not mean you are failing. Try to take one small thing at a time and ask for practical help with chores or the baby so you can rest. If the feeling stays heavy, please talk to someone you trust or a health worker.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS/PSI",
+  "topic": "guilt",
+  "question_en": "I feel like a bad mother and I feel so guilty",
+  "answer_en": "Feeling guilty or like you're not a good enough mother is a very common feeling after birth - but having these feelings does not make you a bad parent. Be as kind to yourself as you would be to a friend, and share these thoughts with someone you trust. If the guilt feels crushing, a health worker can help you through it.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "low mood",
+  "question_en": "I feel worthless and hopeless",
+  "answer_en": "Feeling worthless or hopeless can happen when you're exhausted and overwhelmed after birth, and it's a sign you deserve support, not blame. Please don't go through it alone - tell someone you trust how you're feeling today. If these feelings are strong or lasting, reach out to a health worker soon.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS/PSI",
+  "topic": "loneliness",
+  "question_en": "I feel so alone since my baby was born",
+  "answer_en": "Many new mothers feel lonely or isolated, even while busy caring for a baby - you are not the only one. Reaching out to another mother, a friend, or a mothers' group, even for a short chat, can ease that loneliness. Sharing how you feel with someone you trust really helps; you don't have to carry this by yourself.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "PSI",
+  "topic": "intrusive thoughts",
+  "question_en": "I keep having scary thoughts about my baby and it frightens me",
+  "answer_en": "Upsetting, unwanted thoughts about your baby can happen and they are frightening, but having them does not mean you would act on them - they are usually a sign of anxiety, not who you are. You are not alone, and this can be helped. Please share these thoughts with a health worker or someone you trust so you can get support.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "bonding",
+  "question_en": "I don't feel a bond with my baby and it worries me",
+  "answer_en": "Not feeling an instant bond with your baby is more common than people say, and for many mothers the connection grows gently over time. Be patient and kind with yourself, and hold or talk to your baby when you can. If it keeps worrying you, sharing it with a health worker can help - it doesn't mean you love your baby any less.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "exhaustion",
+  "question_en": "I'm exhausted and it's making me feel low",
+  "answer_en": "Deep tiredness after birth can wear down your mood and make everything feel harder. Rest whenever you can, even small moments, and let others take some of the load so you can recover. If exhaustion and low feelings continue, talking to a health worker can help you find support.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "adjustment",
+  "topic": "identity",
+  "question_en": "I feel like I've lost myself since becoming a mother",
+  "answer_en": "Feeling like you've lost your old self is a real part of adjusting to motherhood, and it doesn't mean anything is wrong with you. Try to keep small things that are just for you, and give yourself time to grow into this new chapter. Sharing these feelings with someone who understands can make the change feel less lonely.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS/PSI",
+  "topic": "reassurance",
+  "question_en": "Is it normal to feel this way after having a baby",
+  "answer_en": "Yes - many mothers feel sadness, worry, guilt or exhaustion after birth, and having these feelings is common and nothing to be ashamed of. You are not alone, and these feelings can get better with rest, support and someone to talk to. If they feel heavy or last a long time, a health worker can help.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "seek help",
+  "question_en": "How do I know if my feelings are serious enough to get help",
+  "answer_en": "It's a good idea to reach out if low or anxious feelings last longer than about two weeks, keep getting worse, or make it hard to cope with daily life or care for yourself. You don't need to wait until it's severe - asking for support early is a strength. A health worker or someone you trust is a good place to start.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "self-care",
+  "question_en": "What can I do to feel a bit better",
+  "answer_en": "Small steps can help: rest when you can, take a short walk or some fresh air, and share how you feel with someone you trust. Accept practical help with chores so you have a little time for yourself, and try to do one gentle thing you enjoy each day. If the low feelings persist, a health worker can offer more support.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS/PSI",
+  "topic": "support",
+  "question_en": "I don't want to burden anyone with how I feel",
+  "answer_en": "It's natural to worry about being a burden, but the people who care about you would want to know you're struggling - sharing how you feel is not a weakness. Even telling one trusted person can lighten the load. You deserve support just as much as anyone, mama.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "irritability",
+  "question_en": "I feel angry and irritable all the time and I don't know why",
+  "answer_en": "Feeling unusually irritable or angry can be part of the emotional ups and downs after birth, often made worse by exhaustion. Try to step away for a slow breath when you can, and be gentle with yourself. If the anger feels overwhelming or constant, talking to a health worker or someone you trust can help.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "baby blues",
+  "question_en": "How is the baby blues different from something more serious",
+  "answer_en": "The 'baby blues' - feeling tearful, moody or anxious - is very common in the first two weeks and usually passes on its own. If low or anxious feelings last longer than two weeks, feel deeper, or make it hard to cope, that may be more than the baby blues and is worth sharing with a health worker. Either way, support is available and you are not alone.",
+  "question_rw": "",
+  "answer_rw": ""
+ },
+ {
+  "source": "NHS",
+  "topic": "mood swings",
+  "question_en": "I cry for no reason and my moods keep changing",
+  "answer_en": "Sudden tears and mood swings, even without a clear reason, are a common part of the early weeks after birth as your body and life adjust. Be patient with yourself and rest when you can. If the crying and low moods carry on past a couple of weeks, reaching out to a health worker can help.",
+  "question_rw": "",
+  "answer_rw": ""
  }
 ]
