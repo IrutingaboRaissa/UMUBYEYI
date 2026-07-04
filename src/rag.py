@@ -15,6 +15,7 @@ validated Kinyarwanda text). The chatbot therefore always returns correct, on-do
 and NEVER calls a commercial API.
 """
 import json
+import random
 import re
 import sys
 from pathlib import Path
@@ -41,6 +42,7 @@ _VEC = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), min_df=1, subline
 _MAT = _VEC.fit_transform(_SEARCH)
 
 SIM_GATE = 0.25          # below this: ask to say more, rather than ground on a weak/off-topic match
+RETRIEVE_GATE = 0.30     # at/above this: serve the VALIDATED answer (richer, safest); below: generate
 TOP_K = 3
 GEN_NOTES = 2            # notes fed to the generator at inference == what it was trained on
 
@@ -74,16 +76,28 @@ def is_greeting(text: str) -> bool:
         return False
     for p in GREET_PHRASES:
         t = t.replace(p, " ")
-    remaining = [w for w in t.split() if w not in (GREET_WORDS | {"mama", "neza", "there", "everyone", "all"})]
+    # trailing small-talk fillers so "hi friend", "how are you today", "good morning dear" count as greetings
+    FILLER = {"mama", "neza", "there", "everyone", "all", "friend", "today", "dear", "sis", "sister",
+              "my", "doing", "again", "so", "now", "how", "are", "you", "u", "ur"}
+    remaining = [w for w in t.split() if w not in (GREET_WORDS | FILLER)]
     return len(remaining) == 0
 
 
+# a few warm variants so greetings/small-talk don't repeat the exact same sentence
+GREETINGS = {
+    "rw": ["Muraho, mama! Nishimiye kuvugana nawe. Ndi hano ku byerekeye uko wiyumva mu mezi 6 ya mbere nyuma yo kubyara. Umeze ute uyu munsi?",
+           "Muraho neza, mama. Nishimiye ko uje. Wambwira uko umutima wawe umeze - agahinda, guhangayika, umunaniro, cyangwa ikindi.",
+           "Bite, mama? Ndi hano kukumva nta kugucira urubanza. Ni iki wiyumva muri iki gihe?",
+           "Mwaramutse, mama. Nishimiye kuba turi kumwe. Wambwira uko byakugendekeye - uko wiyumva?"],
+    "en": ["Hello, mama! I'm glad to talk with you. I'm here for how you're feeling in the first 6 months after birth. How are you today?",
+           "Hi there, mama. I'm really glad you're here. Tell me how you're feeling - low, worried, tired, or anything on your heart.",
+           "Hello, dear. It's good to have you here, and there's no judgement in this space. How is your heart today?",
+           "Hi, mama. I'm listening. What's on your mind or weighing on you right now?"],
+}
+
+
 def _greeting_reply(lang: str) -> str:
-    if lang == "rw":
-        return ("Muraho, mama! Nishimiye kuvugana nawe. Ndi hano kugufasha ku byerekeye uko wiyumva "
-                "mu mezi 6 ya mbere nyuma yo kubyara. Wambwira icyo nakumarira?")
-    return ("Hello, mama! I'm glad to talk with you. I'm here to help with how you're feeling in the "
-            "first 6 months after birth. How can I help you today?")
+    return random.choice(GREETINGS.get(lang, GREETINGS["en"]))
 
 
 def detect_language(text: str) -> str:
@@ -165,7 +179,7 @@ def _generate_en(query: str, snippets) -> str:
     prompt = f"{HEADER}Notes:\n{notes}\nMother: {query}\nAnswer:"
     try:
         ids = tok(prompt, return_tensors="pt", truncation=True, max_length=512).input_ids
-        out = model.generate(ids, max_new_tokens=160, num_beams=4, no_repeat_ngram_size=3)
+        out = model.generate(ids, max_new_tokens=200, num_beams=4, no_repeat_ngram_size=3)
         draft = tok.decode(out[0], skip_special_tokens=True).strip()
     except Exception as e:
         print(f"[umubyeyi] generation error ({type(e).__name__}) -> fallback", file=sys.stderr)
@@ -217,18 +231,24 @@ def answer(query: str, force_lang: str = None, history=None) -> dict:
 
     if not grounded:
         # no confident validated match: stay honest, invite her to say more (never fabricate)
-        msg = ("Numva ibyo uvuga. Nkumva byaba byiza umbwiye byinshi ku byo wiyumva, kugira ngo "
-               "ngufashe neza." if lang == "rw" else
-               "I hear you. Could you tell me a little more about how you're feeling, so I can help you better?")
-        return {"answer": msg, "language": lang, "danger": False, "grounded": False,
-                "mode": "clarify", "intent": intent, "sources": []}
+        opts = {"rw": ["Numva ibyo uvuga. Wambwira gato byinshi ku byo wiyumva, kugira ngo ngufashe neza?",
+                       "Ndi hano kukumva. Ni iki cyane cyane kigukoraho muri iki gihe?",
+                       "Mbwira uko wiyumva mu magambo yawe - agahinda, guhangayika, umunaniro? Ndashaka kugusobanukirwa."],
+                "en": ["I hear you. Could you tell me a little more about how you're feeling, so I can help you better?",
+                       "I'm here for you. What's weighing on you most right now?",
+                       "Tell me in your own words how you're feeling - sad, anxious, overwhelmed, tired? I want to understand."]}
+        return {"answer": random.choice(opts.get(lang, opts["en"])), "language": lang, "danger": False,
+                "grounded": False, "mode": "clarify", "intent": intent, "sources": []}
 
     if lang == "rw":
         # serve the VALIDATED Kinyarwanda answer when we have it (higher quality than MT)
         body = (top.get("answer_rw") or "").strip() or (top.get("answer_en") or "").strip()
         mode = "retrieved_rw" if top.get("answer_rw") else "retrieved_en"
+    elif sim >= RETRIEVE_GATE:
+        # strong match: serve the VALIDATED answer verbatim — richer, warmer, and safest
+        body, mode = (top.get("answer_en") or "").strip(), "retrieved"
     else:
-        draft = _generate_en(query, snippets)        # our fine-tuned generator
+        draft = _generate_en(query, snippets)        # novel phrasing: our fine-tuned generator adapts
         if draft:
             body, mode = draft, "generative"
         else:
