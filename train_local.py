@@ -134,14 +134,19 @@ def train_generator():
     ds = ds.map(_tok, batched=True, remove_columns=["input", "target"])
     model = AutoModelForSeq2SeqLM.from_pretrained(base)
 
+    # early stopping: keep the checkpoint with the LOWEST validation loss (prevents overfitting
+    # on the small dataset — training loss keeps falling but val loss stops improving past ~epoch 3)
     args = Seq2SeqTrainingArguments(
         output_dir=str(MODELS / "_gen_ckpt"), num_train_epochs=epochs, learning_rate=3e-4,
         per_device_train_batch_size=4, per_device_eval_batch_size=4,
-        eval_strategy="epoch", save_strategy="no", logging_steps=25,
+        eval_strategy="epoch", save_strategy="epoch", save_total_limit=1, logging_steps=25,
+        load_best_model_at_end=True, metric_for_best_model="eval_loss", greater_is_better=False,
         predict_with_generate=True, fp16=False, report_to="none", seed=42)
 
+    from transformers import EarlyStoppingCallback
     trainer = Seq2SeqTrainer(model=model, args=args, train_dataset=ds["train"], eval_dataset=ds["test"],
-                             data_collator=DataCollatorForSeq2Seq(tok, model=model), processing_class=tok)
+                             data_collator=DataCollatorForSeq2Seq(tok, model=model), processing_class=tok,
+                             callbacks=[EarlyStoppingCallback(early_stopping_patience=2)])
     trainer.train()
 
     out = MODELS / "umubyeyi-generator"

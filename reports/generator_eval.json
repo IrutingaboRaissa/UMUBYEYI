@@ -1,8 +1,8 @@
 {
-  "model": "flan-t5-small (deployed)",
-  "held_out_examples": 27,
-  "rouge1": 0.2401,
-  "rouge2": 0.0719,
-  "rougeL": 0.1716,
-  "bleu": 2.93
+  "model": "flan-t5-small (deployed, early-stopped, pruned postpartum bank)",
+  "held_out_examples": 16,
+  "rouge1": 0.2616,
+  "rouge2": 0.0846,
+  "rougeL": 0.171,
+  "bleu": 2.79
 }
