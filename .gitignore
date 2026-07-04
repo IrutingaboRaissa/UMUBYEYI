@@ -21,6 +21,13 @@ docs/
 cc.rw.300*
 afroxlmr-kinyarwanda-intent/
 
+# Fine-tuned generator weights (307MB > GitHub 100MB limit) — regenerate via train_local.py / notebook
+models/umubyeyi-generator/
+models/_gen_ckpt/
+
+# local UI screenshots
+screenshots/
+
 # local analytics DB (SQLite dev fallback)
 umubyeyi_analytics.db
 *.db
