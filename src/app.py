@@ -23,13 +23,6 @@ try:
 except Exception:
     PERSIST = False
 
-try:
-    for _k in ("GEMINI_API_KEY", "GEMINI_MODEL"):
-        if _k in st.secrets:
-            os.environ[_k] = str(st.secrets[_k])
-except Exception:
-    pass
-
 st.set_page_config(page_title="Umubyeyi", page_icon="🌿", layout="centered",
                    initial_sidebar_state="expanded")
 
@@ -48,8 +41,7 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 #MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"]{display:none !important;}
 [data-testid="stSidebar"]{background:#FBF5EC;border-right:1px solid #EADFCF;}
 [data-testid="stSidebar"] *{color:#4A3F47 !important;}
-/* hide the native collapse control (unreliable on mobile) — we provide our own ✕ / ☰ toggle */
-[data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"]{display:none !important;}
+/* native sidebar collapse/expand + resize handle stay ON (reliable reopen arrow, draggable width) */
 .sblbl{color:#A08E97 !important;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:10px 0 2px;}
 .sbrand{font-size:19px;font-weight:700;color:#3B2E39;padding:2px 0 2px;}
 
@@ -156,7 +148,6 @@ MOODS = [
 ]
 GREETING_MSG = {"role": "bot", "text": GREETING, "sub": GREETING_SUB, "danger": False}
 
-
 # ---------------- Breathe & Help dialogs ----------------
 @st.dialog("Guhumeka · Breathe")
 def _breathe():
@@ -165,7 +156,6 @@ def _breathe():
                 'eshanu.<br><br><i>Take a slow moment. Breathe in through your nose for <b>4</b>, hold for <b>4</b>, '
                 'and out gently for <b>6</b>. Repeat five times. You are safe right now.</i></div>',
                 unsafe_allow_html=True)
-
 
 @st.dialog("Siba iki kiganiro? · Delete this chat?")
 def _confirm_delete(tid, title):
@@ -186,7 +176,6 @@ def _confirm_delete(tid, title):
         st.session_state._saved = None
         st.session_state.pop("confirm_delete", None); st.rerun()
 
-
 @st.dialog("Ubufasha · Help")
 def _help():
     st.markdown(f'<div class="card">Niba uri mu kaga cyangwa utekereza kwikomeretsa, hamagara '
@@ -194,7 +183,6 @@ def _help():
                 f'<br><br><i>If you are in danger or thinking of harming yourself, call <b>{rag.CRISIS_LINE}</b> now, '
                 'or talk to someone you trust or a health worker. Umubyeyi is emotional support, not a doctor.</i></div>',
                 unsafe_allow_html=True)
-
 
 # ---------------- welcome / consent ----------------
 if not st.session_state.get("consented"):
@@ -242,10 +230,8 @@ if PERSIST:
     except Exception:
         _localS = None
 
-
 def _new_thread():
     return {"id": uuid.uuid4().hex[:12], "title": "", "ts": int(time.time()), "msgs": [dict(GREETING_MSG)]}
-
 
 def _persist():
     if not _localS:
@@ -257,7 +243,6 @@ def _persist():
             st.session_state._saved = payload
     except Exception:
         pass
-
 
 if "threads" not in st.session_state:
     st.session_state.threads = [_new_thread()]
@@ -285,12 +270,6 @@ for _t in st.session_state.threads:
 if "sid" not in st.session_state:
     st.session_state.sid = uuid.uuid4().hex[:16]   # anonymous per-session id (not tied to any identity)
 
-# explicit show/hide of the left panel — visible on mobile too (no force-CSS, just hide when closed)
-st.session_state.setdefault("show_panel", True)
-if not st.session_state.show_panel:
-    st.markdown('<style>[data-testid="stSidebar"]{display:none !important;}</style>', unsafe_allow_html=True)
-
-
 def _cur():
     for t in st.session_state.threads:
         if t["id"] == st.session_state.current_id:
@@ -298,13 +277,25 @@ def _cur():
     return st.session_state.threads[0]
 
 
-def ask(text, force=None):
+def _send(text, force=None):
+    """Show the user's message immediately, then generate on the next run so a 'typing' indicator shows."""
     t = _cur()
-    msgs = t["msgs"]
-    history = [{"role": m["role"], "text": m["text"]} for m in msgs]
-    msgs.append({"role": "user", "text": text})
+    t["msgs"].append({"role": "user", "text": text})
     if not t["title"]:
         t["title"] = text.strip()[:36]
+    st.session_state.threads = [t] + [x for x in st.session_state.threads if x["id"] != t["id"]]
+    st.session_state._awaiting = True
+    st.session_state._awaiting_force = force
+    st.rerun()
+
+
+def _respond(force=None):
+    """Generate the bot reply for the last user message already in the thread."""
+    t = _cur(); msgs = t["msgs"]
+    if not msgs or msgs[-1]["role"] != "user":
+        return
+    text = msgs[-1]["text"]
+    history = [{"role": m["role"], "text": m["text"]} for m in msgs[:-1]]
     try:
         t0 = time.time()
         r = rag.answer(text, force_lang=force, history=history)
@@ -318,8 +309,6 @@ def ask(text, force=None):
         st.session_state._rated = False
     except Exception as e:
         msgs.append({"role": "bot", "text": f"Mbabarira, hari ikibazo. ({e})", "danger": False})
-    st.session_state.threads = [t] + [x for x in st.session_state.threads if x["id"] != t["id"]]
-
 
 def bubble(m):
     if m["role"] == "user":
@@ -330,13 +319,9 @@ def bubble(m):
         inner += f'<div class="subtext">{m["sub"]}</div>'
     return f'<div class="row"><div class="{cls}">{inner}</div></div>'
 
-
 # ---------------- sidebar (Claude-style: brand + collapse, New chat, nav, Recents) ----------------
 with st.sidebar:
-    bc1, bc2 = st.columns([3.3, 1])
-    bc1.markdown('<div class="sbrand">Umubyeyi</div>', unsafe_allow_html=True)
-    if bc2.button("✕", key="close_panel", help="Hisha urutonde · hide panel"):
-        st.session_state.show_panel = False; st.rerun()
+    st.markdown('<div class="sbrand">Umubyeyi</div>', unsafe_allow_html=True)
     if st.button("＋  Ikiganiro gishya · New chat", use_container_width=True, key="newchat"):
         nt = _new_thread()
         st.session_state.threads = [nt] + st.session_state.threads
@@ -379,12 +364,7 @@ if _cd:
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
-    if not st.session_state.show_panel:   # reopen control (visible on desktop & mobile)
-        mc, hc1, hc2, hc3, hc4 = st.columns([0.8, 3.3, 1.5, 1.3, 1.2])
-        if mc.button("☰", key="open_panel", use_container_width=True, help="Erekana ibiganiro · show chats"):
-            st.session_state.show_panel = True; st.rerun()
-    else:
-        hc1, hc2, hc3, hc4 = st.columns([4.1, 1.5, 1.3, 1.2])
+    hc1, hc2, hc3, hc4 = st.columns([4.1, 1.5, 1.3, 1.2])
     hc1.markdown('<div class="topbar"><div class="av"></div><div>'
                  '<div class="t">Umubyeyi</div>'
                  '<div class="s">Umufasha w\'imibereho myiza yo mu mutima · a mental-wellbeing companion</div>'
@@ -400,6 +380,15 @@ if view.startswith("Ikiganiro"):
     msgs = _cur()["msgs"]
     for m in msgs:
         st.markdown(bubble(m), unsafe_allow_html=True)
+
+    # after the user's message is on screen, generate the reply while showing a typing indicator
+    if st.session_state.get("_awaiting"):
+        st.markdown('<div class="row"><div class="bubble bot" style="opacity:.7">'
+                    'Umubyeyi arimo yandika… · typing…</div></div>', unsafe_allow_html=True)
+        with st.spinner("Umubyeyi arimo yandika… · Umubyeyi is typing…"):
+            _respond(st.session_state.get("_awaiting_force"))
+        st.session_state._awaiting = False
+        st.rerun()
 
     if db and msgs[-1]["role"] == "bot" and len(msgs) > 1 and not st.session_state.get("_rated"):
         st.markdown('<div style="font-size:13px;color:#A08E97;margin:2px 0 6px">Iki gisubizo cyagufashije? · Was this helpful?</div>',
@@ -417,14 +406,14 @@ if view.startswith("Ikiganiro"):
         cols = st.columns(3)
         for i, (emo, lbl, q) in enumerate(MOODS):
             if cols[i % 3].button(f"{emo}  {lbl}", key=f"mood{i}", use_container_width=True):
-                ask(q, force); st.rerun()
+                _send(q, force)
 
     st.markdown('<div class="foot">Umufasha w\'imibereho myiza gusa · si uw\'ibindi bibazo · '
                 'mu kaga hamagara 114  ·  a wellness companion only — not for other challenges · '
                 'in a crisis call 114</div>', unsafe_allow_html=True)
     prompt = st.chat_input("Andika uko wiyumva... · Type how you feel...")
     if prompt and prompt.strip():
-        ask(prompt.strip(), force); st.rerun()
+        _send(prompt.strip(), force)
 
 elif view.startswith("Ingero"):
     st.markdown('<div class="topbar"><div class="av"></div><div>'
