@@ -42,7 +42,6 @@ _VEC = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), min_df=1, subline
 _MAT = _VEC.fit_transform(_SEARCH)
 
 SIM_GATE = 0.25          # below this: ask to say more, rather than ground on a weak/off-topic match
-RETRIEVE_GATE = 0.30     # at/above this: serve the VALIDATED answer (richer, safest); below: generate
 TOP_K = 3
 GEN_NOTES = 2            # notes fed to the generator at inference == what it was trained on
 
@@ -244,15 +243,13 @@ def answer(query: str, force_lang: str = None, history=None) -> dict:
         # serve the VALIDATED Kinyarwanda answer when we have it (higher quality than MT)
         body = (top.get("answer_rw") or "").strip() or (top.get("answer_en") or "").strip()
         mode = "retrieved_rw" if top.get("answer_rw") else "retrieved_en"
-    elif sim >= RETRIEVE_GATE:
-        # strong match: serve the VALIDATED answer verbatim — richer, warmer, and safest
-        body, mode = (top.get("answer_en") or "").strip(), "retrieved"
     else:
-        draft = _generate_en(query, snippets)        # novel phrasing: our fine-tuned generator adapts
+        # generation-primary: OUR fine-tuned flan-t5 generates the English answer, grounded on the notes
+        draft = _generate_en(query, snippets)
         if draft:
             body, mode = draft, "generative"
         else:
-            body, mode = (top.get("answer_en") or "").strip(), "retrieved"   # validated fallback
+            body, mode = (top.get("answer_en") or "").strip(), "retrieved"   # validated fallback only if generation fails
 
     text = f"{body}\n\n{DISCLAIMER.get(lang, DISCLAIMER['en'])}"
     return {"answer": text, "language": lang, "danger": False, "grounded": grounded, "mode": mode,
