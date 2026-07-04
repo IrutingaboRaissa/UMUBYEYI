@@ -34,7 +34,7 @@ except ImportError:
     import evaluate
 rouge = evaluate.load("rouge").compute(predictions=preds, references=refs)
 bleu = evaluate.load("sacrebleu").compute(predictions=preds, references=[[r] for r in refs])
-res = {"model": "flan-t5-small (deployed, early-stopped, pruned postpartum bank)",
+res = {"model": "flan-t5-base (deployed, generation-primary, pruned postpartum bank)",
        "held_out_examples": len(preds),
        "rouge1": round(rouge["rouge1"], 4), "rouge2": round(rouge["rouge2"], 4),
        "rougeL": round(rouge["rougeL"], 4), "bleu": round(bleu["score"], 2)}
