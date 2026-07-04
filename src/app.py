@@ -381,10 +381,8 @@ if view.startswith("Ikiganiro"):
     for m in msgs:
         st.markdown(bubble(m), unsafe_allow_html=True)
 
-    # after the user's message is on screen, generate the reply while showing a typing indicator
+    # after the user's message is on screen, generate the reply while showing ONE typing indicator
     if st.session_state.get("_awaiting"):
-        st.markdown('<div class="row"><div class="bubble bot" style="opacity:.7">'
-                    'Umubyeyi arimo yandika… · typing…</div></div>', unsafe_allow_html=True)
         with st.spinner("Umubyeyi arimo yandika… · Umubyeyi is typing…"):
             _respond(st.session_state.get("_awaiting_force"))
         st.session_state._awaiting = False
