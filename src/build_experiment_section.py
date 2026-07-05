@@ -227,15 +227,16 @@ md("""---
 # Part 4 — Live bilingual chatbot demo (the deployed product)
 
 This calls the **production** `rag.answer()` exactly as the deployed app does: language
-detection -> safety check -> retrieval over the 859-pair bank -> **Gemini** generation in the
-user's language, with the disclaimer. Clinical/baby-care questions are referred to a health
-worker; self-harm routes to the crisis line.
+detection -> safety check -> LogReg intent router -> retrieval over the validated postpartum
+bank -> **our own fine-tuned flan-t5 generator** (with a retrieval fallback), plus the
+disclaimer. Clinical/baby-care questions are referred to a health worker; self-harm routes to
+the crisis line. **No external LLM API is used.**
 
-Needs a Gemini key. On Colab set it first: `import os; os.environ["GEMINI_API_KEY"]="AIza..."`.
-Without a key it still runs and shows the retrieval/`unavailable` path (no crash).""")
+If models/umubyeyi-generator is absent it runs in retrieval mode and still returns the
+validated answers (no crash).""")
 code("""import sys, subprocess
 subprocess.run([sys.executable, "-m", "pip", "install", "-q",
-                "google-genai", "python-dotenv", "joblib", "scikit-learn"], check=False)
+                "transformers", "torch", "sentencepiece", "joblib", "scikit-learn"], check=False)
 sys.path.insert(0, os.path.join(ROOT, "src"))
 
 demo = [
@@ -254,7 +255,7 @@ try:
         print("  Q:", q)
         print("  A:", r["answer"])
 except Exception as e:
-    print("Chatbot demo skipped (set GEMINI_API_KEY to enable):", repr(e)[:200])""")
+    print("Chatbot demo error:", repr(e)[:200])""")
 
 md("""### What the sweep shows
 
