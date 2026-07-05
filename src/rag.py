@@ -33,7 +33,8 @@ class UmubyeyiRAG:
     """Fully-local retrieval-augmented generation pipeline for postpartum emotional wellbeing."""
 
     # ---- response policy (class-level constants) ----
-    SIM_GATE = 0.25          # below this: ask to say more, rather than ground on a weak/off-topic match
+    SIM_GATE = 0.12          # below this: ask to say more. Low enough that conversational/filler-laden
+                             # emotional messages still answer, high enough that off-topic (~0.08) deflects.
     TOP_K = 3
     GEN_NOTES = 2            # notes fed to the generator at inference == what it was trained on
     CRISIS_LINE = "114"
@@ -52,6 +53,13 @@ class UmubyeyiRAG:
     # acute medical / baby-care that we refer out rather than answer
     CLINICAL = ["bleeding", "haemorrhage", "hemorrhage", "fever", "stitches", "wound", "infection",
                 "seizure", "convulsion", "not breathing", "unconscious", "amaraso", "umuriro"]
+    # clearly non-wellbeing topics -> politely redirect (matched as whole words, so "car" != "care")
+    OFFTOPIC = {"weather", "rain", "forecast", "temperature", "football", "soccer", "basketball",
+                "sport", "sports", "match", "tournament", "politics", "election", "president", "vote",
+                "government", "news", "movie", "film", "cinema", "song", "recipe", "cook", "cooking",
+                "homework", "exam", "math", "mathematics", "programming", "python", "code", "laptop",
+                "computer", "phone", "car", "vehicle", "flight", "airport", "hotel", "restaurant",
+                "bitcoin", "stock", "salary", "tax", "dog", "cat", "football"}
 
     GREET_WORDS = {"muraho", "mwaramutse", "mwiriwe", "mwiriweho", "murakaza", "bite", "amakuru",
                    "hi", "hello", "hey", "hallo", "hola", "yego"}
@@ -119,6 +127,10 @@ class UmubyeyiRAG:
         t = text.lower()
         return any(k in t for k in self.CLINICAL)
 
+    def is_offtopic(self, text: str) -> bool:
+        words = set(re.findall(r"[a-z]+", text.lower()))
+        return bool(words & self.OFFTOPIC)
+
     def is_greeting(self, text: str) -> bool:
         t = re.sub(r"[^\w\s]", " ", text.lower()).strip()
         if not t:
@@ -148,6 +160,13 @@ class UmubyeyiRAG:
                     "w'ubuzima vuba. Ese wowe ubwawe wiyumva ute muri iki gihe?")
         return ("Umubyeyi helps with how you are feeling. For physical or baby concerns (bleeding, fever, "
                 "wounds), please see a nurse or health worker soon. How are you coping in yourself right now?")
+
+    def _offtopic_message(self, lang: str) -> str:
+        if lang == "rw":
+            return ("Umubyeyi ari hano ku byerekeye uko wiyumva nk'umubyeyi mushya mu mezi ya mbere - "
+                    "sinshobora gufasha ku bindi bibazo. Ariko ndumva: hari ikiguhangayikishije mu mutima?")
+        return ("Umubyeyi is here for how you're feeling as a new mother in these early months - I can't "
+                "help with other topics. But I'm listening: is something weighing on your heart?")
 
     # ----------------------------------------------- our own ML: router + retrieval + generator
     def route_intent(self, text: str):
@@ -225,6 +244,10 @@ class UmubyeyiRAG:
         if self.is_clinical(query):
             return {"answer": self._clinical_message(lang), "language": lang, "danger": False,
                     "grounded": False, "mode": "referral", "intent": "clinical", "sources": []}
+
+        if self.is_offtopic(query):
+            return {"answer": self._offtopic_message(lang), "language": lang, "danger": False,
+                    "grounded": False, "mode": "offtopic", "intent": "offtopic", "sources": []}
 
         intent = self.route_intent(query)                 # our LogReg router tags the wellness topic
         snippets = self.retrieve(query)
