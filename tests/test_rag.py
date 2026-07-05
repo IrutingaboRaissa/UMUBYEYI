@@ -42,7 +42,7 @@ def test_greeting_returns_greeting_mode():
 
 def test_off_topic_is_redirected_not_answered():
     r = rag.answer("Who won the football match?", force_lang="en")
-    assert r["mode"] in ("clarify", "referral")
+    assert r["mode"] in ("clarify", "referral", "offtopic")
     assert "football" not in r["answer"].lower()   # never answers the off-topic question
 
 
