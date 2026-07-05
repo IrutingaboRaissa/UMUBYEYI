@@ -1,14 +1,13 @@
-<!-- Hugging Face Space config (read by HF when this repo is deployed as a Space; GitHub ignores it). -->
 ---
 title: Umubyeyi
-emoji: U
+emoji: 🌿
 colorFrom: green
 colorTo: gray
 sdk: streamlit
 sdk_version: 1.48.1
 app_file: src/app.py
 pinned: false
-short_description: Bilingual emotional-wellbeing companion for postpartum mothers in Rwanda
+short_description: Bilingual postpartum wellbeing companion for Rwanda
 ---
 
 # Umubyeyi
