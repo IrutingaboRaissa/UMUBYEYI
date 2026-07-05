@@ -1,16 +1,16 @@
-# Umubyeyi runtime.
-# Product = grounded generation (RAG): retrieve validated MOTHER+KB snippets, then an LLM
-# (Gemini) answers in the user's language. Backend: FastAPI. Frontend: Streamlit.
-# The LLM key is read from .env (GEMINI_API_KEY) and never committed.
+# Umubyeyi runtime. FULLY LOCAL: no external LLM API.
+# Product = grounded generation (RAG): retrieve validated postpartum snippets, then OUR
+# fine-tuned flan-t5 generator answers (retrieval fallback if unavailable). Frontend: Streamlit.
 
-# retrieval / grounding
+# retrieval / grounding / router (our own sklearn models)
 scikit-learn==1.9.0
 joblib==1.5.2
 numpy==2.4.6
 
-# generation
-google-genai>=1.0
-python-dotenv>=1.0
+# generation (our own fine-tuned generator — no commercial API)
+transformers>=4.44
+torch>=2.2
+sentencepiece>=0.2
 
 # backend + frontend
 fastapi>=0.115
