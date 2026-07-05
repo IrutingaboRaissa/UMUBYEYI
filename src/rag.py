@@ -269,5 +269,7 @@ route_intent = _default.route_intent
 # constants some callers reference
 HEADER = UmubyeyiRAG.HEADER
 SIM_GATE = UmubyeyiRAG.SIM_GATE
+CRISIS_LINE = UmubyeyiRAG.CRISIS_LINE
+DISCLAIMER = UmubyeyiRAG.DISCLAIMER
 GEN_DIR = _default.gen_dir
 BANK = _default.bank
