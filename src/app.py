@@ -105,6 +105,15 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   margin:2px 0 8px;font-weight:700;}
 .qpill{display:inline-block;background:#F4ECDF;border:1px solid #EADFCF;border-radius:12px;padding:8px 12px;
   margin:4px 6px 4px 0;font-size:14px;color:#5b4f56;}
+/* self-care tip cards */
+.tipgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:8px;}
+.tip{background:#FBF5EC;border:1px solid #EADFCF;border-radius:15px;padding:13px 15px;}
+.tip .emo{font-size:22px;line-height:1;}
+.tip .tt{font-weight:700;color:#5E4A5E;font-size:13.5px;margin:6px 0 3px;}
+.tip .tt span{color:#A08E97;font-weight:600;}
+.tip .td{font-size:12px;color:#6b5560;line-height:1.45;}
+.tip .td span{color:#A99BA3;}
+@media(max-width:640px){.tipgrid{grid-template-columns:1fr;}}
 
 /* welcome / consent */
 .hero{text-align:center;padding:4px 0 2px;}
@@ -431,6 +440,30 @@ elif view.startswith("Ingero"):
     for g, qs in groups.items():
         html += f'<div class="h" style="margin-top:8px">{g}</div>' + "".join(f'<span class="qpill">{q}</span>' for q in qs)
     st.markdown(html + '</div>', unsafe_allow_html=True)
+
+    # gentle self-care tips for the mother (general wellbeing guidance, bilingual)
+    TIPS = [
+        ("🤝", "Shaka ubufasha", "Reach out", "Ganira n'umuntu wizeye cyangwa umukozi w'ubuzima.", "Talk to someone you trust or a health worker."),
+        ("👪", "Wubake abagufasha", "Build support", "Egera uwo mwashakanye, umuryango n'incuti.", "Lean on your partner, family, and friends."),
+        ("🌸", "Wite ku mutima wawe", "Self-care", "Fata udukanya duto wiyibagiza, ushake ibikunezeza bito.", "Take small moments for yourself; small joys matter."),
+        ("😴", "Ruhuka bihagije", "Rest", "Sinzira igihe umwana asinziriye, usabe ubufasha nijoro.", "Sleep when the baby sleeps; ask for help at night."),
+        ("🚶", "Imyitozo yoroheje", "Gentle movement", "Genda urugendo rugufi cyangwa unyeganyege gato.", "A short walk or light stretching lifts your mood."),
+        ("🥗", "Kurya indyo yuzuye", "Nourish", "Fata indyo yuzuye kugira ngo ugire imbaraga.", "Balanced meals help your energy and mood."),
+        ("🧘", "Humeka utuze", "Breathe", "Guhumeka gahoro bishobora gutuza umutima.", "A few slow breaths can calm a hard moment."),
+        ("💬", "Vuga uko wiyumva", "Share openly", "Vuga ibyiyumvo byawe utagira ipfunwe.", "Speak your feelings without guilt; it's a strength."),
+    ]
+    cards = "".join(
+        f'<div class="tip"><div class="emo">{e}</div>'
+        f'<div class="tt">{rw} · <span>{en}</span></div>'
+        f'<div class="td">{drw}<br><span>{den}</span></div></div>'
+        for e, rw, en, drw, den in TIPS)
+    st.markdown(
+        '<div class="h" style="margin:18px 0 2px;color:#5E4A5E;font-size:12px;letter-spacing:1px;'
+        'text-transform:uppercase;font-weight:700">Inama zo kwita ku mutima · Self-care tips</div>'
+        f'<div class="tipgrid">{cards}</div>'
+        '<div class="scopebar" style="margin-top:14px">Ntabwo uri wenyine · you are not alone. '
+        'Wihangane, gukira bisaba igihe · be patient, recovery takes time.</div>',
+        unsafe_allow_html=True)
 
 elif view.startswith("Imibare"):
     st.markdown('<div class="topbar"><div class="av"></div><div><div class="t">Imibare · Insights</div>'
