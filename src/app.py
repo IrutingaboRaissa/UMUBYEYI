@@ -86,6 +86,10 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 [data-testid="stSegmentedControl"] button[aria-checked="true"],
 [data-testid="stSegmentedControl"] button[data-selected="true"]{
   background:#5E4A5E !important;color:#fff !important;}
+/* full-width menu bar: segmented controls fill the width with equal buttons (great on mobile) */
+[data-testid="stSegmentedControl"]{width:100% !important;}
+[data-testid="stSegmentedControl"] > div{display:flex !important;width:100% !important;gap:5px;}
+[data-testid="stSegmentedControl"] button{flex:1 1 0 !important;}
 
 /* kill every dark background: the whole app + the bottom input band must be cream */
 .stApp, body, [data-testid="stMain"], [data-testid="stBottom"], [data-testid="stBottom"] > div,
@@ -347,10 +351,9 @@ with st.sidebar:
             db.log_action(st.session_state.sid, "new_chat")
         st.rerun()
     admin = st.query_params.get("admin") == "1"
-    nav_items = ["Ikiganiro · Chat", "Kwiyitaho · Self-care", "Ibyerekeye · About"]
+    nav_items = ["Ikiganiro", "Kwiyitaho", "Ibyerekeye"]   # Chat · Self-care · About (compact for the top menu bar)
     if admin:
-        nav_items.append("Imibare · Insights")
-    view = st.radio("nav", nav_items, label_visibility="collapsed")
+        nav_items.append("Imibare")
     if len(st.session_state.threads) > 1 or bool(st.session_state.threads[0]["title"]):
         st.markdown('<div class="sblbl">Ibiganiro · Recent</div>', unsafe_allow_html=True)
         for t in st.session_state.threads[:25]:
@@ -377,6 +380,10 @@ with st.sidebar:
 _cd = st.session_state.get("confirm_delete")
 if _cd:
     _confirm_delete(_cd["id"], _cd["title"])
+
+# ---------------- top menu bar (mobile-friendly nav; no sidebar needed to switch pages) ----------------
+view = st.segmented_control("nav", nav_items, default=nav_items[0],
+                            label_visibility="collapsed", key="topnav") or nav_items[0]
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
