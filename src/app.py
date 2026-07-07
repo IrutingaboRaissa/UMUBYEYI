@@ -113,6 +113,9 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 .tip .tt span{color:#A08E97;font-weight:600;}
 .tip .td{font-size:12px;color:#6b5560;line-height:1.45;}
 .tip .td span{color:#A99BA3;}
+.aff{background:linear-gradient(135deg,#F6EBF0,#F3EFE6);border:1px solid #EFD9E2;border-radius:15px;
+  padding:13px 15px;font-size:13.5px;color:#5E4A5E;font-weight:600;line-height:1.45;}
+.aff .affrw{color:#A08E97;font-weight:500;font-size:12px;margin-top:5px;font-style:italic;}
 @media(max-width:640px){.tipgrid{grid-template-columns:1fr;}}
 
 /* welcome / consent */
@@ -340,7 +343,7 @@ with st.sidebar:
             db.log_action(st.session_state.sid, "new_chat")
         st.rerun()
     admin = st.query_params.get("admin") == "1"
-    nav_items = ["Ikiganiro · Chat", "Ingero · Examples", "Ibyerekeye · About"]
+    nav_items = ["Ikiganiro · Chat", "Kwiyitaho · Self-care", "Ibyerekeye · About"]
     if admin:
         nav_items.append("Imibare · Insights")
     view = st.radio("nav", nav_items, label_visibility="collapsed")
@@ -422,24 +425,11 @@ if view.startswith("Ikiganiro"):
     if prompt and prompt.strip():
         _send(prompt.strip(), force)
 
-elif view.startswith("Ingero"):
+elif view.startswith("Kwiyitaho"):
     st.markdown('<div class="topbar"><div class="av"></div><div>'
-                '<div class="t">Ingero z\'ibibazo</div><div class="s">Example questions you can ask</div>'
+                '<div class="t">Kwiyitaho · Self-care</div>'
+                '<div class="s">Wowe wanitaye ku mwana - noneho niwiyiteho · you cared for your baby, now care for you</div>'
                 '</div></div>', unsafe_allow_html=True)
-    groups = {
-        "Agahinda · Sadness & low mood": ["Numva mfite agahinda kuva nabyaye.",
-                                          "Sinkunda ibyo nakundaga, kandi ndarira kenshi."],
-        "Guhangayika · Anxiety & worry": ["Mfite ubwoba n'guhangayika ku kuba mama bushya.",
-                                          "Ntekereza cyane ko ntazabasha kwita ku mwana."],
-        "Kunanirwa · Feeling overwhelmed": ["Numva nananiwe cyane kandi ndi ngenyine.",
-                                            "Byose biranyemera, sinzi aho ngomba gutangirira."],
-        "Guhangana · Coping & support": ["Nakora iki ngo niyumve neza gato?",
-                                         "Numva ndi ngenyine, nta wundi mfite."],
-    }
-    html = '<div class="card">'
-    for g, qs in groups.items():
-        html += f'<div class="h" style="margin-top:8px">{g}</div>' + "".join(f'<span class="qpill">{q}</span>' for q in qs)
-    st.markdown(html + '</div>', unsafe_allow_html=True)
 
     # gentle self-care tips for the mother (general wellbeing guidance, bilingual)
     TIPS = [
@@ -458,9 +448,27 @@ elif view.startswith("Ingero"):
         f'<div class="td">{drw}<br><span>{den}</span></div></div>'
         for e, rw, en, drw, den in TIPS)
     st.markdown(
-        '<div class="h" style="margin:18px 0 2px;color:#5E4A5E;font-size:12px;letter-spacing:1px;'
+        '<div class="h" style="margin:6px 0 2px;color:#5E4A5E;font-size:12px;letter-spacing:1px;'
         'text-transform:uppercase;font-weight:700">Inama zo kwita ku mutima · Self-care tips</div>'
-        f'<div class="tipgrid">{cards}</div>'
+        f'<div class="tipgrid">{cards}</div>', unsafe_allow_html=True)
+
+    # gentle affirmations / reminders for hard days (bilingual)
+    AFFIRM = [
+        ("You are not failing - you are learning.", "Ntabwo unaniwe - uriga."),
+        ("It's okay not to be okay - this is a huge change.", "Biremewe kutamererwa neza - iyi ni impinduka ikomeye."),
+        ("The house can wait; you and your baby cannot.", "Inzu irashobora gutegereza; wowe n'umwana oya."),
+        ("Rest is productive - your healing is the priority.", "Kuruhuka ni ingirakamaro - gukira kwawe ni ingenzi."),
+        ("Tears are okay; they don't erase the joy.", "Amarira aremewe; ntahindura ibyishimo."),
+        ("Your body is a miracle - be gentle with it.", "Umubiri wawe ni igitangaza - wugwize neza."),
+        ("Asking for help is a sign of strength, not weakness.", "Gusaba ubufasha ni ubutwari, si intege nke."),
+        ("You are exactly what your baby needs.", "Uri ibyo umwana wawe akeneye byuzuye."),
+        ("You are an amazing parent - even on the hard days.", "Uri umubyeyi mwiza - ndetse no ku minsi igoye."),
+    ]
+    affcards = "".join(f'<div class="aff">💗 {en}<div class="affrw">{rw}</div></div>' for en, rw in AFFIRM)
+    st.markdown(
+        '<div class="h" style="margin:20px 0 2px;color:#5E4A5E;font-size:12px;letter-spacing:1px;'
+        'text-transform:uppercase;font-weight:700">Amagambo yo kongera imbaraga · Gentle reminders</div>'
+        f'<div class="tipgrid">{affcards}</div>'
         '<div class="scopebar" style="margin-top:14px">Ntabwo uri wenyine · you are not alone. '
         'Wihangane, gukira bisaba igihe · be patient, recovery takes time.</div>',
         unsafe_allow_html=True)
