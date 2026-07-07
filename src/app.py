@@ -41,7 +41,10 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 #MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"]{display:none !important;}
 [data-testid="stSidebar"]{background:#FBF5EC;border-right:1px solid #EADFCF;}
 [data-testid="stSidebar"] *{color:#4A3F47 !important;}
-/* native sidebar collapse/expand + resize handle stay ON (reliable reopen arrow, draggable width) */
+/* hide Streamlit's native collapse control (its Material icon renders as "keyboard..." text in the
+   HF mobile iframe). We provide our own ☰ toggle instead. */
+[data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"], [data-testid="stSidebarHeader"]{display:none !important;}
 .sblbl{color:#A08E97 !important;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:10px 0 2px;}
 .sbrand{font-size:19px;font-weight:700;color:#3B2E39;padding:2px 0 2px;}
 
@@ -381,9 +384,16 @@ _cd = st.session_state.get("confirm_delete")
 if _cd:
     _confirm_delete(_cd["id"], _cd["title"])
 
-# ---------------- top menu bar (mobile-friendly nav; no sidebar needed to switch pages) ----------------
-view = st.segmented_control("nav", nav_items, default=nav_items[0],
-                            label_visibility="collapsed", key="topnav") or nav_items[0]
+# ---------------- top bar: ☰ history toggle + navigation menu (mobile-friendly) ----------------
+st.session_state.setdefault("panel", False)          # left history panel collapsed by default
+if not st.session_state.panel:
+    st.markdown('<style>[data-testid="stSidebar"]{display:none !important;}</style>', unsafe_allow_html=True)
+_mc, _nc = st.columns([1, 6.5])
+if _mc.button("✕" if st.session_state.panel else "☰", key="panel_toggle", help="Ibiganiro · your chats"):
+    st.session_state.panel = not st.session_state.panel; st.rerun()
+with _nc:
+    view = st.segmented_control("nav", nav_items, default=nav_items[0],
+                                label_visibility="collapsed", key="topnav") or nav_items[0]
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
