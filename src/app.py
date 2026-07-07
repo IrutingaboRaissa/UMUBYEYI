@@ -47,8 +47,10 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 
 /* ---- top bar ---- */
 .topbar{display:flex;align-items:center;gap:12px;padding:2px 2px 16px;border-bottom:1px solid #EADFCF;margin-bottom:20px;}
-.topbar .av{width:44px;height:44px;border-radius:50%;flex-shrink:0;
-  background:radial-gradient(circle at 32% 30%, #9A7C9D 0%, #5E4A5E 75%);box-shadow:0 4px 12px rgba(94,74,94,.25);}
+.topbar .av{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;background:radial-gradient(circle at 32% 30%, #9A7C9D 0%, #5E4A5E 75%);
+  box-shadow:0 4px 12px rgba(94,74,94,.25);}
+.topbar .av::after{content:"U";color:#fff;font-weight:800;font-size:22px;line-height:1;letter-spacing:-.5px;}
 .topbar .t{font-size:20px;font-weight:700;color:#3B2E39;line-height:1.15;}
 .topbar .s{font-size:12.5px;color:#A08E97;}
 
@@ -124,6 +126,8 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   justify-content:center;font-size:66px;background:radial-gradient(circle at 50% 35%,#EFE1E7 0%,#F6EFE5 72%);
   box-shadow:0 14px 34px rgba(94,74,94,.14);}
 .hero .ill img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.hero .ill.logo{background:radial-gradient(circle at 34% 28%,#9A7C9D 0%,#5E4A5E 72%);box-shadow:0 12px 30px rgba(94,74,94,.32);}
+.hero .ill.logo span{font-weight:800;font-size:74px;color:#fff;line-height:1;letter-spacing:-2px;}
 .hero h1{font-size:27px;font-weight:700;color:#3B2E39;margin:0 0 3px;}
 .hero .tag{font-size:14.5px;color:#A08E97;margin-bottom:12px;}
 .hero .lead{font-size:15.5px;line-height:1.6;color:#5b4f56;max-width:440px;margin:0 auto 2px;}
@@ -201,7 +205,7 @@ if not st.session_state.get("consented"):
     st.markdown('<style>.block-container{padding-top:1.8rem !important;}</style>', unsafe_allow_html=True)
     # illustration: drop a picture at assets/welcome.png (or .jpg) to use it; otherwise a placeholder shows
     import base64
-    _ill = '<div class="ill">🤱</div>'
+    _ill = '<div class="ill logo"><span>U</span></div>'
     _adir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
     for _n in ("welcome.png", "welcome.jpg", "hero.png"):
         _p = os.path.join(_adir, _n)
