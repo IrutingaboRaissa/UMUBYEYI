@@ -63,9 +63,25 @@ html, body {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  outline: none;
+}
+
+.sidebar-nav-btn:focus,
+.sidebar-nav-btn:focus-visible,
+.sidebar-nav-btn:active {
+  outline: none;
+  border-color: #C9B9C2;
+  box-shadow: 0 0 0 2px rgba(94, 74, 94, 0.15);
 }
 
 .sidebar-nav-btn.active {
+  background: #5E4A5E;
+  color: #fff;
+  border-color: #5E4A5E;
+}
+
+.sidebar-nav-btn.active:focus,
+.sidebar-nav-btn.active:active {
   background: #5E4A5E;
   color: #fff;
   border-color: #5E4A5E;
@@ -212,12 +228,34 @@ html, body {
   color: #6b5c64;
   font-size: 13px;
   cursor: pointer;
+  outline: none;
+}
+
+.topnav button:hover {
+  background: #FCF8F2;
+  border-color: #C9B9C2;
+}
+
+.topnav button:focus,
+.topnav button:focus-visible,
+.topnav button:active {
+  outline: none;
+  border-color: #C9B9C2;
+  box-shadow: 0 0 0 2px rgba(94, 74, 94, 0.15);
 }
 
 .topnav button.active {
   background: #5E4A5E;
   color: #fff;
   border-color: #5E4A5E;
+}
+
+.topnav button.active:focus,
+.topnav button.active:active {
+  background: #5E4A5E;
+  color: #fff;
+  border-color: #5E4A5E;
+  box-shadow: 0 0 0 2px rgba(94, 74, 94, 0.2);
 }
 
 .topbar {
