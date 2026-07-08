@@ -154,9 +154,34 @@ pytest -q
 
 ## Deployment
 
-Deployed as a **Hugging Face Space** (Streamlit SDK) - HF provides enough RAM for the `flan-t5-base` model and hosts the weights alongside the app (via Git LFS), so the deployed app runs the real generator, not the fallback. The Space is configured by the frontmatter at the top of this README (`sdk: streamlit`, `app_file: src/app.py`).
+### Vercel (recommended for the web app)
 
-**Deploy steps:** create a Space (Streamlit) → push this repo to it → add `models/umubyeyi-generator/` tracked with Git LFS (`git lfs track "*.safetensors"`). Optionally set `DATABASE_URL` (Postgres) in Space secrets to enable the anonymous analytics dashboard (`?admin=1`); otherwise a local SQLite file is used.
+The Vercel deployment uses a **Next.js frontend** + **Python serverless API** (`/api/chat`, `/api/feedback`, `/api/event`). Because the fine-tuned generator (~990 MB) exceeds Vercel's function size limit, production on Vercel runs in **retrieval-only mode** (validated bank answers + sklearn router/detector — no torch).
+
+**Deploy steps:**
+
+1. Push this repo to GitHub.
+2. Import the project in [Vercel](https://vercel.com/new).
+3. Vercel auto-detects Next.js; `vercel.json` configures the Python functions.
+4. Add environment variables in Vercel → Settings → Environment Variables:
+   - `DATABASE_URL` — (optional) Neon/Supabase Postgres for anonymous analytics
+5. Deploy. Ensure `models/lang_detector.joblib` and `models/intent_clf.joblib` are in the repo.
+
+**Local dev (Next.js + API):**
+
+```bash
+pip install -r requirements-vercel.txt
+set VERCEL=1 && set UMU_RETRIEVAL_FALLBACK=1   # Windows
+npm install && npm run dev
+```
+
+Open http://localhost:3000
+
+### Hugging Face Space (full generator)
+
+For the **full fine-tuned flan-t5 generator**, deploy as a **Hugging Face Space** (Streamlit SDK) — HF provides enough RAM for the model. See the frontmatter at the top of this README (`sdk: streamlit`, `app_file: src/app.py`).
+
+**HF deploy steps:** create a Space (Streamlit) → push this repo → add `models/umubyeyi-generator/` tracked with Git LFS (`git lfs track "*.safetensors"`). Optionally set `DATABASE_URL` in Space secrets.
 
 ---
 

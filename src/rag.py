@@ -17,6 +17,7 @@ A module-level singleton exposes a backward-compatible functional API (`answer`,
 `detect_language`, ...) used by the app, the tests, and the evaluation scripts.
 """
 import json
+import os
 import random
 import re
 import sys
@@ -33,8 +34,10 @@ class UmubyeyiRAG:
     """Fully-local retrieval-augmented generation pipeline for postpartum emotional wellbeing."""
 
     # ---- response policy (class-level constants) ----
-    SIM_GATE = 0.12          # below this: ask to say more. Low enough that conversational/filler-laden
-                             # emotional messages still answer, high enough that off-topic (~0.08) deflects.
+    SIM_GATE = 0.12          # below this: redirect (not in wellbeing scope). Low enough that conversational/
+                             # filler-laden emotional messages still answer, high enough that off-topic deflects.
+    WELLBEING_INTENTS = {"self_care_coping", "sleep", "overwhelmed_identity",
+                         "sadness_low_mood", "anxiety_worry", "relationship_support"}
     TOP_K = 3
     GEN_NOTES = 2            # notes fed to the generator at inference == what it was trained on
     CRISIS_LINE = "114"
@@ -53,6 +56,18 @@ class UmubyeyiRAG:
     # acute medical / baby-care that we refer out rather than answer
     CLINICAL = ["bleeding", "haemorrhage", "hemorrhage", "fever", "stitches", "wound", "infection",
                 "seizure", "convulsion", "not breathing", "unconscious", "amaraso", "umuriro"]
+    # baby / child care (not the mother's emotional wellbeing) -> redirect
+    BABY_CARE = ["my baby", "the baby", "baby's", "infant", "newborn", "toddler", "diaper", "breastfeed",
+                 "breast milk", "bottle feed", "colic", "vaccin", "immuniz", "weaning", "teething",
+                 "umwana wanjye", "umwana wawe", "umwana", "umwanya", "uruhinja", "gususura", "indembe",
+                 "amata y'umwana", "gutwara inda"]
+    # signals the mother is talking about her own feelings or emotional wellbeing
+    FEELING = ["i feel", "i'm feeling", "im feeling", "feeling", "felt", "sad", "anxious", "worry",
+               "worried", "overwhelm", "lonely", "depressed", "worthless", "scared", "stressed",
+               "cope", "coping", "umutima", "wiyumva", "agahinda", "impungenge", "guhangayika",
+               "umunaniro", "ndumva", "mfite agahinda", "nshobora", "nabuze", "gusinda",
+               "sleep", "insomnia", "tired", "exhaust", "can't sleep", "cant sleep", "crying",
+               "cry", "alone", "hopeless", "panic", "miserable", "numb", "sinzi", "gusinzira"]
     # clearly non-wellbeing topics -> politely redirect (matched as whole words, so "car" != "care")
     OFFTOPIC = {"weather", "rain", "forecast", "temperature", "football", "soccer", "basketball",
                 "sport", "sports", "match", "tournament", "politics", "election", "president", "vote",
@@ -69,7 +84,7 @@ class UmubyeyiRAG:
     GREET_FILLER = {"mama", "neza", "there", "everyone", "all", "friend", "today", "dear", "sis", "sister",
                     "my", "doing", "again", "so", "now", "how", "are", "you", "u", "ur"}
 
-    # a few warm variants so greetings/small-talk/clarify don't repeat the exact same sentence
+    # a few warm variants so greetings/small-talk don't repeat the exact same sentence
     GREETINGS = {
         "rw": ["Muraho, mama! Nishimiye kuvugana nawe. Ndi hano ku byerekeye uko wiyumva mu mezi 6 ya mbere nyuma yo kubyara. Umeze ute uyu munsi?",
                "Muraho neza, mama. Nishimiye ko uje. Wambwira uko umutima wawe umeze - agahinda, guhangayika, umunaniro, cyangwa ikindi.",
@@ -80,15 +95,6 @@ class UmubyeyiRAG:
                "Hello, dear. It's good to have you here, and there's no judgement in this space. How is your heart today?",
                "Hi, mama. I'm listening. What's on your mind or weighing on you right now?"],
     }
-    CLARIFY = {
-        "rw": ["Numva ibyo uvuga. Wambwira gato byinshi ku byo wiyumva, kugira ngo ngufashe neza?",
-               "Ndi hano kukumva. Ni iki cyane cyane kigukoraho muri iki gihe?",
-               "Mbwira uko wiyumva mu magambo yawe - agahinda, guhangayika, umunaniro? Ndashaka kugusobanukirwa."],
-        "en": ["I hear you. Could you tell me a little more about how you're feeling, so I can help you better?",
-               "I'm here for you. What's weighing on you most right now?",
-               "Tell me in your own words how you're feeling - sad, anxious, overwhelmed, tired? I want to understand."],
-    }
-
     def __init__(self, root: Path = ROOT):
         self.root = Path(root)
         # postpartum grounding bank (validated MOTHER + maternalcare + curated); fall back to legacy bank
@@ -130,6 +136,36 @@ class UmubyeyiRAG:
     def is_offtopic(self, text: str) -> bool:
         words = set(re.findall(r"[a-z]+", text.lower()))
         return bool(words & self.OFFTOPIC)
+
+    def has_feeling_language(self, text: str) -> bool:
+        t = text.lower()
+        return any(k in t for k in self.FEELING)
+
+    def is_baby_care(self, text: str) -> bool:
+        """True when the query is about baby/child care, not the mother's emotional wellbeing."""
+        t = text.lower()
+        if not any(k in t for k in self.BABY_CARE):
+            return False
+        return not self.has_feeling_language(text)
+
+    def is_wellbeing_scope(self, text: str, intent: str, sim: float) -> bool:
+        """True only when the query is clearly about the mother's emotional wellbeing."""
+        if self.is_baby_care(text):
+            return False
+        if sim < self.SIM_GATE:
+            return False
+        if self.has_feeling_language(text):
+            return True
+        # indirect wording (e.g. "I never sleep") — require stronger retrieval match
+        return intent in self.WELLBEING_INTENTS and sim >= 0.18
+
+    def _redirect(self, lang: str) -> str:
+        return self._offtopic_message(lang)
+
+    def _use_retrieval_fallback(self) -> bool:
+        """Vercel/serverless: no generator weights — serve validated bank answers instead."""
+        flag = os.environ.get("UMU_RETRIEVAL_FALLBACK", "").lower()
+        return os.environ.get("VERCEL") == "1" or flag in ("1", "true", "yes")
 
     def is_greeting(self, text: str) -> bool:
         t = re.sub(r"[^\w\s]", " ", text.lower()).strip()
@@ -191,6 +227,8 @@ class UmubyeyiRAG:
 
     def _load_generator(self):
         """Load our fine-tuned flan-t5 once. Returns (tok, model) or (None, None) if unavailable."""
+        if self._use_retrieval_fallback():
+            return None, None
         if self._gen_tried:
             return self._tok, self._model
         self._gen_tried = True
@@ -249,30 +287,44 @@ class UmubyeyiRAG:
             return {"answer": self._offtopic_message(lang), "language": lang, "danger": False,
                     "grounded": False, "mode": "offtopic", "intent": "offtopic", "sources": []}
 
+        if self.is_baby_care(query):
+            return {"answer": self._clinical_message(lang), "language": lang, "danger": False,
+                    "grounded": False, "mode": "referral", "intent": "clinical", "sources": []}
+
         intent = self.route_intent(query)                 # our LogReg router tags the wellness topic
         snippets = self.retrieve(query)
         top, sim = snippets[0] if snippets else (None, 0.0)
-        grounded = top is not None and sim >= self.SIM_GATE
 
-        if not grounded:
-            # no confident validated match: stay honest, invite her to say more (never fabricate)
-            return {"answer": random.choice(self.CLARIFY.get(lang, self.CLARIFY["en"])), "language": lang,
-                    "danger": False, "grounded": False, "mode": "clarify", "intent": intent, "sources": []}
+        if not self.is_wellbeing_scope(query, intent, sim):
+            return {"answer": self._redirect(lang), "language": lang, "danger": False,
+                    "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
 
         if lang == "rw":
-            # serve the VALIDATED Kinyarwanda answer when we have it (higher quality than MT)
-            body = (top.get("answer_rw") or "").strip() or (top.get("answer_en") or "").strip()
-            mode = "retrieved_rw" if top.get("answer_rw") else "retrieved_en"
+            body = (top.get("answer_rw") or "").strip()
+            if not body and self._use_retrieval_fallback():
+                body = (top.get("answer_en") or "").strip()
+                mode = "retrieved_en"
+            elif body:
+                mode = "retrieved_rw"
+            else:
+                return {"answer": self._redirect(lang), "language": lang, "danger": False,
+                        "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
         else:
-            # generation-primary: OUR fine-tuned flan-t5 generates the English answer, grounded on the notes
             draft = self._generate_en(query, snippets)
             if draft:
                 body, mode = draft, "generative"
+            elif self._use_retrieval_fallback():
+                body = (top.get("answer_en") or "").strip()
+                if not body:
+                    return {"answer": self._redirect(lang), "language": lang, "danger": False,
+                            "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
+                mode = "retrieved"
             else:
-                body, mode = (top.get("answer_en") or "").strip(), "retrieved"   # validated fallback if generation fails
+                return {"answer": self._redirect(lang), "language": lang, "danger": False,
+                        "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
 
         text = f"{body}\n\n{self.DISCLAIMER.get(lang, self.DISCLAIMER['en'])}"
-        return {"answer": text, "language": lang, "danger": False, "grounded": grounded, "mode": mode,
+        return {"answer": text, "language": lang, "danger": False, "grounded": True, "mode": mode,
                 "intent": intent,
                 "sources": [{"topic": b.get("topic", ""), "source": b.get("source", ""), "sim": round(s, 2)}
                             for b, s in snippets]}
