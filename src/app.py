@@ -397,7 +397,7 @@ with _nc:
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
-    hc1, hc2, hc3, hc4 = st.columns([4.1, 1.5, 1.3, 1.2])
+    hc1, hc2, hc3 = st.columns([5.2, 1.6, 1.4])
     hc1.markdown('<div class="topbar"><div class="av"></div><div>'
                  '<div class="t">Umubyeyi</div>'
                  '<div class="s">Umufasha w\'imibereho myiza yo mu mutima · a mental-wellbeing companion</div>'
@@ -406,9 +406,6 @@ if view.startswith("Ikiganiro"):
         _breathe()
     if hc3.button("Ubufasha · Help", use_container_width=True):
         _help()
-    with hc4:   # optional language pin; leave unset for auto-detect
-        _lang = st.segmented_control("lang", ["RW", "EN"], label_visibility="collapsed", key="langpref")
-    force = {"RW": "rw", "EN": "en"}.get(_lang)
 
     msgs = _cur()["msgs"]
     for m in msgs:
@@ -437,14 +434,14 @@ if view.startswith("Ikiganiro"):
         cols = st.columns(3)
         for i, (emo, lbl, q) in enumerate(MOODS):
             if cols[i % 3].button(f"{emo}  {lbl}", key=f"mood{i}", use_container_width=True):
-                _send(q, force)
+                _send(q)
 
     st.markdown('<div class="foot">Umufasha w\'imibereho myiza gusa · si uw\'ibindi bibazo · '
                 'mu kaga hamagara 114  ·  a wellness companion only — not for other challenges · '
                 'in a crisis call 114</div>', unsafe_allow_html=True)
     prompt = st.chat_input("Andika uko wiyumva... · Type how you feel...")
     if prompt and prompt.strip():
-        _send(prompt.strip(), force)
+        _send(prompt.strip())
 
 elif view.startswith("Kwiyitaho"):
     st.markdown('<div class="topbar"><div class="av"></div><div>'
