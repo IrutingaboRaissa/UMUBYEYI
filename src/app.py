@@ -84,15 +84,38 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   text-align:center !important;font-weight:600 !important;font-size:15px !important;padding:12px 18px !important;
   box-shadow:0 8px 20px rgba(87,68,90,.28) !important;}
 
-/* language segmented control -> plum active */
-[data-testid="stSegmentedControl"] button{border-radius:20px !important;font-size:13px !important;color:#6b5c64 !important;}
+/* nav segmented control -> plum active, no red focus ring */
+[data-testid="stSegmentedControl"]{width:100% !important;border:none !important;background:transparent !important;}
+[data-testid="stSegmentedControl"] > div{display:flex !important;width:100% !important;gap:5px;}
+[data-testid="stSegmentedControl"] button{
+  flex:1 1 0 !important;border-radius:20px !important;font-size:13px !important;
+  color:#6b5c64 !important;background:#FFFFFF !important;border:1px solid #E7DDCF !important;
+  outline:none !important;box-shadow:none !important;}
+[data-testid="stSegmentedControl"] button:hover{
+  background:#FCF8F2 !important;border-color:#C9B9C2 !important;color:#4A3F47 !important;}
+[data-testid="stSegmentedControl"] button:focus,
+[data-testid="stSegmentedControl"] button:focus-visible,
+[data-testid="stSegmentedControl"] button:active{
+  background:#FCF8F2 !important;color:#4A3F47 !important;border-color:#C9B9C2 !important;
+  outline:none !important;box-shadow:0 0 0 2px rgba(94,74,94,.15) !important;}
 [data-testid="stSegmentedControl"] button[aria-checked="true"],
 [data-testid="stSegmentedControl"] button[data-selected="true"]{
-  background:#5E4A5E !important;color:#fff !important;}
-/* full-width menu bar: segmented controls fill the width with equal buttons (great on mobile) */
-[data-testid="stSegmentedControl"]{width:100% !important;}
-[data-testid="stSegmentedControl"] > div{display:flex !important;width:100% !important;gap:5px;}
-[data-testid="stSegmentedControl"] button{flex:1 1 0 !important;}
+  background:#5E4A5E !important;color:#fff !important;border-color:#5E4A5E !important;
+  outline:none !important;box-shadow:none !important;}
+[data-testid="stSegmentedControl"] button[aria-checked="true"]:focus,
+[data-testid="stSegmentedControl"] button[aria-checked="true"]:active,
+[data-testid="stSegmentedControl"] button[data-selected="true"]:focus,
+[data-testid="stSegmentedControl"] button[data-selected="true"]:active{
+  background:#5E4A5E !important;color:#fff !important;border-color:#5E4A5E !important;
+  outline:none !important;box-shadow:0 0 0 2px rgba(94,74,94,.2) !important;}
+
+/* all buttons: kill Streamlit's red click/focus accent */
+.stButton button:focus, .stButton button:focus-visible, .stButton button:active{
+  outline:none !important;box-shadow:0 0 0 2px rgba(94,74,94,.15) !important;border-color:#C9B9C2 !important;}
+.stButton button[kind="primary"]:focus, [data-testid="stBaseButton-primary"]:focus,
+.stButton button[kind="primary"]:active, [data-testid="stBaseButton-primary"]:active{
+  background:linear-gradient(135deg,#6E5668,#57445A) !important;border:none !important;
+  box-shadow:0 8px 20px rgba(87,68,90,.28) !important;}
 
 /* kill every dark background: the whole app + the bottom input band must be cream */
 .stApp, body, [data-testid="stMain"], [data-testid="stBottom"], [data-testid="stBottom"] > div,
@@ -161,6 +184,8 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   .sidebar-nav{display:none !important;}
 }
 .sidebar-nav .stButton button{width:100% !important;text-align:left !important;}
+.sidebar-nav .stButton button:focus, .sidebar-nav .stButton button:active{
+  outline:none !important;box-shadow:0 0 0 2px rgba(94,74,94,.15) !important;border-color:#C9B9C2 !important;}
 </style>
 """, unsafe_allow_html=True)
 
