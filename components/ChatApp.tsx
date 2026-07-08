@@ -9,6 +9,12 @@ import {
 
 type View = "chat" | "selfcare" | "about";
 
+const NAV: { id: View; label: string }[] = [
+  { id: "chat", label: "Ikiganiro" },
+  { id: "selfcare", label: "Kwiyitaho" },
+  { id: "about", label: "Ibyerekeye" },
+];
+
 export default function ChatApp() {
   const [consented, setConsented] = useState(false);
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -95,6 +101,11 @@ export default function ChatApp() {
     setView("chat");
   };
 
+  const goToView = (v: View) => {
+    setView(v);
+    setPanelOpen(false);
+  };
+
   const renameThread = (id: string, name: string) => {
     const trimmed = name.trim().slice(0, 40);
     if (!trimmed) return;
@@ -151,10 +162,28 @@ export default function ChatApp() {
       {panelOpen && <div className="sidebar-backdrop" onClick={() => setPanelOpen(false)} aria-hidden />}
 
       <aside className={`sidebar ${panelOpen ? "open" : ""}`}>
-        <div className="sbrand">Umubyeyi</div>
+        <div className="sidebar-header">
+          <div className="sbrand">Umubyeyi</div>
+          <button className="sidebar-close" onClick={() => setPanelOpen(false)} aria-label="Close menu">✕</button>
+        </div>
+
+        <nav className="sidebar-nav">
+          {NAV.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              className={`sidebar-nav-btn ${view === id ? "active" : ""}`}
+              onClick={() => goToView(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+
         <button className="btn btn-primary sidebar-new" onClick={startNewChat}>
           ＋ Ikiganiro gishya · New chat
         </button>
+
         <div className="sblbl">Ibiganiro · Recent</div>
         <div className="thread-list">
           {threads.map((t) => {
@@ -162,7 +191,7 @@ export default function ChatApp() {
             const active = t.id === currentId;
             return (
               <div key={t.id} className={`thread-row ${active ? "active" : ""}`}>
-                <button className="thread-btn" onClick={() => setCurrent(t.id)}>
+                <button className="thread-btn" onClick={() => { setCurrent(t.id); setView("chat"); }}>
                   {active ? "• " : ""}{label}
                 </button>
                 <button
@@ -201,21 +230,16 @@ export default function ChatApp() {
 
       <div className="main">
         <div className="main-toolbar">
-          <button className="menu-toggle" onClick={() => setPanelOpen(!panelOpen)} aria-label="Toggle chats">
+          <button className="menu-toggle" onClick={() => setPanelOpen(true)} aria-label="Open menu">
             ☰
           </button>
-          <div className="topnav">
-            {(["chat", "selfcare", "about"] as View[]).map((v) => (
-              <button key={v} className={view === v ? "active" : ""} onClick={() => setView(v)}>
-                {v === "chat" ? "Ikiganiro" : v === "selfcare" ? "Kwiyitaho" : "Ibyerekeye"}
+          <div className="topnav desktop-topnav">
+            {NAV.map(({ id, label }) => (
+              <button key={id} type="button" className={view === id ? "active" : ""} onClick={() => setView(id)}>
+                {label}
               </button>
             ))}
           </div>
-          {view === "chat" && (
-            <button className="btn btn-sm new-chat-btn" onClick={startNewChat} title="New chat">
-              ＋ Gishya
-            </button>
-          )}
         </div>
 
         {view === "chat" && current && (
