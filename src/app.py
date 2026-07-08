@@ -154,7 +154,13 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   .bubble{max-width:90%;font-size:15px;padding:11px 15px;}
   .hero h1{font-size:24px;} .hero .lead{font-size:15.5px;}
   [data-testid="stChatInput"] textarea{font-size:16px !important;}
+  /* mobile: nav lives in the ☰ drawer, not the top bar */
+  .desktop-topnav{display:none !important;}
 }
+@media (min-width:641px){
+  .sidebar-nav{display:none !important;}
+}
+.sidebar-nav .stButton button{width:100% !important;text-align:left !important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -246,6 +252,7 @@ if not st.session_state.get("consented"):
 
 # ---------------- on-device history (browser localStorage only) ----------------
 STORE_KEY = "umubyeyi_threads_v2"
+STORE_CURRENT_KEY = "umubyeyi_current_v2"
 _localS = None
 if PERSIST:
     try:
@@ -264,6 +271,7 @@ def _persist():
         if st.session_state.get("_saved") != payload:
             _localS.setItem(STORE_KEY, payload, key="ls_set")
             st.session_state._saved = payload
+        _localS.setItem(STORE_CURRENT_KEY, st.session_state.current_id, key="ls_set_current")
     except Exception:
         pass
 
@@ -279,7 +287,9 @@ if _localS and not st.session_state.get("_hydrated"):
             data = json.loads(raw)
             if isinstance(data, list) and data:
                 st.session_state.threads = data
-                st.session_state.current_id = data[0]["id"]
+                saved_cid = _localS.getItem(STORE_CURRENT_KEY)
+                ids = {t["id"] for t in data}
+                st.session_state.current_id = saved_cid if saved_cid in ids else data[0]["id"]
             st.session_state._hydrated = True
     except Exception:
         st.session_state._hydrated = True
@@ -342,21 +352,32 @@ def bubble(m):
         inner += f'<div class="subtext">{m["sub"]}</div>'
     return f'<div class="row"><div class="{cls}">{inner}</div></div>'
 
-# ---------------- sidebar (Claude-style: brand + collapse, New chat, nav, Recents) ----------------
+# ---------------- sidebar (brand, nav, new chat, recents) ----------------
+admin = st.query_params.get("admin") == "1"
+nav_items = ["Ikiganiro", "Kwiyitaho", "Ibyerekeye"]
+if admin:
+    nav_items.append("Imibare")
+st.session_state.setdefault("view", nav_items[0])
+
 with st.sidebar:
     st.markdown('<div class="sbrand">Umubyeyi</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-nav">', unsafe_allow_html=True)
+    for item in nav_items[:3]:
+        if st.button(item, key=f"nav_{item}", use_container_width=True):
+            st.session_state.view = item
+            st.session_state.panel = False
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
     if st.button("＋  Ikiganiro gishya · New chat", use_container_width=True, key="newchat"):
         nt = _new_thread()
         st.session_state.threads = [nt] + st.session_state.threads
         st.session_state.current_id = nt["id"]
+        st.session_state.view = "Ikiganiro"
         st.session_state._saved = None
+        st.session_state.panel = False
         if db:
             db.log_action(st.session_state.sid, "new_chat")
         st.rerun()
-    admin = st.query_params.get("admin") == "1"
-    nav_items = ["Ikiganiro", "Kwiyitaho", "Ibyerekeye"]   # Chat · Self-care · About (compact for the top menu bar)
-    if admin:
-        nav_items.append("Imibare")
     if len(st.session_state.threads) > 1 or bool(st.session_state.threads[0]["title"]):
         st.markdown('<div class="sblbl">Ibiganiro · Recent</div>', unsafe_allow_html=True)
         for t in st.session_state.threads[:25]:
@@ -364,7 +385,10 @@ with st.sidebar:
             mark = "•  " if t["id"] == st.session_state.current_id else ""
             rc1, rc2 = st.columns([5, 1.25])
             if rc1.button(mark + title, key=f"th_{t['id']}", use_container_width=True):
-                st.session_state.current_id = t["id"]; st.rerun()
+                st.session_state.current_id = t["id"]
+                st.session_state.view = "Ikiganiro"
+                st.session_state.panel = False
+                st.rerun()
             with rc2.popover("⋯", use_container_width=True):
                 new_name = st.text_input("Guhindura izina · Rename", value=t["title"],
                                          key=f"rn_{t['id']}", placeholder="Izina · name")
@@ -384,16 +408,22 @@ _cd = st.session_state.get("confirm_delete")
 if _cd:
     _confirm_delete(_cd["id"], _cd["title"])
 
-# ---------------- top bar: ☰ history toggle + navigation menu (mobile-friendly) ----------------
-st.session_state.setdefault("panel", False)          # left history panel collapsed by default
+# ---------------- top bar: ☰ drawer toggle + desktop nav ----------------
+st.session_state.setdefault("panel", False)
 if not st.session_state.panel:
     st.markdown('<style>[data-testid="stSidebar"]{display:none !important;}</style>', unsafe_allow_html=True)
 _mc, _nc = st.columns([1, 6.5])
-if _mc.button("✕" if st.session_state.panel else "☰", key="panel_toggle", help="Ibiganiro · your chats"):
-    st.session_state.panel = not st.session_state.panel; st.rerun()
+if _mc.button("✕" if st.session_state.panel else "☰", key="panel_toggle", help="Menu · Ibiganiro, Kwiyitaho, Ibyerekeye"):
+    st.session_state.panel = not st.session_state.panel
+    st.rerun()
 with _nc:
-    view = st.segmented_control("nav", nav_items, default=nav_items[0],
-                                label_visibility="collapsed", key="topnav") or nav_items[0]
+    st.markdown('<div class="desktop-topnav">', unsafe_allow_html=True)
+    picked = st.segmented_control("nav", nav_items, default=st.session_state.view,
+                                  label_visibility="collapsed", key="topnav")
+    if picked:
+        st.session_state.view = picked
+    st.markdown('</div>', unsafe_allow_html=True)
+view = st.session_state.view
 
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
