@@ -9,6 +9,10 @@ venv/
 .DS_Store
 Thumbs.db
 
+# JavaScript / Next.js local build artifacts
+node_modules/
+.next/
+
 # Secrets - never commit API keys
 .env
 *.key
