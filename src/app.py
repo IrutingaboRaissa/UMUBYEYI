@@ -41,14 +41,19 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
 #MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"]{display:none !important;}
 [data-testid="stSidebar"]{background:#FBF5EC;border-right:1px solid #EADFCF;}
 [data-testid="stSidebar"] *{color:#4A3F47 !important;}
-/* native sidebar collapse/expand + resize handle stay ON (reliable reopen arrow, draggable width) */
+/* hide Streamlit's native collapse control (its Material icon renders as "keyboard..." text in the
+   HF mobile iframe). We provide our own ☰ toggle instead. */
+[data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"], [data-testid="stSidebarHeader"]{display:none !important;}
 .sblbl{color:#A08E97 !important;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:10px 0 2px;}
 .sbrand{font-size:19px;font-weight:700;color:#3B2E39;padding:2px 0 2px;}
 
 /* ---- top bar ---- */
 .topbar{display:flex;align-items:center;gap:12px;padding:2px 2px 16px;border-bottom:1px solid #EADFCF;margin-bottom:20px;}
-.topbar .av{width:44px;height:44px;border-radius:50%;flex-shrink:0;
-  background:radial-gradient(circle at 32% 30%, #9A7C9D 0%, #5E4A5E 75%);box-shadow:0 4px 12px rgba(94,74,94,.25);}
+.topbar .av{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;background:radial-gradient(circle at 32% 30%, #9A7C9D 0%, #5E4A5E 75%);
+  box-shadow:0 4px 12px rgba(94,74,94,.25);}
+.topbar .av::after{content:"U";color:#fff;font-weight:800;font-size:22px;line-height:1;letter-spacing:-.5px;}
 .topbar .t{font-size:20px;font-weight:700;color:#3B2E39;line-height:1.15;}
 .topbar .s{font-size:12.5px;color:#A08E97;}
 
@@ -79,11 +84,38 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   text-align:center !important;font-weight:600 !important;font-size:15px !important;padding:12px 18px !important;
   box-shadow:0 8px 20px rgba(87,68,90,.28) !important;}
 
-/* language segmented control -> plum active */
-[data-testid="stSegmentedControl"] button{border-radius:20px !important;font-size:13px !important;color:#6b5c64 !important;}
+/* nav segmented control -> plum active, no red focus ring */
+[data-testid="stSegmentedControl"]{width:100% !important;border:none !important;background:transparent !important;}
+[data-testid="stSegmentedControl"] > div{display:flex !important;width:100% !important;gap:5px;}
+[data-testid="stSegmentedControl"] button{
+  flex:1 1 0 !important;border-radius:20px !important;font-size:13px !important;
+  color:#6b5c64 !important;background:#FFFFFF !important;border:1px solid #E7DDCF !important;
+  outline:none !important;box-shadow:none !important;}
+[data-testid="stSegmentedControl"] button:hover{
+  background:#FCF8F2 !important;border-color:#C9B9C2 !important;color:#4A3F47 !important;}
+[data-testid="stSegmentedControl"] button:focus,
+[data-testid="stSegmentedControl"] button:focus-visible,
+[data-testid="stSegmentedControl"] button:active{
+  background:#FCF8F2 !important;color:#4A3F47 !important;border-color:#C9B9C2 !important;
+  outline:none !important;box-shadow:0 0 0 2px rgba(94,74,94,.15) !important;}
 [data-testid="stSegmentedControl"] button[aria-checked="true"],
 [data-testid="stSegmentedControl"] button[data-selected="true"]{
-  background:#5E4A5E !important;color:#fff !important;}
+  background:#5E4A5E !important;color:#fff !important;border-color:#5E4A5E !important;
+  outline:none !important;box-shadow:none !important;}
+[data-testid="stSegmentedControl"] button[aria-checked="true"]:focus,
+[data-testid="stSegmentedControl"] button[aria-checked="true"]:active,
+[data-testid="stSegmentedControl"] button[data-selected="true"]:focus,
+[data-testid="stSegmentedControl"] button[data-selected="true"]:active{
+  background:#5E4A5E !important;color:#fff !important;border-color:#5E4A5E !important;
+  outline:none !important;box-shadow:0 0 0 2px rgba(94,74,94,.2) !important;}
+
+/* all buttons: kill Streamlit's red click/focus accent */
+.stButton button:focus, .stButton button:focus-visible, .stButton button:active{
+  outline:none !important;box-shadow:0 0 0 2px rgba(94,74,94,.15) !important;border-color:#C9B9C2 !important;}
+.stButton button[kind="primary"]:focus, [data-testid="stBaseButton-primary"]:focus,
+.stButton button[kind="primary"]:active, [data-testid="stBaseButton-primary"]:active{
+  background:linear-gradient(135deg,#6E5668,#57445A) !important;border:none !important;
+  box-shadow:0 8px 20px rgba(87,68,90,.28) !important;}
 
 /* kill every dark background: the whole app + the bottom input band must be cream */
 .stApp, body, [data-testid="stMain"], [data-testid="stBottom"], [data-testid="stBottom"] > div,
@@ -105,6 +137,18 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   margin:2px 0 8px;font-weight:700;}
 .qpill{display:inline-block;background:#F4ECDF;border:1px solid #EADFCF;border-radius:12px;padding:8px 12px;
   margin:4px 6px 4px 0;font-size:14px;color:#5b4f56;}
+/* self-care tip cards */
+.tipgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:8px;}
+.tip{background:#FBF5EC;border:1px solid #EADFCF;border-radius:15px;padding:13px 15px;}
+.tip .emo{font-size:22px;line-height:1;}
+.tip .tt{font-weight:700;color:#5E4A5E;font-size:13.5px;margin:6px 0 3px;}
+.tip .tt span{color:#A08E97;font-weight:600;}
+.tip .td{font-size:12px;color:#6b5560;line-height:1.45;}
+.tip .td span{color:#A99BA3;}
+.aff{background:linear-gradient(135deg,#F6EBF0,#F3EFE6);border:1px solid #EFD9E2;border-radius:15px;
+  padding:13px 15px;font-size:13.5px;color:#5E4A5E;font-weight:600;line-height:1.45;}
+.aff .affrw{color:#A08E97;font-weight:500;font-size:12px;margin-top:5px;font-style:italic;}
+@media(max-width:640px){.tipgrid{grid-template-columns:1fr;}}
 
 /* welcome / consent */
 .hero{text-align:center;padding:4px 0 2px;}
@@ -112,6 +156,8 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   justify-content:center;font-size:66px;background:radial-gradient(circle at 50% 35%,#EFE1E7 0%,#F6EFE5 72%);
   box-shadow:0 14px 34px rgba(94,74,94,.14);}
 .hero .ill img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.hero .ill.logo{background:radial-gradient(circle at 34% 28%,#9A7C9D 0%,#5E4A5E 72%);box-shadow:0 12px 30px rgba(94,74,94,.32);}
+.hero .ill.logo span{font-weight:800;font-size:74px;color:#fff;line-height:1;letter-spacing:-2px;}
 .hero h1{font-size:27px;font-weight:700;color:#3B2E39;margin:0 0 3px;}
 .hero .tag{font-size:14.5px;color:#A08E97;margin-bottom:12px;}
 .hero .lead{font-size:15.5px;line-height:1.6;color:#5b4f56;max-width:440px;margin:0 auto 2px;}
@@ -131,7 +177,15 @@ html, body, [class*="css"], [data-testid="stAppViewContainer"] *, [data-testid="
   .bubble{max-width:90%;font-size:15px;padding:11px 15px;}
   .hero h1{font-size:24px;} .hero .lead{font-size:15.5px;}
   [data-testid="stChatInput"] textarea{font-size:16px !important;}
+  /* mobile: nav lives in the ☰ drawer, not the top bar */
+  .desktop-topnav{display:none !important;}
 }
+@media (min-width:641px){
+  .sidebar-nav{display:none !important;}
+}
+.sidebar-nav .stButton button{width:100% !important;text-align:left !important;}
+.sidebar-nav .stButton button:focus, .sidebar-nav .stButton button:active{
+  outline:none !important;box-shadow:0 0 0 2px rgba(94,74,94,.15) !important;border-color:#C9B9C2 !important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -189,7 +243,7 @@ if not st.session_state.get("consented"):
     st.markdown('<style>.block-container{padding-top:1.8rem !important;}</style>', unsafe_allow_html=True)
     # illustration: drop a picture at assets/welcome.png (or .jpg) to use it; otherwise a placeholder shows
     import base64
-    _ill = '<div class="ill">🤱</div>'
+    _ill = '<div class="ill logo"><span>U</span></div>'
     _adir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
     for _n in ("welcome.png", "welcome.jpg", "hero.png"):
         _p = os.path.join(_adir, _n)
@@ -223,6 +277,7 @@ if not st.session_state.get("consented"):
 
 # ---------------- on-device history (browser localStorage only) ----------------
 STORE_KEY = "umubyeyi_threads_v2"
+STORE_CURRENT_KEY = "umubyeyi_current_v2"
 _localS = None
 if PERSIST:
     try:
@@ -241,6 +296,7 @@ def _persist():
         if st.session_state.get("_saved") != payload:
             _localS.setItem(STORE_KEY, payload, key="ls_set")
             st.session_state._saved = payload
+        _localS.setItem(STORE_CURRENT_KEY, st.session_state.current_id, key="ls_set_current")
     except Exception:
         pass
 
@@ -256,7 +312,9 @@ if _localS and not st.session_state.get("_hydrated"):
             data = json.loads(raw)
             if isinstance(data, list) and data:
                 st.session_state.threads = data
-                st.session_state.current_id = data[0]["id"]
+                saved_cid = _localS.getItem(STORE_CURRENT_KEY)
+                ids = {t["id"] for t in data}
+                st.session_state.current_id = saved_cid if saved_cid in ids else data[0]["id"]
             st.session_state._hydrated = True
     except Exception:
         st.session_state._hydrated = True
@@ -319,22 +377,32 @@ def bubble(m):
         inner += f'<div class="subtext">{m["sub"]}</div>'
     return f'<div class="row"><div class="{cls}">{inner}</div></div>'
 
-# ---------------- sidebar (Claude-style: brand + collapse, New chat, nav, Recents) ----------------
+# ---------------- sidebar (brand, nav, new chat, recents) ----------------
+admin = st.query_params.get("admin") == "1"
+nav_items = ["Ikiganiro", "Kwiyitaho", "Ibyerekeye"]
+if admin:
+    nav_items.append("Imibare")
+st.session_state.setdefault("view", nav_items[0])
+
 with st.sidebar:
     st.markdown('<div class="sbrand">Umubyeyi</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-nav">', unsafe_allow_html=True)
+    for item in nav_items[:3]:
+        if st.button(item, key=f"nav_{item}", use_container_width=True):
+            st.session_state.view = item
+            st.session_state.panel = False
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
     if st.button("＋  Ikiganiro gishya · New chat", use_container_width=True, key="newchat"):
         nt = _new_thread()
         st.session_state.threads = [nt] + st.session_state.threads
         st.session_state.current_id = nt["id"]
+        st.session_state.view = "Ikiganiro"
         st.session_state._saved = None
+        st.session_state.panel = False
         if db:
             db.log_action(st.session_state.sid, "new_chat")
         st.rerun()
-    admin = st.query_params.get("admin") == "1"
-    nav_items = ["Ikiganiro · Chat", "Ingero · Examples", "Ibyerekeye · About"]
-    if admin:
-        nav_items.append("Imibare · Insights")
-    view = st.radio("nav", nav_items, label_visibility="collapsed")
     if len(st.session_state.threads) > 1 or bool(st.session_state.threads[0]["title"]):
         st.markdown('<div class="sblbl">Ibiganiro · Recent</div>', unsafe_allow_html=True)
         for t in st.session_state.threads[:25]:
@@ -342,7 +410,10 @@ with st.sidebar:
             mark = "•  " if t["id"] == st.session_state.current_id else ""
             rc1, rc2 = st.columns([5, 1.25])
             if rc1.button(mark + title, key=f"th_{t['id']}", use_container_width=True):
-                st.session_state.current_id = t["id"]; st.rerun()
+                st.session_state.current_id = t["id"]
+                st.session_state.view = "Ikiganiro"
+                st.session_state.panel = False
+                st.rerun()
             with rc2.popover("⋯", use_container_width=True):
                 new_name = st.text_input("Guhindura izina · Rename", value=t["title"],
                                          key=f"rn_{t['id']}", placeholder="Izina · name")
@@ -362,9 +433,26 @@ _cd = st.session_state.get("confirm_delete")
 if _cd:
     _confirm_delete(_cd["id"], _cd["title"])
 
+# ---------------- top bar: ☰ drawer toggle + desktop nav ----------------
+st.session_state.setdefault("panel", False)
+if not st.session_state.panel:
+    st.markdown('<style>[data-testid="stSidebar"]{display:none !important;}</style>', unsafe_allow_html=True)
+_mc, _nc = st.columns([1, 6.5])
+if _mc.button("✕" if st.session_state.panel else "☰", key="panel_toggle", help="Menu · Ibiganiro, Kwiyitaho, Ibyerekeye"):
+    st.session_state.panel = not st.session_state.panel
+    st.rerun()
+with _nc:
+    st.markdown('<div class="desktop-topnav">', unsafe_allow_html=True)
+    picked = st.segmented_control("nav", nav_items, default=st.session_state.view,
+                                  label_visibility="collapsed", key="topnav")
+    if picked:
+        st.session_state.view = picked
+    st.markdown('</div>', unsafe_allow_html=True)
+view = st.session_state.view
+
 # ---------------- views ----------------
 if view.startswith("Ikiganiro"):
-    hc1, hc2, hc3, hc4 = st.columns([4.1, 1.5, 1.3, 1.2])
+    hc1, hc2, hc3 = st.columns([5.2, 1.6, 1.4])
     hc1.markdown('<div class="topbar"><div class="av"></div><div>'
                  '<div class="t">Umubyeyi</div>'
                  '<div class="s">Umufasha w\'imibereho myiza yo mu mutima · a mental-wellbeing companion</div>'
@@ -373,9 +461,6 @@ if view.startswith("Ikiganiro"):
         _breathe()
     if hc3.button("Ubufasha · Help", use_container_width=True):
         _help()
-    with hc4:   # optional language pin; leave unset for auto-detect
-        _lang = st.segmented_control("lang", ["RW", "EN"], label_visibility="collapsed", key="langpref")
-    force = {"RW": "rw", "EN": "en"}.get(_lang)
 
     msgs = _cur()["msgs"]
     for m in msgs:
@@ -404,33 +489,62 @@ if view.startswith("Ikiganiro"):
         cols = st.columns(3)
         for i, (emo, lbl, q) in enumerate(MOODS):
             if cols[i % 3].button(f"{emo}  {lbl}", key=f"mood{i}", use_container_width=True):
-                _send(q, force)
+                _send(q)
 
     st.markdown('<div class="foot">Umufasha w\'imibereho myiza gusa · si uw\'ibindi bibazo · '
                 'mu kaga hamagara 114  ·  a wellness companion only — not for other challenges · '
                 'in a crisis call 114</div>', unsafe_allow_html=True)
     prompt = st.chat_input("Andika uko wiyumva... · Type how you feel...")
     if prompt and prompt.strip():
-        _send(prompt.strip(), force)
+        _send(prompt.strip())
 
-elif view.startswith("Ingero"):
+elif view.startswith("Kwiyitaho"):
     st.markdown('<div class="topbar"><div class="av"></div><div>'
-                '<div class="t">Ingero z\'ibibazo</div><div class="s">Example questions you can ask</div>'
+                '<div class="t">Kwiyitaho · Self-care</div>'
+                '<div class="s">Wowe wanitaye ku mwana - noneho niwiyiteho · you cared for your baby, now care for you</div>'
                 '</div></div>', unsafe_allow_html=True)
-    groups = {
-        "Agahinda · Sadness & low mood": ["Numva mfite agahinda kuva nabyaye.",
-                                          "Sinkunda ibyo nakundaga, kandi ndarira kenshi."],
-        "Guhangayika · Anxiety & worry": ["Mfite ubwoba n'guhangayika ku kuba mama bushya.",
-                                          "Ntekereza cyane ko ntazabasha kwita ku mwana."],
-        "Kunanirwa · Feeling overwhelmed": ["Numva nananiwe cyane kandi ndi ngenyine.",
-                                            "Byose biranyemera, sinzi aho ngomba gutangirira."],
-        "Guhangana · Coping & support": ["Nakora iki ngo niyumve neza gato?",
-                                         "Numva ndi ngenyine, nta wundi mfite."],
-    }
-    html = '<div class="card">'
-    for g, qs in groups.items():
-        html += f'<div class="h" style="margin-top:8px">{g}</div>' + "".join(f'<span class="qpill">{q}</span>' for q in qs)
-    st.markdown(html + '</div>', unsafe_allow_html=True)
+
+    # gentle self-care tips for the mother (general wellbeing guidance, bilingual)
+    TIPS = [
+        ("🤝", "Shaka ubufasha", "Reach out", "Ganira n'umuntu wizeye cyangwa umukozi w'ubuzima.", "Talk to someone you trust or a health worker."),
+        ("👪", "Wubake abagufasha", "Build support", "Egera uwo mwashakanye, umuryango n'incuti.", "Lean on your partner, family, and friends."),
+        ("🌸", "Wite ku mutima wawe", "Self-care", "Fata udukanya duto wiyibagiza, ushake ibikunezeza bito.", "Take small moments for yourself; small joys matter."),
+        ("😴", "Ruhuka bihagije", "Rest", "Sinzira igihe umwana asinziriye, usabe ubufasha nijoro.", "Sleep when the baby sleeps; ask for help at night."),
+        ("🚶", "Imyitozo yoroheje", "Gentle movement", "Genda urugendo rugufi cyangwa unyeganyege gato.", "A short walk or light stretching lifts your mood."),
+        ("🥗", "Kurya indyo yuzuye", "Nourish", "Fata indyo yuzuye kugira ngo ugire imbaraga.", "Balanced meals help your energy and mood."),
+        ("🧘", "Humeka utuze", "Breathe", "Guhumeka gahoro bishobora gutuza umutima.", "A few slow breaths can calm a hard moment."),
+        ("💬", "Vuga uko wiyumva", "Share openly", "Vuga ibyiyumvo byawe utagira ipfunwe.", "Speak your feelings without guilt; it's a strength."),
+    ]
+    cards = "".join(
+        f'<div class="tip"><div class="emo">{e}</div>'
+        f'<div class="tt">{rw} · <span>{en}</span></div>'
+        f'<div class="td">{drw}<br><span>{den}</span></div></div>'
+        for e, rw, en, drw, den in TIPS)
+    st.markdown(
+        '<div class="h" style="margin:6px 0 2px;color:#5E4A5E;font-size:12px;letter-spacing:1px;'
+        'text-transform:uppercase;font-weight:700">Inama zo kwita ku mutima · Self-care tips</div>'
+        f'<div class="tipgrid">{cards}</div>', unsafe_allow_html=True)
+
+    # gentle affirmations / reminders for hard days (bilingual)
+    AFFIRM = [
+        ("You are not failing - you are learning.", "Ntabwo unaniwe - uriga."),
+        ("It's okay not to be okay - this is a huge change.", "Biremewe kutamererwa neza - iyi ni impinduka ikomeye."),
+        ("The house can wait; you and your baby cannot.", "Inzu irashobora gutegereza; wowe n'umwana oya."),
+        ("Rest is productive - your healing is the priority.", "Kuruhuka ni ingirakamaro - gukira kwawe ni ingenzi."),
+        ("Tears are okay; they don't erase the joy.", "Amarira aremewe; ntahindura ibyishimo."),
+        ("Your body is a miracle - be gentle with it.", "Umubiri wawe ni igitangaza - wugwize neza."),
+        ("Asking for help is a sign of strength, not weakness.", "Gusaba ubufasha ni ubutwari, si intege nke."),
+        ("You are exactly what your baby needs.", "Uri ibyo umwana wawe akeneye byuzuye."),
+        ("You are an amazing parent - even on the hard days.", "Uri umubyeyi mwiza - ndetse no ku minsi igoye."),
+    ]
+    affcards = "".join(f'<div class="aff">💗 {en}<div class="affrw">{rw}</div></div>' for en, rw in AFFIRM)
+    st.markdown(
+        '<div class="h" style="margin:20px 0 2px;color:#5E4A5E;font-size:12px;letter-spacing:1px;'
+        'text-transform:uppercase;font-weight:700">Amagambo yo kongera imbaraga · Gentle reminders</div>'
+        f'<div class="tipgrid">{affcards}</div>'
+        '<div class="scopebar" style="margin-top:14px">Ntabwo uri wenyine · you are not alone. '
+        'Wihangane, gukira bisaba igihe · be patient, recovery takes time.</div>',
+        unsafe_allow_html=True)
 
 elif view.startswith("Imibare"):
     st.markdown('<div class="topbar"><div class="av"></div><div><div class="t">Imibare · Insights</div>'

@@ -42,8 +42,20 @@ def test_greeting_returns_greeting_mode():
 
 def test_off_topic_is_redirected_not_answered():
     r = rag.answer("Who won the football match?", force_lang="en")
-    assert r["mode"] in ("clarify", "referral")
+    assert r["mode"] in ("referral", "offtopic")
     assert "football" not in r["answer"].lower()   # never answers the off-topic question
+
+
+def test_baby_care_question_is_redirected_not_answered():
+    r = rag.answer("umwanya wanjye ariko arakora", force_lang="rw")
+    assert r["mode"] in ("referral", "offtopic")
+    assert "ibinyugunyugu" not in r["answer"].lower()
+
+
+def test_ambiguous_non_wellbeing_is_redirected():
+    r = rag.answer("What is the capital of France?", force_lang="en")
+    assert r["mode"] == "offtopic"
+    assert "paris" not in r["answer"].lower()
 
 
 # --------------------------------------------------------------------- language detection
@@ -98,6 +110,6 @@ def test_deterministic_paths_work_with_network_disabled(monkeypatch):
                     reason="fine-tuned generator not downloaded (see README 'Get the model')")
 def test_emotional_query_is_answered_by_the_model():
     r = rag.answer("I feel sad and alone since my baby was born", force_lang="en")
-    assert r["mode"] in ("generative", "retrieved")
+    assert r["mode"] == "generative"
     assert r["danger"] is False
     assert len(r["answer"].split()) >= 8      # a real, substantive answer
