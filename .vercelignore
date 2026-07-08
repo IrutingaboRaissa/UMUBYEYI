@@ -1,0 +1,17 @@
+# Exclude heavy ML weights — Vercel uses retrieval-only mode
+models/umubyeyi-generator/
+models/_gen_ckpt/
+*.safetensors
+*.bin
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+notebooks/
+tests/
+docs/
+screenshots/
+.devcontainer/
+umubyeyi_analytics.db
+.env
+src/app.py
