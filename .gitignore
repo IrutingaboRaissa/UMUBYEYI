@@ -31,3 +31,9 @@ screenshots/
 # local analytics DB (SQLite dev fallback)
 umubyeyi_analytics.db
 *.db
+
+# Next.js
+node_modules/
+.next/
+out/
+.vercel/

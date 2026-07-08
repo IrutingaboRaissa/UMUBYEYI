@@ -1,0 +1,158 @@
+export type Msg = {
+  role: "user" | "bot";
+  text: string;
+  sub?: string;
+  danger?: boolean;
+};
+
+export type Thread = {
+  id: string;
+  title: string;
+  ts: number;
+  msgs: Msg[];
+};
+
+export type ChatResponse = {
+  answer: string;
+  language: string;
+  danger: boolean;
+  grounded: boolean;
+  mode: string;
+  intent: string | null;
+  sources: { topic: string; source: string; sim: number }[];
+  latency_ms?: number;
+};
+
+export const GREETING = "Muraho, mama. Wambwira uko umeze uyu munsi?";
+export const GREETING_SUB = "Hello, mama. Tell me how you're feeling today.";
+export const CRISIS_LINE = "114";
+export const STORE_KEY = "umubyeyi_threads_v2";
+export const STORE_CURRENT_KEY = "umubyeyi_current_v2";
+
+export const MOODS = [
+  ["😔", "Agahinda · Sad", "Numva mfite agahinda."],
+  ["😟", "Guhangayika · Anxious", "Mfite guhangayika kwinshi."],
+  ["😩", "Nananiwe · Tired", "Numva nananiwe cyane."],
+  ["🌧️", "Ndi ngenyine · Alone", "Numva ndi ngenyine, nta wundi mfite."],
+  ["🙂", "Meze neza · Okay", "Numva meze neza uyu munsi."],
+] as const;
+
+export const TIPS = [
+  ["🤝", "Shaka ubufasha", "Reach out", "Ganira n'umuntu wizeye cyangwa umukozi w'ubuzima.", "Talk to someone you trust or a health worker."],
+  ["👪", "Wubake abagufasha", "Build support", "Egera uwo mwashakanye, umuryango n'incuti.", "Lean on your partner, family, and friends."],
+  ["🌸", "Wite ku mutima wawe", "Self-care", "Fata udukanya duto wiyibagiza, ushake ibikunezeza bito.", "Take small moments for yourself; small joys matter."],
+  ["😴", "Ruhuka bihagije", "Rest", "Sinzira igihe umwana asinziriye, usabe ubufasha nijoro.", "Sleep when the baby sleeps; ask for help at night."],
+  ["🚶", "Imyitozo yoroheje", "Gentle movement", "Genda urugendo rugufi cyangwa unyeganyege gato.", "A short walk or light stretching lifts your mood."],
+  ["🥗", "Kurya indyo yuzuye", "Nourish", "Fata indyo yuzuye kugira ngo ugire imbaraga.", "Balanced meals help your energy and mood."],
+  ["🧘", "Humeka utuze", "Breathe", "Guhumeka gahoro bishobora gutuza umutima.", "A few slow breaths can calm a hard moment."],
+  ["💬", "Vuga uko wiyumva", "Share openly", "Vuga ibyiyumvo byawe utagira ipfunwe.", "Speak your feelings without guilt; it's a strength."],
+] as const;
+
+export const AFFIRM = [
+  ["You are not failing - you are learning.", "Ntabwo unaniwe - uriga."],
+  ["It's okay not to be okay - this is a huge change.", "Biremewe kutamererwa neza - iyi ni impinduka ikomeye."],
+  ["The house can wait; you and your baby cannot.", "Inzu irashobora gutegereza; wowe n'umwana oya."],
+  ["Rest is productive - your healing is the priority.", "Kuruhuka ni ingirakamaro - gukira kwawe ni ingenzi."],
+  ["Asking for help is a sign of strength, not weakness.", "Gusaba ubufasha ni ubutwari, si intege nke."],
+  ["You are exactly what your baby needs.", "Uri ibyo umwana wawe akeneye byuzuye."],
+] as const;
+
+export function newThread(): Thread {
+  return {
+    id: Math.random().toString(36).slice(2, 14),
+    title: "",
+    ts: Date.now(),
+    msgs: [{ role: "bot", text: GREETING, sub: GREETING_SUB }],
+  };
+}
+
+export function loadThreads(): { threads: Thread[]; currentId: string } {
+  if (typeof window === "undefined") {
+    const t = newThread();
+    return { threads: [t], currentId: t.id };
+  }
+  let threads: Thread[] = [];
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (Array.isArray(data) && data.length) threads = data;
+    }
+  } catch { /* ignore */ }
+  if (!threads.length) {
+    const t = newThread();
+    return { threads: [t], currentId: t.id };
+  }
+  // keep greeting in sync across saved chats
+  for (const t of threads) {
+    if (t.msgs?.[0]?.role === "bot") {
+      t.msgs[0].text = GREETING;
+      t.msgs[0].sub = GREETING_SUB;
+    }
+  }
+  const savedCurrent = localStorage.getItem(STORE_CURRENT_KEY);
+  const currentId = savedCurrent && threads.some((t) => t.id === savedCurrent)
+    ? savedCurrent
+    : threads[0].id;
+  return { threads: sortThreads(threads), currentId };
+}
+
+export function saveThreads(threads: Thread[], currentId: string) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORE_KEY, JSON.stringify(sortThreads(threads)));
+  localStorage.setItem(STORE_CURRENT_KEY, currentId);
+}
+
+export function sortThreads(threads: Thread[]): Thread[] {
+  return [...threads].sort((a, b) => b.ts - a.ts);
+}
+
+export function touchThread(t: Thread): Thread {
+  return { ...t, ts: Date.now() };
+}
+
+export function sessionId(): string {
+  if (typeof window === "undefined") return "";
+  let sid = localStorage.getItem("umubyeyi_sid");
+  if (!sid) {
+    sid = Math.random().toString(36).slice(2, 18);
+    localStorage.setItem("umubyeyi_sid", sid);
+  }
+  return sid;
+}
+
+export async function sendChat(message: string, forceLang?: "en" | "rw" | null): Promise<ChatResponse> {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, force_lang: forceLang ?? null }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `Request failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function logEvent(sid: string, data: ChatResponse) {
+  await fetch("/api/event", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      session_id: sid,
+      language: data.language,
+      mode: data.mode,
+      grounded: data.grounded,
+      sources: data.sources,
+      latency_ms: data.latency_ms ?? 0,
+    }),
+  }).catch(() => {});
+}
+
+export async function sendFeedback(sid: string, rating: 1 | -1, lang?: string, mode?: string) {
+  await fetch("/api/feedback", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session_id: sid, rating, language: lang, mode }),
+  }).catch(() => {});
+}
