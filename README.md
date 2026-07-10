@@ -124,7 +124,7 @@ assets/system_architecture_layered.png
 ## Install & run locally
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-local.txt
 streamlit run src/app.py     # opens http://localhost:8501
 ```
 
@@ -175,7 +175,7 @@ The Vercel deployment uses a **Next.js frontend** + **Python serverless API** (`
 **Local dev (Next.js + API):**
 
 ```bash
-pip install -r requirements-vercel.txt
+pip install -r requirements.txt
 set VERCEL=1 && set UMU_RETRIEVAL_FALLBACK=1   # Windows
 npm install && npm run dev
 ```
