@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "installCommand": "pip install -r requirements-vercel.txt && npm install",
+  "installCommand": "npm ci",
   "framework": "nextjs",
   "functions": {
     "api/**/*.py": {

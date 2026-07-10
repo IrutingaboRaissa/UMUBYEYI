@@ -1,21 +1,7 @@
-# Umubyeyi runtime — Streamlit app / Hugging Face Space. FULLY LOCAL: no external LLM API.
-# Product = grounded generation (RAG): our sklearn router + retriever, then OUR fine-tuned
-# flan-t5 generator writes the answer (validated-retrieval fallback if the model is absent).
-
-# CPU-only PyTorch — keeps the Space build small on a CPU Space (works locally too)
---extra-index-url https://download.pytorch.org/whl/cpu
-torch>=2.2
-
-# our own models: sklearn (EN/RW detector + intent router) + fine-tuned flan-t5 generator
+# Vercel Python functions. Keep this root file lightweight: Vercel discovers and
+# installs it automatically for every api/*.py function.
 scikit-learn==1.9.0
 joblib>=1.3
 numpy>=2.0
-transformers>=4.44
-sentencepiece>=0.2
-
-# frontend
-streamlit==1.48.1
-streamlit-local-storage==0.0.25   # on-device (browser) conversation memory
-
-# optional anonymous analytics (SQLite by default; set DATABASE_URL in Space secrets for Postgres)
 SQLAlchemy>=2.0
+psycopg2-binary>=2.9
