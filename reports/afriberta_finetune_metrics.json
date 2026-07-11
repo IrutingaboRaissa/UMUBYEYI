@@ -1,8 +1,0 @@
-{
-  "Model 4: AfriBERTa fine-tune (Kinyarwanda)": {
-    "accuracy": 0.4759,
-    "precision_macro": 0.478,
-    "recall_macro": 0.4373,
-    "f1_macro": 0.4405
-  }
-}

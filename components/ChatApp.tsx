@@ -2,15 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AFFIRM, CRISIS_LINE, MOODS, TIPS,
+  AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, MOODS, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat, sendFeedback,
-  logEvent, sessionId, sortThreads, touchThread,
+  logEvent, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
 
-type View = "chat" | "selfcare" | "about";
+type View = "chat" | "checkin" | "selfcare" | "about";
 
 const NAV: { id: View; label: string }[] = [
   { id: "chat", label: "Ikiganiro" },
+  { id: "checkin", label: "Isuzuma · Check-in" },
   { id: "selfcare", label: "Kwiyitaho" },
   { id: "about", label: "Ibyerekeye" },
 ];
@@ -29,6 +30,15 @@ export default function ChatApp() {
   const [renameDraft, setRenameDraft] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [ratedThreads, setRatedThreads] = useState<Record<string, boolean>>({});
+  const [checkin, setCheckin] = useState<Record<string, string | number>>(() => {
+    const initial: Record<string, string | number> = { Age: 25 };
+    for (const [key, , options] of CHECKIN_FIELDS) initial[key] = options[0];
+    return initial;
+  });
+  const [screenResult, setScreenResult] = useState<ScreenResponse | null>(null);
+  const [screening, setScreening] = useState(false);
+  const [screenError, setScreenError] = useState("");
+  const [moodHistory, setMoodHistory] = useState<{ mood: string; date: string }[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
   const sid = useRef("");
   const hydrated = useRef(false);
@@ -40,6 +50,7 @@ export default function ChatApp() {
     setCurrentId(cid);
     if (loaded.some((t) => t.msgs.length > 1)) setConsented(true);
     hydrated.current = true;
+    try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
@@ -212,8 +223,15 @@ export default function ChatApp() {
                       maxLength={40}
                     />
                     <div className="thread-menu-actions">
-                      <button className="btn btn-sm" onClick={() => renameThread(t.id, renameDraft)}>Bika · Save</button>
                       <button
+                        type="button"
+                        className="btn btn-sm"
+                        onClick={() => renameThread(t.id, renameDraft)}
+                      >
+                        Hindura izina · Rename
+                      </button>
+                      <button
+                        type="button"
                         className="btn btn-sm btn-danger"
                         onClick={() => setDeleteTarget({ id: t.id, title: label })}
                       >
@@ -304,6 +322,23 @@ export default function ChatApp() {
                 <div className="s">Wowe wanitaye ku mwana - noneho niwiyiteho</div>
               </div>
             </div>
+            <div className="section-h">Uko wiyumva · Mood check</div>
+            <div className="card">
+              <div className="tt">Uyu munsi wiyumva ute? · How are you today?</div>
+              <div className="mood-grid">
+                {["Great", "Okay", "Low", "Anxious", "Exhausted"].map((mood) => (
+                  <button key={mood} onClick={() => {
+                    const next = [{ mood, date: new Date().toISOString() }, ...moodHistory].slice(0, 30);
+                    setMoodHistory(next);
+                    localStorage.setItem("umubyeyi_moods_v1", JSON.stringify(next));
+                  }}>{mood}</button>
+                ))}
+              </div>
+              {moodHistory.length > 0 && <div className="disc">
+                Recent: {moodHistory.slice(0, 7).map((entry) => entry.mood).join(" · ")}
+                <br />Stored only on this device. Discuss persistent distress with a health worker.
+              </div>}
+            </div>
             <div className="section-h">Inama zo kwita ku mutima · Self-care tips</div>
             <div className="tipgrid">
               {TIPS.map(([e, rw, en, drw, den]) => (
@@ -321,6 +356,44 @@ export default function ChatApp() {
               ))}
             </div>
           </>
+        )}
+
+        {view === "checkin" && (
+          <section className="view-section">
+            <div className="topbar"><div className="av" /><div>
+              <div className="t">Isuzuma ryoroheje · Guided check-in</div>
+              <div className="s">Optional screening support · not a diagnosis · answers are not stored</div>
+            </div></div>
+            <div className="card">
+              <p>This research check-in estimates whether your answers resemble the dataset&apos;s elevated screening-risk group. It cannot diagnose postpartum depression.</p>
+              <label className="thread-menu-label">Age</label>
+              <input className="thread-rename-input" type="number" min={18} max={60}
+                value={checkin.Age} onChange={(e) => setCheckin({ ...checkin, Age: Number(e.target.value) })} />
+              <div className="tipgrid" style={{ marginTop: 14 }}>
+                {CHECKIN_FIELDS.map(([key, label, options]) => (
+                  <label className="tip" key={key}>
+                    <span className="tt">{label}</span>
+                    <select className="thread-rename-input" value={String(checkin[key])}
+                      onChange={(e) => setCheckin({ ...checkin, [key]: e.target.value })}>
+                      {options.map((option) => <option key={option} value={option}>{option}</option>)}
+                    </select>
+                  </label>
+                ))}
+              </div>
+              <button className="btn btn-primary" disabled={screening} onClick={async () => {
+                setScreening(true); setScreenError(""); setScreenResult(null);
+                try { setScreenResult(await sendScreen(checkin)); }
+                catch (e) { setScreenError(e instanceof Error ? e.message : "Unable to complete check-in"); }
+                finally { setScreening(false); }
+              }}>{screening ? "Checking…" : "Reba ibisubizo · Check result"}</button>
+              {screenError && <div className="card danger">{screenError}</div>}
+              {screenResult && <div className={`card ${screenResult.elevated ? "danger" : ""}`}>
+                <b>{screenResult.elevated ? "Additional support recommended" : "No elevated risk classified"}</b>
+                <p>{screenResult.message_en}</p><p>{screenResult.message_rw}</p>
+                <div className="disc">{screenResult.disclaimer}</div>
+              </div>}
+            </div>
+          </section>
         )}
 
         {view === "about" && (

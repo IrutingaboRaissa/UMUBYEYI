@@ -23,6 +23,31 @@ export type ChatResponse = {
   latency_ms?: number;
 };
 
+export type ScreenResponse = {
+  risk: "elevated" | "not_elevated";
+  elevated: boolean;
+  message_en: string;
+  message_rw: string;
+  disclaimer: string;
+};
+
+export const CHECKIN_FIELDS = [
+  ["Relationship with husband", "Relationship with partner", ["Good", "Neutral", "Bad"]],
+  ["Relationship with the newborn", "Connection with your baby", ["Good", "Neutral", "Bad"]],
+  ["Feeling about motherhood", "How you feel about motherhood", ["Positive", "Neutral", "Negative"]],
+  ["Recieved Support", "Support you currently receive", ["High", "Medium", "Low"]],
+  ["Need for Support", "How much more support you need", ["High", "Medium", "Low"]],
+  ["Abuse", "Have you experienced abuse?", ["No", "Yes"]],
+  ["Trust and share feelings", "Can you share feelings with someone you trust?", ["Yes", "No"]],
+  ["Worry about newborn", "Are you constantly worried about your baby?", ["No", "Yes"]],
+  ["Relax/sleep when newborn is tended ", "Can you rest when someone trusted watches the baby?", ["Yes", "No"]],
+  ["Relax/sleep when the newborn is asleep", "Can you rest when the baby sleeps?", ["Yes", "No"]],
+  ["Angry after latest child birth", "Have you often felt angry or hard to calm?", ["No", "Yes"]],
+  ["Feeling for regular activities", "How do ordinary activities feel?", ["Nothing (no difficulty)", "Tired", "Anxious", "Fearful"]],
+  ["Depression before pregnancy (PHQ2)", "Low mood before pregnancy screening", ["Negative", "Positive"]],
+  ["Depression during pregnancy (PHQ2)", "Low mood during pregnancy screening", ["Negative", "Positive"]],
+] as const;
+
 export const GREETING = "Muraho, mama. Wambwira uko umeze uyu munsi?";
 export const GREETING_SUB = "Hello, mama. Tell me how you're feeling today.";
 export const CRISIS_LINE = "114";
@@ -126,6 +151,19 @@ export async function sendChat(message: string, forceLang?: "en" | "rw" | null):
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, force_lang: forceLang ?? null }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `Request failed (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function sendScreen(answers: Record<string, string | number>): Promise<ScreenResponse> {
+  const res = await fetch("/api/screen", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ answers }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));

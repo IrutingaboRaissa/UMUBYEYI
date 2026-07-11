@@ -1,8 +1,0 @@
-{
-  "model": "flan-t5-base (deployed, generation-primary, pruned postpartum bank)",
-  "held_out_examples": 18,
-  "rouge1": 0.2722,
-  "rouge2": 0.0623,
-  "rougeL": 0.1633,
-  "bleu": 5.81
-}

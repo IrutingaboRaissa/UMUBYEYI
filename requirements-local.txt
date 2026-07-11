@@ -1,14 +1,9 @@
-# Full local / Hugging Face Space runtime. Vercel must not install this file.
---extra-index-url https://download.pytorch.org/whl/cpu
-torch>=2.2
-
+# Local training and notebook environment. Vercel does not install this file.
 scikit-learn==1.9.0
 joblib>=1.3
 numpy>=2.0
-transformers>=4.44
-sentencepiece>=0.2
-
-streamlit==1.48.1
-streamlit-local-storage==0.0.25
-
+pandas>=2.2
+matplotlib>=3.9
 SQLAlchemy>=2.0
+nbformat>=5.10
+nbconvert>=7.16

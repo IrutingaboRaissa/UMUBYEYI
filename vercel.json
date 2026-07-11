@@ -7,7 +7,7 @@
     "api/**/*.py": {
       "maxDuration": 30,
       "memory": 1024,
-      "includeFiles": "{models/lang_detector.joblib,models/intent_clf.joblib,data/grounding_bank_postpartum.json,src/**}"
+      "includeFiles": "{models/lang_detector.joblib,models/ppd_checkin_risk.joblib,data/knowledge/postpartum_wellbeing.json,src/**}"
     }
   },
   "env": {

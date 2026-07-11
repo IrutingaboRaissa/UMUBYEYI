@@ -1,6 +1,0 @@
-,Accuracy,F1
-Baseline (ComplementNB),0.531,0.465
-Model 1: TF-IDF + LogReg (English),0.6621,0.6483
-Model 2: Linear SVM (English),0.6897,0.6688
-Model 3: Random Forest (English),0.7172,0.7045
-Model 4: AfriBERTa fine-tune (Kinyarwanda),0.4759,0.4405

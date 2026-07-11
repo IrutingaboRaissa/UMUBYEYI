@@ -19,6 +19,7 @@ node_modules/
 
 # Private docs (capstone report, slides) - keep local, off the public repo
 docs/
+*_turnitin_submission.docx
 
 # Large external models (not part of the repo)
 *.bin

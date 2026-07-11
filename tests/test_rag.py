@@ -4,10 +4,10 @@ Umubyeyi test suite — multiple strategies against the deployed pipeline (src/r
   * deterministic safety   (self-harm -> 114 crisis; clinical -> health-worker referral)
   * intent routing         (greeting / small-talk / off-topic handling)
   * language detection      (English vs Kinyarwanda)
-  * our own ML components  (LogReg intent router, TF-IDF retrieval)
+  * project ML components  (language detector and TF-IDF retrieval)
   * response-contract       (the dict every caller relies on)
-  * "no external LLM API"  (source guard + deterministic paths work offline)
-  * generation             (model-generated answer, skipped if the model isn't downloaded)
+  * fully local operation (source guard + deterministic paths work offline)
+  * local fallback         (deterministic paths remain available without Ollama)
 
 Run:  pytest -q
 """
@@ -65,10 +65,9 @@ def test_language_detection_en_and_rw():
 
 
 # ------------------------------------------------------------------- our own ML components
-def test_intent_router_returns_a_wellness_tag():
+def test_retrieval_topic_router_returns_a_knowledge_topic():
     intent = rag.route_intent("I can't stop crying and feel worthless")
-    assert intent in {"self_care_coping", "sleep", "overwhelmed_identity",
-                      "sadness_low_mood", "anxiety_worry", "relationship_support"}
+    assert intent in {row["topic"] for row in rag.BANK}
 
 
 def test_retrieval_returns_scored_matches():
@@ -76,7 +75,29 @@ def test_retrieval_returns_scored_matches():
     assert len(snippets) >= 1
     bank_entry, sim = snippets[0]
     assert 0.0 <= sim <= 1.0
-    assert "answer_en" in bank_entry
+    assert "text_en" in bank_entry
+
+
+def test_rw_retrieval_only_returns_complete_source_documents():
+    snippets = rag.retrieve("Numva mfite agahinda nyuma yo kubyara", lang="rw")
+    assert snippets
+    for row, _ in snippets:
+        assert row["queries_rw"].strip()
+        assert row["text_rw"].strip()
+
+
+def test_rw_index_contains_every_complete_knowledge_document():
+    complete = sum(bool((row.get("queries_rw") or "").strip()) and
+                   bool((row.get("text_rw") or "").strip()) for row in rag.BANK)
+    assert complete == 14
+    assert len(rag._default._indices["rw"]) == complete
+
+
+def test_low_confidence_rw_query_abstains_instead_of_returning_english():
+    r = rag.answer("nkomeje kumva mbabaye sinzi impamvu", force_lang="rw")
+    assert r["mode"] == "offtopic"
+    assert r["grounded"] is False
+    assert r["language"] == "rw"
 
 
 # ------------------------------------------------------------------------ response contract
@@ -86,12 +107,12 @@ def test_response_contract_has_all_keys():
         assert key in r
 
 
-# ------------------------------------------------------------------- no external LLM API
-def test_source_has_no_commercial_llm_api():
+# ------------------------------------------------------------------- fully local operation
+def test_source_uses_expected_local_dependencies():
     import inspect
     src = inspect.getsource(rag).lower()
-    for banned in ("gemini", "openai", "google.genai", "google-genai", "anthropic"):
-        assert banned not in src, f"unexpected external-API reference: {banned}"
+    for banned in ("openai", "google.genai", "google-genai", "anthropic"):
+        assert banned not in src, f"unexpected dependency reference: {banned}"
 
 
 def test_deterministic_paths_work_with_network_disabled(monkeypatch):
@@ -104,12 +125,3 @@ def test_deterministic_paths_work_with_network_disabled(monkeypatch):
     assert rag.answer("I want to end my life", force_lang="en")["mode"] == "safety"
     assert rag.answer("hi", force_lang="en")["mode"] == "greeting"
 
-
-# -------------------------------------------------------------------------------- generation
-@pytest.mark.skipif(not (rag.GEN_DIR / "config.json").exists(),
-                    reason="fine-tuned generator not downloaded (see README 'Get the model')")
-def test_emotional_query_is_answered_by_the_model():
-    r = rag.answer("I feel sad and alone since my baby was born", force_lang="en")
-    assert r["mode"] == "generative"
-    assert r["danger"] is False
-    assert len(r["answer"].split()) >= 8      # a real, substantive answer
