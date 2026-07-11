@@ -14,4 +14,3 @@ screenshots/
 .devcontainer/
 umubyeyi_analytics.db
 .env
-src/app.py

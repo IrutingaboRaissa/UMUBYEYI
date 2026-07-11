@@ -1,0 +1,156 @@
+[
+  {
+    "id": "emotional_changes",
+    "topic": "normal emotional changes",
+    "source": "WHO World Health Day 2025",
+    "url": "https://www.who.int/campaigns/world-health-day/2025/key-messages",
+    "text_en": "Many mothers experience changing emotions in the days after birth. Feeling tearful or low can occur during early adjustment, but feelings that become intense, worsen, or continue beyond about two weeks deserve attention from a health worker.",
+    "text_rw": "Ababyeyi benshi bagira ibyiyumvo bihindagurika mu minsi ikurikira kubyara. Kurira cyangwa kumva ubabaye bishobora kubaho mu ntangiriro, ariko iyo ibyo byiyumvo bikomeye, birushaho kuba bibi, cyangwa bikomeza ibyumweru birenga bibiri, ni ngombwa kuvugana n’umukozi w’ubuzima.",
+    "queries_en": "baby blues emotional changes tearful crying low mood after birth two weeks",
+    "queries_rw": "agahinda nyuma yo kubyara kurira ibyiyumvo bihindagurika ibyumweru bibiri",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "persistent_sadness",
+    "topic": "persistent sadness",
+    "source": "WHO Perinatal Mental Health",
+    "url": "https://www.who.int/teams/mental-health-and-substance-use/promotion-prevention/perinatal-mental-health",
+    "text_en": "Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step.",
+    "text_rw": "Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza.",
+    "queries_en": "depressed hopeless miserable numb no interest cannot function worthless",
+    "queries_rw": "numva mfite agahinda nyuma yo kubyara kwiheba kubura icyizere agahinda gakabije nta byishimo nta cyo maze",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "anxiety_worry",
+    "topic": "anxiety and worry",
+    "source": "WHO World Health Day 2025",
+    "url": "https://www.who.int/campaigns/world-health-day/2025/key-messages",
+    "text_en": "Strong anxiety after birth may feel like constant worry, fear, panic, or being unable to relax. A mother who feels extremely anxious should seek advice from a health worker; postpartum anxiety is common and professional support can help.",
+    "text_rw": "Guhangayika cyane nyuma yo kubyara bishobora kugaragara nko guhora ufite impungenge, ubwoba, igihunga, cyangwa kutabasha gutuza. Umubyeyi uhangayitse cyane akwiriye kugisha inama umukozi w’ubuzima; ubufasha bw’umwuga bushobora kumufasha.",
+    "queries_en": "anxious worry worried fear scared panic racing thoughts cannot relax",
+    "queries_rw": "guhangayika impungenge ubwoba igihunga sinshobora gutuza",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "overwhelmed",
+    "topic": "feeling overwhelmed",
+    "source": "WHO Perinatal Mental Health Integration Guide",
+    "url": "https://www.who.int/publications/i/item/9789240057142",
+    "text_en": "Feeling overwhelmed does not mean that a mother is failing. Support can include listening without judgement, helping her identify immediate needs, reducing practical burdens, and connecting her with family, community, or health services.",
+    "text_rw": "Kumva ibintu bikurenze ntibivuze ko wananiwe kuba umubyeyi. Ubufasha bushobora kuba ukumva nta kugucira urubanza, kumenya ibyo ukeneye ubu, kugabanya imirimo ikuremereye, no kuguhuza n’umuryango, abaturage, cyangwa serivisi z’ubuzima.",
+    "queries_en": "overwhelmed too much cannot cope failing mother everything on top of me",
+    "queries_rw": "byandenze sinshoboye kunanirwa kuba umubyeyi ibintu byinshi",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "sleep_fatigue",
+    "topic": "sleep and fatigue",
+    "source": "WHO World Health Day 2025",
+    "url": "https://www.who.int/campaigns/world-health-day/2025/key-messages",
+    "text_en": "Fatigue is common after childbirth, but severe exhaustion and ongoing sleep difficulty can also accompany emotional distress. Rest when possible, ask trusted people for practical help, and speak with a health worker when exhaustion is persistent or affects daily functioning.",
+    "text_rw": "Umunaniro urasanzwe nyuma yo kubyara, ariko kunanirwa cyane no gukomeza kubura ibitotsi bishobora no kujyana n’ihungabana ry’ibyiyumvo. Ruhuka igihe bishoboka, saba abo wizeye kugufasha, kandi uvugane n’umukozi w’ubuzima niba umunaniro ukomeza cyangwa ukubangamira mu buzima bwa buri munsi.",
+    "queries_en": "cannot sleep insomnia exhausted tired no energy awake all night fatigue",
+    "queries_rw": "sinshobora gusinzira kubura ibitotsi umunaniro ndananiwe nta mbaraga",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "self_blame_guilt",
+    "topic": "guilt and self-blame",
+    "source": "WHO Perinatal Mental Health Integration Guide",
+    "url": "https://www.who.int/publications/i/item/9789240057142",
+    "text_en": "Guilt, harsh self-blame, or feeling like a bad mother can be part of postpartum emotional distress. A supportive response acknowledges the difficulty, avoids judgement, and encourages the mother to share these feelings with someone she trusts or a trained health worker.",
+    "text_rw": "Kumva ufite icyaha, kwigaya cyane, cyangwa kumva uri umubyeyi mubi bishobora kujyana n’ihungabana nyuma yo kubyara. Ni byiza kwemera ko bikugoye uticira urubanza, ukabiganiriza umuntu wizeye cyangwa umukozi w’ubuzima wabihuguriwe.",
+    "queries_en": "guilty blame myself bad mother failure worthless not good enough",
+    "queries_rw": "numva mfite icyaha ndigaya ndi umubyeyi mubi nta cyo maze",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "social_support",
+    "topic": "social support",
+    "source": "WHO Postnatal Care Recommendations",
+    "url": "https://www.who.int/publications/i/item/9789240045989",
+    "text_en": "Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest.",
+    "text_rw": "Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka.",
+    "queries_en": "alone lonely no support nobody helps partner family friends isolated",
+    "queries_rw": "ndi jyenyine nta mfashanyo umuryango inshuti uwo twashakanye irungu",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "partner_relationship",
+    "topic": "partner and family support",
+    "source": "WHO Postnatal Care Recommendations",
+    "url": "https://www.who.int/publications/i/item/9789240045989",
+    "text_en": "Partners and family members can support postpartum wellbeing by listening, sharing caregiving and household work, attending postnatal contacts, and taking a mother’s emotional concerns seriously. Persistent conflict, threats, or violence require additional professional and safety support.",
+    "text_rw": "Abo bashakanye n’umuryango bashobora gufasha umubyeyi bamwumva, bagabana kwita ku mwana n’imirimo yo mu rugo, bakajyana na we kwa muganga, kandi bagafata ibyiyumvo bye nk’ibikomeye. Amakimbirane akomeza, iterabwoba, cyangwa ihohoterwa bisaba ubufasha bw’umwuga n’ubw’umutekano.",
+    "queries_en": "husband partner relationship family conflict ignored no help violence abuse",
+    "queries_rw": "umugabo uwo twashakanye umuryango amakimbirane kunyirengagiza ihohoterwa",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "loss_grief",
+    "topic": "loss and grief",
+    "source": "WHO World Health Day 2025",
+    "url": "https://www.who.int/campaigns/world-health-day/2025/key-messages",
+    "text_en": "Stillbirth, miscarriage, or the death or serious illness of a baby can bring profound grief. Compassionate care should respect the mother’s way of grieving and connect her with trusted people, bereavement support, and trained health workers when needed.",
+    "text_rw": "Gupfusha umwana, gukuramo inda, cyangwa kugira umwana urwaye cyane bishobora gutera agahinda gakomeye. Ubufasha bwuje impuhwe bugomba kubaha uburyo umubyeyi agaragaza agahinda no kumuhuza n’abantu yizeye, abafasha abapfushije, n’abakozi b’ubuzima igihe bikenewe.",
+    "queries_en": "miscarriage stillbirth baby died loss grief bereavement mourning",
+    "queries_rw": "gupfusha umwana gukuramo inda agahinda ikiriyo urupfu rw'umwana",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "bonding",
+    "topic": "bonding and emotional connection",
+    "source": "WHO Perinatal Mental Health",
+    "url": "https://www.who.int/teams/mental-health-and-substance-use/promotion-prevention/perinatal-mental-health",
+    "text_en": "Emotional distress can make bonding or daily care feel difficult. This does not make someone a bad mother. Gentle support for the mother’s mental health can also support her relationship with the baby; persistent difficulty should be discussed with a health worker.",
+    "text_rw": "Ihungabana ry’ibyiyumvo rishobora gutuma kwegera umwana cyangwa kumwitaho buri munsi bigorana. Ibi ntibivuze ko uri umubyeyi mubi. Gufasha ubuzima bwo mu mutwe bw’umubyeyi bishobora no gufasha umubano we n’umwana; iyo bikomeje, biganirize umukozi w’ubuzima.",
+    "queries_en": "cannot bond disconnected from baby no love distant bad mother attachment",
+    "queries_rw": "sinshobora kwegera umwana sinumva mukunda nitandukanyije n'umwana",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "irritability_anger",
+    "topic": "irritability and anger",
+    "source": "WHO Perinatal Mental Health",
+    "url": "https://www.who.int/teams/mental-health-and-substance-use/promotion-prevention/perinatal-mental-health",
+    "text_en": "Irritability and anger can accompany exhaustion, anxiety, or depression after birth. Step away briefly when the baby is safe, ask someone trusted to help, and discuss persistent or frightening anger with a health worker.",
+    "text_rw": "Kurakara no kugira umujinya bishobora kujyana n’umunaniro, guhangayika, cyangwa kwiheba nyuma yo kubyara. Niba umwana atekanye, fata akanya gato, saba umuntu wizeye kugufasha, kandi ubwire umukozi w’ubuzima niba umujinya ukomeza cyangwa ugutera ubwoba.",
+    "queries_en": "angry irritable rage frustrated losing temper shouting",
+    "queries_rw": "ndarakara umujinya kurakazwa gucika intege",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "daily_functioning",
+    "topic": "daily functioning",
+    "source": "WHO Perinatal Mental Health",
+    "url": "https://www.who.int/teams/mental-health-and-substance-use/promotion-prevention/perinatal-mental-health",
+    "text_en": "Difficulty eating, bathing, concentrating, making decisions, or completing basic daily activities can signal significant postpartum distress. A mother experiencing these changes should receive practical support and assessment from a trained health worker.",
+    "text_rw": "Kunanirwa kurya, kwiyuhagira, kwibanda ku kintu, gufata ibyemezo, cyangwa gukora imirimo y’ibanze bishobora kugaragaza ihungabana rikomeye nyuma yo kubyara. Umubyeyi ufite ibi bimenyetso akwiriye gufashwa mu mirimo no gusuzumwa n’umukozi w’ubuzima wabihuguriwe.",
+    "queries_en": "cannot eat cannot shower cannot concentrate decisions daily tasks no appetite",
+    "queries_rw": "sinshobora kurya kwiyuhagira kwibanda gufata ibyemezo gukora imirimo",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "professional_help",
+    "topic": "seeking professional help",
+    "source": "WHO Postnatal Care Recommendations",
+    "url": "https://www.who.int/publications/i/item/9789240045989",
+    "text_en": "Postnatal care should include assessment of the mother’s mood and screening for depression or anxiety, with referral and management when needed. A mother can bring emotional concerns to a nurse, midwife, community health worker, counsellor, or doctor even if she is unsure how serious they are.",
+    "text_rw": "Kwita ku mubyeyi nyuma yo kubyara bigomba kubamo kubaza uko yiyumva no gusuzuma kwiheba cyangwa guhangayika, hanyuma agahabwa ubufasha bukwiye. Umubyeyi ashobora kubwira umuforomo, umubyaza, umujyanama w’ubuzima, umujyanama mu by’imitekerereze, cyangwa umuganga nubwo yaba atazi neza uburemere bw’ikibazo.",
+    "queries_en": "need help therapist counsellor doctor nurse health worker treatment screening",
+    "queries_rw": "nkeneye ubufasha umuganga umuforomo umujyanama w'ubuzima gusuzumwa",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  },
+  {
+    "id": "urgent_psychosis",
+    "topic": "urgent confusion or psychosis",
+    "source": "WHO World Health Day 2025",
+    "url": "https://www.who.int/campaigns/world-health-day/2025/key-messages",
+    "text_en": "Sudden hallucinations, fixed false beliefs, severe confusion, or rapidly changing extreme mood after childbirth may indicate postpartum psychosis. This is a medical emergency: the mother should not be left alone and needs urgent professional care.",
+    "text_rw": "Kubona cyangwa kumva ibintu bitariho, kwizera ibintu bitari ukuri, urujijo rukomeye, cyangwa ibyiyumvo bikabije bihinduka vuba nyuma yo kubyara bishobora kuba uburwayi bukomeye bwo mu mutwe. Ni ikibazo cyihutirwa: umubyeyi ntagomba gusigara wenyine kandi akeneye ubufasha bw’umuganga ako kanya.",
+    "queries_en": "hearing voices seeing things hallucinations delusions confused psychosis mania emergency",
+    "queries_rw": "kumva amajwi kubona ibitariho urujijo uburwayi bwo mu mutwe byihutirwa",
+    "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
+  }
+]

@@ -1,8 +1,0 @@
-{
-  "Model 2: Linear SVM (English)": {
-    "accuracy": 0.6897,
-    "precision_macro": 0.7188,
-    "recall_macro": 0.6414,
-    "f1_macro": 0.6688
-  }
-}

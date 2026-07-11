@@ -1,8 +1,0 @@
-# Light "cream & plum" theme (mother-facing). App CSS layers the gradient + accents on top.
-[theme]
-base = "light"
-primaryColor = "#5E4A5E"
-backgroundColor = "#F2E8E4"
-secondaryBackgroundColor = "#FBF5EC"
-textColor = "#3B2E39"
-font = "sans serif"
