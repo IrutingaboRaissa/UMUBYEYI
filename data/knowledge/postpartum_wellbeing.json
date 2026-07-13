@@ -17,7 +17,7 @@
     "url": "https://www.who.int/teams/mental-health-and-substance-use/promotion-prevention/perinatal-mental-health",
     "text_en": "Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step.",
     "text_rw": "Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza.",
-    "queries_en": "depressed hopeless miserable numb no interest cannot function worthless",
+    "queries_en": "depressed hopeless miserable numb no interest cannot function worthless persistent sadness sad all the time since birth",
     "queries_rw": "numva mfite agahinda nyuma yo kubyara kwiheba kubura icyizere agahinda gakabije nta byishimo nta cyo maze",
     "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
   },
@@ -61,7 +61,7 @@
     "url": "https://www.who.int/publications/i/item/9789240057142",
     "text_en": "Guilt, harsh self-blame, or feeling like a bad mother can be part of postpartum emotional distress. A supportive response acknowledges the difficulty, avoids judgement, and encourages the mother to share these feelings with someone she trusts or a trained health worker.",
     "text_rw": "Kumva ufite icyaha, kwigaya cyane, cyangwa kumva uri umubyeyi mubi bishobora kujyana n’ihungabana nyuma yo kubyara. Ni byiza kwemera ko bikugoye uticira urubanza, ukabiganiriza umuntu wizeye cyangwa umukozi w’ubuzima wabihuguriwe.",
-    "queries_en": "guilty blame myself bad mother failure worthless not good enough",
+    "queries_en": "guilty blame myself bad mother failure worthless not good enough body image weight gain ashamed appearance how I look",
     "queries_rw": "numva mfite icyaha ndigaya ndi umubyeyi mubi nta cyo maze",
     "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
   },
@@ -72,7 +72,7 @@
     "url": "https://www.who.int/publications/i/item/9789240045989",
     "text_en": "Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest.",
     "text_rw": "Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka.",
-    "queries_en": "alone lonely no support nobody helps partner family friends isolated",
+    "queries_en": "alone lonely no support nobody helps partner family friends isolated avoiding friends social withdrawal afraid to show up club",
     "queries_rw": "ndi jyenyine nta mfashanyo umuryango inshuti uwo twashakanye irungu",
     "review_status": "source-grounded; Kinyarwanda requires native-speaker review"
   },

@@ -24,6 +24,23 @@ def test_self_harm_short_circuits_to_crisis_114():
     assert "114" in r["answer"]
 
 
+@pytest.mark.parametrize("message", [
+    "I don't want to live anymore",
+    "Everyone would be better off without me",
+    "I cannot keep myself safe tonight",
+    "I might h4rm myself",
+    "I want to k.i.l.l myself",
+    "Sinshaka kubaho",
+    "Ndashaka gupfa",
+])
+def test_indirect_and_obfuscated_crisis_messages_are_not_bypassed(message):
+    lang = "rw" if message.startswith(("Nd", "Sin")) else "en"
+    r = rag.answer(message, force_lang=lang)
+    assert r["danger"] is True
+    assert r["mode"] == "safety"
+    assert "114" in r["answer"]
+
+
 def test_clinical_question_is_referred_not_answered():
     r = rag.answer("My baby has a high fever and won't stop crying", force_lang="en")
     assert r["mode"] == "referral"
@@ -36,8 +53,15 @@ def test_greetings_and_small_talk_recognized(greeting):
     assert rag.is_greeting(greeting) is True
 
 
-def test_greeting_returns_greeting_mode():
-    assert rag.answer("hi", force_lang="en")["mode"] == "greeting"
+def test_greeting_is_generated_by_conversational_model(monkeypatch):
+    monkeypatch.setattr(
+        rag._default.gemini_generator,
+        "generate_social",
+        lambda query, lang: "Hello. I am listening; how are you feeling today?",
+    )
+    result = rag.answer("hi", force_lang="en")
+    assert result["mode"] == "gemini_conversation"
+    assert result["answer"].startswith("Hello")
 
 
 def test_off_topic_is_redirected_not_answered():
@@ -123,5 +147,91 @@ def test_deterministic_paths_work_with_network_disabled(monkeypatch):
 
     monkeypatch.setattr(socket, "socket", _no_network)
     assert rag.answer("I want to end my life", force_lang="en")["mode"] == "safety"
-    assert rag.answer("hi", force_lang="en")["mode"] == "greeting"
+    monkeypatch.setattr(rag._default.gemini_generator, "generate_social", lambda *args: "")
+    assert rag.answer("hi", force_lang="en")["mode"] == "greeting_fallback"
+
+
+def test_gemini_is_used_after_local_generator_rejects(monkeypatch):
+    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args: "")
+    monkeypatch.setattr(
+        rag._default.gemini_generator,
+        "generate",
+        lambda query, evidence, lang: "Ndumva bikugoye. Vugana n'umuntu wizeye kugira ngo agufashe.",
+    )
+    result = rag.answer("Numva mfite agahinda nyuma yo kubyara", force_lang="rw")
+    assert result["mode"] == "gemini_grounded"
+    assert result["grounded"] is True
+
+
+def test_rw_skips_unreviewed_ollama_when_gemini_fails(monkeypatch):
+    monkeypatch.delenv("UMU_ALLOW_RW_OLLAMA", raising=False)
+    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args: "")
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *args: "")
+    monkeypatch.setattr(
+        rag._default,
+        "_generate_ollama",
+        lambda *args: (_ for _ in ()).throw(AssertionError("RW Ollama must be skipped")),
+    )
+    result = rag.answer("Numva mfite agahinda nyuma yo kubyara", force_lang="rw")
+    assert result["mode"] == "retrieved_rw"
+    assert result["grounded"] is True
+
+
+def test_generator_exception_falls_back_instead_of_raising_500(monkeypatch):
+    monkeypatch.setattr(
+        rag._default.finetuned_generator,
+        "generate",
+        lambda *args: (_ for _ in ()).throw(RuntimeError("incompatible local backend")),
+    )
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *args: "")
+    result = rag.answer("I feel a little sad today", force_lang="en")
+    assert result["mode"] == "retrieved"
+    assert result["grounded"] is True
+    assert "general information" in result["answer"].lower()
+
+
+def test_ollama_is_opt_in_and_cannot_delay_default_fallback(monkeypatch):
+    monkeypatch.delenv("UMU_ENABLE_OLLAMA", raising=False)
+    monkeypatch.delenv("UMU_DISABLE_OLLAMA", raising=False)
+    rag._default._ollama_checked = False
+    assert rag._default._generate_ollama("I feel sad", "Seek support.", "en") == ""
+    assert rag._default._ollama_checked is False
+
+
+def test_retrieval_fallback_is_the_reviewed_passage_not_a_canned_wrapper(monkeypatch):
+    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args: "")
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *args: "")
+    top, _ = rag.retrieve("I feel a little sad today", k=1, lang="en")[0]
+
+    result = rag.answer("I feel a little sad today", force_lang="en")
+    assert result["mode"] == "retrieved"
+    assert result["answer"].startswith(top["text_en"])
+    assert "really glad you told me" not in result["answer"].lower()
+
+
+def test_gemini_receives_evidence_selected_by_trained_topic_classifier(monkeypatch):
+    captured = {}
+    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args: "")
+
+    def grounded(query, evidence, lang):
+        captured["evidence"] = evidence
+        return "I hear how heavy today feels. Your feelings matter. Would you like to share more?"
+
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", grounded)
+    result = rag.answer("I feel a little sad today", force_lang="en")
+    assert result["mode"] == "gemini_grounded"
+    predictions = rag._default.classify_topics("I feel a little sad today", k=3)
+    expected_ids = [item["topic_id"] for item in predictions]
+    assert len(expected_ids) == 3
+    assert all(f"Topic {topic_id} " in captured["evidence"] for topic_id in expected_ids)
+    assert len([line for line in captured["evidence"].splitlines() if line.startswith("Topic ")]) == 3
+
+
+def test_multi_concern_message_selects_relevant_topics():
+    message = (
+        "I feel sad all the time since giving birth. I gained weight and feel ashamed of how I look, "
+        "so I am afraid to return to my yoga club and see my friends."
+    )
+    predicted = {item["topic_id"] for item in rag._default.classify_topics(message, k=3)}
+    assert {"persistent_sadness", "self_blame_guilt", "social_support"}.issubset(predicted)
 

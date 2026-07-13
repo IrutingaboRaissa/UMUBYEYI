@@ -3,6 +3,7 @@ export type Msg = {
   text: string;
   sub?: string;
   danger?: boolean;
+  mode?: string;
 };
 
 export type Thread = {
@@ -20,6 +21,7 @@ export type ChatResponse = {
   mode: string;
   intent: string | null;
   sources: { topic: string; source: string; sim: number }[];
+  topic_predictions?: { topic_id: string; topic: string; score: number }[];
   latency_ms?: number;
 };
 
@@ -48,11 +50,9 @@ export const CHECKIN_FIELDS = [
   ["Depression during pregnancy (PHQ2)", "Low mood during pregnancy screening", ["Negative", "Positive"]],
 ] as const;
 
-export const GREETING = "Muraho, mama. Wambwira uko umeze uyu munsi?";
-export const GREETING_SUB = "Hello, mama. Tell me how you're feeling today.";
 export const CRISIS_LINE = "114";
-export const STORE_KEY = "umubyeyi_threads_v2";
-export const STORE_CURRENT_KEY = "umubyeyi_current_v2";
+export const STORE_KEY = "umubyeyi_threads_v3";
+export const STORE_CURRENT_KEY = "umubyeyi_current_v3";
 
 export const MOODS = [
   ["😔", "Agahinda · Sad", "Numva mfite agahinda."],
@@ -87,7 +87,7 @@ export function newThread(): Thread {
     id: Math.random().toString(36).slice(2, 14),
     title: "",
     ts: Date.now(),
-    msgs: [{ role: "bot", text: GREETING, sub: GREETING_SUB }],
+    msgs: [],
   };
 }
 
@@ -107,13 +107,6 @@ export function loadThreads(): { threads: Thread[]; currentId: string } {
   if (!threads.length) {
     const t = newThread();
     return { threads: [t], currentId: t.id };
-  }
-  // keep greeting in sync across saved chats
-  for (const t of threads) {
-    if (t.msgs?.[0]?.role === "bot") {
-      t.msgs[0].text = GREETING;
-      t.msgs[0].sub = GREETING_SUB;
-    }
   }
   const savedCurrent = localStorage.getItem(STORE_CURRENT_KEY);
   const currentId = savedCurrent && threads.some((t) => t.id === savedCurrent)
