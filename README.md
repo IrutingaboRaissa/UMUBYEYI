@@ -2,8 +2,8 @@
 
 Umubyeyi is a bilingual English/Kinyarwanda postpartum emotional-well-being assistant for first-time
 mothers. It combines trained screening-risk classifiers, source-grounded retrieval, deterministic
-safety rules, an optional locally running Ollama model, a guided check-in, mood history, and self-care
-support. It is a research prototype and does not diagnose or replace a health professional.
+safety rules, a project-fine-tuned multilingual generator, a guided check-in, mood history, and
+self-care support. It is a research prototype and does not diagnose or replace a health professional.
 
 ## Submission links
 
@@ -18,8 +18,13 @@ The first two placeholders must be replaced only after the final commit is deplo
 - English and Kinyarwanda emotional-well-being conversations
 - deterministic crisis, acute-health, baby-care, and unrelated-topic routing
 - same-language character n-gram TF-IDF retrieval across 14 source-attributed topics
-- optional local Ollama response phrasing constrained to retrieved evidence
-- direct retrieved-passage fallback when Ollama is unavailable
+- project-trained bilingual topic classifier selecting the three strongest evidence topics
+- locally fine-tuned mT5 LoRA generator constrained to retrieved evidence
+- coverage-controlled grounded Gemini generation with one corrective retry
+- model-generated greetings/small talk; no canned conversational response list
+- strict generated-output grounding validation and direct-passage fallback
+- visible response provenance: fine-tuned mT5, Gemini, Ollama, or retrieved evidence
+- optional Ollama phrasing as a secondary local path
 - 15-input guided screening-risk check-in with a non-diagnostic disclaimer
 - browser-local mood and conversation history
 - self-care guidance, affirmations, feedback, and mobile navigation
@@ -33,11 +38,11 @@ Safety and scope rules                    15 validated answers
        |                                        |
 Language detection                        preprocessing pipeline
        |                                        |
-English/RW TF-IDF retrieval               trained Logistic Regression
+trained bilingual topic classifier        trained Logistic Regression
        |                                        |
-confidence gate                           non-diagnostic result
+Top-3 reviewed evidence                   non-diagnostic result
        |
-local Ollama phrasing OR retrieval fallback
+grounded Gemini -> fine-tuned mT5 fallback -> optional Ollama -> retrieval fallback
        |
 sources + general-information disclaimer
 ```
@@ -50,7 +55,8 @@ The 800 participant records train screening classifiers. They are never used as 
 - Python 3.11–3.13
 - Node.js 20 or newer and npm
 - Git
-- Ollama, only when local generated phrasing is required
+- enough memory to load the 300M-parameter mT5-small base model for local generation
+- Ollama, optional secondary generation path only
 
 ## Installation from a fresh clone
 
@@ -92,13 +98,21 @@ npm ci
 ### 4. Configure the environment
 
 ```powershell
-Copy-Item .env.example .env
+Copy-Item .env.example .env.local
 ```
 
 Analytics are optional. The application uses a local SQLite file when no `DATABASE_URL` is provided.
-Do not commit `.env`.
+Create a fresh Gemini API key and put it only in the git-ignored `.env.local` file as
+`GEMINI_API_KEY=...`. Never commit or paste a real key into source code, a notebook, or the report.
+Without a key, the app safely continues through its local/retrieval paths.
 
-### 5. Optional: install the local response model
+### 5. Fine-tuned local response model
+
+The repository includes the compact Umubyeyi LoRA adapter. On first local generation,
+Transformers downloads the Apache-2.0 `google/mt5-small` base checkpoint and applies the adapter.
+Set `UMU_DISABLE_FINETUNED=1` only when intentionally testing retrieval fallback.
+
+Optional secondary Ollama path:
 
 ```powershell
 ollama pull gemma3:4b
@@ -106,13 +120,26 @@ ollama create umubyeyi -f ollama/Modelfile
 $env:OLLAMA_MODEL = "umubyeyi"
 ```
 
-`ollama create` applies project instructions; it does not fine-tune model weights. Without Ollama,
-the application safely returns the retrieved evidence passage.
+`ollama create` applies project instructions and does not fine-tune Ollama weights. This is distinct
+from the mT5 LoRA adapter, whose trainable weights were updated by this project. If neither generator
+returns an answer that passes grounding validation, the application returns the retrieved passage.
+
+Gemini receives only the current message and three reviewed passages selected by the project-trained
+topic classifier, not conversation history. Its structured response must enumerate the concerns it
+identified, confirm each concern was covered, identify the exact factual sentences in its answer, cite
+supporting evidence, and pass local coverage and grounding validation. A rejected response receives one
+corrective retry before the system falls back to the project-fine-tuned model or source passage.
+It is an external inference component and is not described as project-fine-tuned.
+The verified default is `gemini-3.1-flash-lite`; it can be changed with `GEMINI_MODEL`.
+
+Ordinary greetings are generated by Gemini and labelled `Gemini · conversation`; they are not selected
+from canned greeting variants. If Gemini is unavailable, the app returns a labelled availability notice.
+Fixed application text is restricted to safety, clinical referral, scope redirection, disclaimer, and
+failure handling. These controls are intentionally deterministic and are not presented as learned output.
 
 ### 6. Start the complete local application
 
 ```powershell
-$env:OLLAMA_MODEL = "umubyeyi"   # omit when testing fallback mode
 npm run dev
 ```
 
@@ -127,9 +154,57 @@ Next.js, normally http://localhost:3000. If port 3000 is occupied, it selects an
 python -m pytest -q
 ```
 
-Current verified result: **32 tests passed**. Strategies include unit, parameterized, boundary-value,
+Current verified result: **66 tests passed**. Strategies include unit, parameterized, boundary-value,
 invalid-input, offline/fallback, bilingual retrieval, safety, response-contract, dependency-injection,
-and HTTP integration testing.
+HTTP integration, indirect/obfuscated crisis messages, Gemini failure fallback, generation-data
+leakage control, layered-evaluation integrity, and generated-output grounding validation.
+
+### Layered model evaluation
+
+```powershell
+python evaluate_system_layers.py
+```
+
+No single accuracy score describes the system because classification, retrieval, generation, and
+safety routing are different tasks. The command writes auditable cases, JSON metrics, and figures to
+`reports/system_evaluation/`.
+
+| Layer | Evaluation evidence | Primary result |
+|---|---|---:|
+| Full screening classifier | 120 untouched participant rows | F1 0.7890 |
+| Practical check-in classifier | 120 untouched participant rows | F1 0.7544 |
+| Bilingual topic classifier | 28 controlled paraphrases | Top-1 0.8571; Top-3 0.9643; macro-F1 0.8599* |
+| English question-to-topic retrieval | 14 controlled paraphrases | Top-1 0.6429; Top-3 0.9286 |
+| Kinyarwanda question-to-topic retrieval | 14 controlled project-authored cases | Top-1 1.0000* |
+| Fine-tuned generator | 24 examples from two untouched topics | ROUGE-L 0.4862; overlap 0.6687 |
+| Generator strict quality gate | same 24 examples | English 0.75; Kinyarwanda 0.00 |
+| Safety/scope routing | 16 controlled cases across five categories | Accuracy 1.0000* |
+
+`*` Controlled results are software/behavior evidence, not real-user or clinical validity. The
+Kinyarwanda retrieval cases share domain vocabulary with the knowledge bank and require native review,
+so their perfect score must not be presented as proof of generalization. English Top-1 performance also
+shows that the lexical retriever can confuse indirect paraphrases even when the right topic is usually
+within its Top-3 results.
+
+### Project-trained topic classifier
+
+```powershell
+python train_topic_classifier.py
+```
+
+The persisted `models/topic_classifier.joblib` pipeline combines word and character TF-IDF with
+balanced multinomial Logistic Regression. It trains on 168 labelled project-authored prompt examples
+and 70 alternative representations already present in the reviewed knowledge bank (238 total; 14
+topics). A stratified validation split selects the representation; the final model is evaluated on 28
+separately phrased controlled cases. These are reproducible software-evaluation cases, not real-user
+conversations or evidence of clinical validity. Runtime generation uses its Top-3 predictions so a
+multi-concern message can bring several relevant passages into one answer.
+
+Automatic text metrics cannot establish whether a response is empathetic, natural, or culturally
+appropriate. `reports/system_evaluation/generator_human_review_template.csv` contains all 24 held-out
+outputs and blank 1–5 review fields for relevance, fluency, empathy, grounding, safety, and language
+correctness. Scores must only be reported after named reviewers complete the sheet; blank fields are
+deliberately not replaced with model-generated ratings.
 
 ### Production build
 
@@ -145,10 +220,18 @@ The current Next.js production build completes successfully.
 ```powershell
 python train_ppd_classifier.py
 python train_checkin_classifier.py
+python train_grounded_generator.py
 ```
 
-These commands regenerate saved pipelines, metrics, training timings, model comparisons, and confusion
-matrices. The complete executed workflow is also available in `notebooks/umubyeyi.ipynb`.
+These commands regenerate the screening pipelines and bilingual mT5 LoRA generator. Generator training
+writes its adapter under `models/umubyeyi-mt5-lora/` and evidence under `reports/generator/`. Use
+`--smoke` only to verify the pipeline quickly; the reported metrics come from the complete run. The
+tabular PPD participant data is never used as generator supervision.
+
+For faster GPU training, open `notebooks/umubyeyi_colab_finetuning.ipynb` in Google Colab, select a
+T4 GPU, and upload the existing `data/knowledge/postpartum_wellbeing.json` when prompted. The notebook
+contains dataset construction, topic-grouped splitting, LoRA training, held-out evaluation, manifest
+creation, and adapter download. Extract its zip into `models/umubyeyi-mt5-lora/` to use it in the app.
 
 ### Performance benchmark
 
@@ -170,7 +253,8 @@ Current Windows 11 / Python 3.13.7 / 8-logical-CPU fallback-mode medians:
 | Kinyarwanda retrieval response | 3.335 ms |
 | Guided check-in prediction | 15.301 ms |
 
-These are steady-state local measurements and exclude browser/network latency and Ollama generation.
+These are steady-state fallback measurements and exclude fine-tuned mT5, Gemini network, and Ollama
+generation latency.
 
 ## Supervised machine-learning experiments
 
@@ -193,20 +277,54 @@ items, totals, and derived labels are excluded to prevent target leakage.
 
 These are held-out experimental results, not clinical validation.
 
+## Fine-tuned grounded generator
+
+`google/mt5-small` was adapted with supervised LoRA fine-tuning for bilingual evidence-conditioned
+postpartum support generation. This is genuine parameter training: 344,064 adapter parameters were
+updated, rather than only changing a prompt or Modelfile.
+
+- generator examples: 168 (84 English / 84 Kinyarwanda)
+- split unit: complete knowledge topic, preventing paraphrases of one answer crossing splits
+- train / validation / untouched test: 120 / 24 / 24 examples across 10 / 2 / 2 topics
+- validation loss: 11.42 after epoch 1 to 1.034 after epoch 12
+- held-out ROUGE-L F1: 0.0050 base to 0.4862 fine-tuned
+- held-out mean evidence overlap: 0.0729 base to 0.6687 fine-tuned
+
+Raw generation review is still mandatory. The strict validator accepted 9/24 held-out outputs; all
+accepted outputs were English, while Kinyarwanda raw generation remained insufficiently fluent and
+therefore routes to grounded Gemini when configured, then to the source passage on API/validation
+failure. This is a documented limitation, not evidence of bilingual clinical readiness. Metrics and
+raw generations are retained in `reports/generator/` for audit.
+
+### Why synthetic augmentation was used
+
+The 168 generator examples are not real mother-chatbot conversations. They are six project-authored
+question templates per language applied to 14 source-attributed evidence topics; target facts remain
+the corresponding evidence passage. This provides reproducible supervised fine-tuning without using
+sensitive patient conversations, but it limits linguistic diversity and external validity.
+
+A scoped dataset search found adjacent resources—English mental-health dialogue, English synthetic
+maternal dialogue, Kinyarwanda speech, and tourism translation—but no resource identified that was
+simultaneously real conversational data, Kinyarwanda, postpartum-emotional-wellbeing-specific,
+appropriately licensed, and suitable for answer generation. This is recorded as “no suitable dataset
+identified under the project criteria,” not “no such dataset exists.” See
+`data/knowledge/DATASET_SEARCH_RECORD.md` for the inclusion criteria and examined alternatives.
+
 ## Deployment plan
 
 1. Run tests and the production build locally.
 2. Commit and push the exact tested revision.
 3. Import the GitHub repository into Vercel.
 4. Configure optional `DATABASE_URL` in project environment variables.
-5. Deploy using `vercel.json`; Vercel runs retrieval fallback because it cannot reach the local Ollama
-   process on the developer's computer.
+5. Deploy using `vercel.json`; set a fresh `GEMINI_API_KEY` in project environment variables. The
+   hosted build uses grounded Gemini plus retrieval fallback because local mT5/Ollama dependencies
+   are intentionally excluded from the serverless function.
 6. Verify `/`, `/api/chat`, `/api/screen`, crisis routing, English/RW retrieval, and mobile layout.
 7. Add the verified URL at the top of this README.
 8. Record the demo against that exact deployed revision.
 
-For an installable local demonstration with Ollama, use the fresh-clone instructions above. The hosted
-fallback and local Ollama modes should be presented as two intentionally different environments.
+Present the hosted Gemini/retrieval path and local fine-tuned-generator mode as intentionally
+different environments.
 
 ## Five-minute demonstration plan
 
@@ -215,7 +333,7 @@ fallback and local Ollama modes should be presented as two intentionally differe
 3. English and Kinyarwanda reformulated emotional messages — 60 seconds
 4. Guided check-in with varied inputs — 35 seconds
 5. Crisis, clinical/baby-care, and unrelated-topic routing — 45 seconds
-6. Ollama-enabled response and retrieval fallback — 35 seconds
+6. Fine-tuned mT5, grounded Gemini RW, strict validation, and retrieval fallback — 35 seconds
 7. Tests, benchmark, limitations, and recommendations — 55 seconds
 
 Do not focus the video on authentication or visual styling; demonstrate algorithms, varied data,
@@ -229,9 +347,14 @@ app/, components/, lib/      Next.js user interface
 data/postpartum_depression/  licensed participant data and dictionary
 data/knowledge/              bilingual source-attributed grounding collection
 models/                      fitted language and screening pipelines
+models/umubyeyi-mt5-lora/    project-trained LoRA adapter and training manifest
 notebooks/umubyeyi.ipynb     complete executed ML/retrieval workflow
 ollama/Modelfile             local response-model instructions
 reports/                     metrics, figures, and performance evidence
+train_grounded_generator.py  reproducible bilingual generator fine-tuning
+evaluate_system_layers.py    layered metrics, auditable cases, and consolidated figures
+src/generation_data.py       generator dataset construction and grouped splits
+src/finetuned_generator.py   lazy inference and strict grounding validator
 src/rag.py                   conversational pipeline and safety policy
 src/screening.py             OOP check-in service
 src/visualizations.py        OOP experiment visualizer
@@ -249,12 +372,19 @@ benchmark_system.py          reproducible runtime benchmark
   Rwanda-relevant evidence.
 - Project-produced Kinyarwanda passages require native-speaker and maternal-health review.
 - No reviewed Kinyarwanda gold evaluation set or formal Rwandan user study has been completed.
-- The local Ollama model is pretrained and instruction-configured, not fine-tuned by this project.
+- The mT5 LoRA adapter is fine-tuned by this project, but its 168 augmented examples originate from
+  only 14 evidence topics and do not constitute clinical conversational validation.
+- Raw Kinyarwanda generation did not pass the strict quality gate in held-out evaluation; the current
+  hybrid therefore uses grounded Gemini when configured and falls back to the source passage if the
+  API or its output fails validation.
+- Gemini is an externally hosted model, not a project-trained model. Sending a message to it requires
+  clear user disclosure, data minimization, secure key handling, and documented API availability/cost.
+- The optional Ollama model remains pretrained and instruction-configured, not fine-tuned.
 - Deterministic safety rules may miss novel paraphrases and do not replace emergency assessment.
 
 Future work should prioritize ethical Rwanda-specific data collection, professional and native-speaker
 review, usability testing, model calibration, fairness analysis, multilingual semantic retrieval, and a
-reviewed bilingual conversational corpus before language-model fine-tuning.
+larger reviewed bilingual conversational corpus for a stronger second fine-tuning experiment.
 
 ## Safety notice
 

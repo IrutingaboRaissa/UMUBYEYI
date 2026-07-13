@@ -1,11 +1,31 @@
 """Local HTTP adapter for the Python endpoints used by ``npm run dev``."""
 import json
+import os
 import sys
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+
+
+def _load_local_env(path: Path, override: bool = False) -> None:
+    """Load simple KEY=VALUE development secrets without another dependency."""
+    if not path.exists():
+        return
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key, value = key.strip(), value.strip().strip('"').strip("'")
+        # Empty placeholders must not mask a real value in another local env file.
+        if key and value and (override or key not in os.environ):
+            os.environ[key] = value
+
+
+_load_local_env(ROOT / ".env")
+_load_local_env(ROOT / ".env.local", override=True)
 sys.path.insert(0, str(ROOT / "src"))
 
 import db  # noqa: E402

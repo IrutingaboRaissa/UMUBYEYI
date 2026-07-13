@@ -12,9 +12,11 @@ Thumbs.db
 # JavaScript / Next.js local build artifacts
 node_modules/
 .next/
+.next-dev/
 
 # Secrets - never commit API keys
 .env
+.env.local
 *.key
 
 # Private docs (capstone report, slides) - keep local, off the public repo
@@ -29,6 +31,9 @@ afroxlmr-kinyarwanda-intent/
 # Fine-tuned generator weights (307MB > GitHub 100MB limit) — regenerate via train_local.py / notebook
 models/umubyeyi-generator/
 models/_gen_ckpt/
+models/_generator_smoke/
+models/_generator_checkpoints/
+reports/_generator_smoke/
 
 # local UI screenshots
 screenshots/

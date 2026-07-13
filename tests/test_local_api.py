@@ -37,7 +37,7 @@ def post(base_url, path, payload):
 def test_chat_endpoint_returns_response_contract(api_server):
     status, result = post(api_server, "/api/chat", {"message": "hello", "force_lang": "en"})
     assert status == 200
-    assert result["mode"] == "greeting"
+    assert result["mode"] in {"gemini_conversation", "greeting_fallback"}
     assert result["language"] == "en"
     assert "latency_ms" in result
 

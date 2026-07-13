@@ -1,0 +1,47 @@
+{
+  "training_source": "168 project-authored augmented prompts + 70 knowledge-bank representations",
+  "external_validity": "controlled project-authored test; not real-user or clinical validation",
+  "training_examples": 238,
+  "topics": 14,
+  "selected_pipeline": "char_word",
+  "candidate_validation": {
+    "word": {
+      "cases": 34,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "top_3_accuracy": 1.0
+    },
+    "char": {
+      "cases": 34,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "top_3_accuracy": 1.0
+    },
+    "char_word": {
+      "cases": 34,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "top_3_accuracy": 1.0
+    }
+  },
+  "controlled_test": {
+    "cases": 28,
+    "accuracy": 0.8571,
+    "macro_f1": 0.8599,
+    "top_3_accuracy": 0.9643,
+    "by_language": {
+      "en": {
+        "cases": 14,
+        "accuracy": 0.7143,
+        "macro_f1": 0.6476,
+        "top_3_accuracy": 0.9286
+      },
+      "rw": {
+        "cases": 14,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "top_3_accuracy": 1.0
+      }
+    }
+  }
+}

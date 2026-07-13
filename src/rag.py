@@ -15,8 +15,9 @@ A module-level singleton exposes a backward-compatible functional API (`answer`,
 """
 import json
 import os
-import random
 import re
+import sys
+import unicodedata
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -24,6 +25,10 @@ from pathlib import Path
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
+from finetuned_generator import FineTunedGenerator
+from gemini_generator import GeminiGenerator
+from topic_classifier import TopicClassifier
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -47,8 +52,15 @@ class UmubyeyiRAG:
         "en": "This is general information, not medical advice. Please talk to a health worker if you are worried.",
     }
 
-    DANGER = ["kill myself", "end my life", "suicide", "hurt myself", "hurt my baby", "harm my baby",
-              "kwiyahura", "kwiyica", "guhotora", "kwica umwana"]
+    DANGER = [
+        "kill myself", "end my life", "take my life", "suicide", "suicidal",
+        "hurt myself", "harm myself", "want to die", "wish i were dead", "plan to die",
+        "dont want to live", "do not want to live", "not want to be alive",
+        "better off without me", "cannot keep myself safe", "cant keep myself safe",
+        "hurt my baby", "harm my baby", "kill my baby",
+        "kwiyahura", "kwiyica", "ndashaka gupfa", "nifuza gupfa", "sinshaka kubaho",
+        "kwikomeretsa", "gukomeretsa umwana", "kwica umwana", "guhotora",
+    ]
     # acute medical / baby-care that we refer out rather than answer
     CLINICAL = ["bleeding", "haemorrhage", "hemorrhage", "fever", "stitches", "wound", "infection",
                 "seizure", "convulsion", "not breathing", "unconscious", "amaraso", "umuriro"]
@@ -80,16 +92,10 @@ class UmubyeyiRAG:
     GREET_FILLER = {"mama", "neza", "there", "everyone", "all", "friend", "today", "dear", "sis", "sister",
                     "my", "doing", "again", "so", "now", "how", "are", "you", "u", "ur"}
 
-    # a few warm variants so greetings/small-talk don't repeat the exact same sentence
-    GREETINGS = {
-        "rw": ["Muraho, mama! Nishimiye kuvugana nawe. Ndi hano ku byerekeye uko wiyumva mu mezi 6 ya mbere nyuma yo kubyara. Umeze ute uyu munsi?",
-               "Muraho neza, mama. Nishimiye ko uje. Wambwira uko umutima wawe umeze - agahinda, guhangayika, umunaniro, cyangwa ikindi.",
-               "Bite, mama? Ndi hano kukumva nta kugucira urubanza. Ni iki wiyumva muri iki gihe?",
-               "Mwaramutse, mama. Nishimiye kuba turi kumwe. Wambwira uko byakugendekeye - uko wiyumva?"],
-        "en": ["Hello, mama! I'm glad to talk with you. I'm here for how you're feeling in the first 6 months after birth. How are you today?",
-               "Hi there, mama. I'm really glad you're here. Tell me how you're feeling - low, worried, tired, or anything on your heart.",
-               "Hello, dear. It's good to have you here, and there's no judgement in this space. How is your heart today?",
-               "Hi, mama. I'm listening. What's on your mind or weighing on you right now?"],
+    # An honest availability notice, used only when conversational generation fails.
+    GREETING_FAILURE = {
+        "rw": "Ubu sinshoboye gutangiza ikiganiro. Ongera ugerageze mu kanya.",
+        "en": "I couldn't start the conversation just now. Please try again in a moment.",
     }
     def __init__(self, root: Path = ROOT):
         self.root = Path(root)
@@ -99,6 +105,12 @@ class UmubyeyiRAG:
             raise FileNotFoundError(f"Runtime grounding bank not found: {bank_path}")
         self.bank = json.loads(bank_path.read_text(encoding="utf-8"))
         self.langdet = joblib.load(self.root / "models" / "lang_detector.joblib")
+        self.finetuned_generator = FineTunedGenerator(
+            self.root / "models" / "umubyeyi-mt5-lora"
+        )
+        self.gemini_generator = GeminiGenerator()
+        self.topic_classifier = TopicClassifier(self.root / "models" / "topic_classifier.joblib")
+        self._bank_by_id = {row["id"]: row for row in self.bank}
 
         # Keep language indexes separate. Each index contains every complete same-language pair
         # in the scoped postpartum bank. Do not silently filter Kinyarwanda rows using English
@@ -116,6 +128,13 @@ class UmubyeyiRAG:
             self._indices[lang] = indices
             self._vecs[lang] = vec
             self._mats[lang] = vec.fit_transform(search)
+        self._gemini_context = {
+            lang: " ".join(
+                (row.get(f"text_{lang}") or "").strip()
+                for row in self.bank if (row.get(f"text_{lang}") or "").strip()
+            )
+            for lang in ("en", "rw")
+        }
         self._ollama_checked = False
         self._ollama_ready = False
 
@@ -128,7 +147,11 @@ class UmubyeyiRAG:
 
     # ------------------------------------------------------------- safety / scope
     def is_danger(self, text: str) -> bool:
-        t = text.lower()
+        t = unicodedata.normalize("NFKC", text).lower().replace("'", "").replace("’", "")
+        t = t.translate(str.maketrans({"0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t"}))
+        t = re.sub(r"[^a-z\s]", " ", t)
+        t = re.sub(r"\bk\s+i\s+l\s+l\b", "kill", t)
+        t = " ".join(t.split())
         return any(k in t for k in self.DANGER)
 
     def is_clinical(self, text: str) -> bool:
@@ -154,10 +177,13 @@ class UmubyeyiRAG:
         """True only when the query is clearly about the mother's emotional wellbeing."""
         if self.is_baby_care(text):
             return False
-        if sim < self.SIM_GATE:
-            return False
+        # Explicit first-person feeling language is itself in scope; the trained topic
+        # classifier then decides which evidence categories apply. Do not reject a short
+        # disclosure merely because lexical similarity is just below the retrieval gate.
         if self.has_feeling_language(text):
             return True
+        if sim < self.SIM_GATE:
+            return False
         # Indirect wording (for example, "I never sleep") requires a stronger
         # source-document match even when it does not contain an explicit feeling phrase.
         return sim >= 0.18
@@ -176,9 +202,6 @@ class UmubyeyiRAG:
             t = t.replace(p, " ")
         remaining = [w for w in t.split() if w not in (self.GREET_WORDS | self.GREET_FILLER)]
         return len(remaining) == 0
-
-    def _greeting_reply(self, lang: str) -> str:
-        return random.choice(self.GREETINGS.get(lang, self.GREETINGS["en"]))
 
     def _crisis_message(self, lang: str) -> str:
         if lang == "rw":
@@ -216,15 +239,39 @@ class UmubyeyiRAG:
         local_idx = sims.argsort()[::-1][:(k or self.TOP_K)]
         return [(self.bank[self._indices[lang][i]], float(sims[i])) for i in local_idx]
 
-    def _generate_grounded(self, query: str, evidence: str, lang: str, history=None) -> str:
+    def classify_topics(self, text: str, k: int = 3) -> list[dict]:
+        """Return ranked topics from the supervised classifier trained by this project."""
+        return self.topic_classifier.predict(text, k=k)
+
+    def _classified_evidence(self, text: str, lang: str) -> tuple[str, list[dict]]:
+        """Build a compact evidence bundle from the classifier's three strongest topics."""
+        predictions = self.classify_topics(text, k=3)
+        passages = []
+        usable_predictions = []
+        for prediction in predictions:
+            row = self._bank_by_id.get(prediction["topic_id"])
+            body = (row or {}).get(f"text_{lang}", "").strip()
+            if not row or not body:
+                continue
+            passages.append(f"Topic {row['id']} ({row['topic']}): {body}")
+            usable_predictions.append({
+                "topic_id": row["id"],
+                "topic": row["topic"],
+                "score": round(prediction["score"], 4),
+            })
+        return "\n".join(passages), usable_predictions
+
+    def _generate_ollama(self, query: str, evidence: str, lang: str, history=None) -> str:
         """Ask local Ollama to phrase a fresh answer; return empty text on any failure."""
-        if os.environ.get("VERCEL") == "1" or os.environ.get("UMU_DISABLE_OLLAMA") == "1":
+        if (os.environ.get("VERCEL") == "1" or
+                os.environ.get("UMU_DISABLE_OLLAMA") == "1" or
+                os.environ.get("UMU_ENABLE_OLLAMA") != "1"):
             return ""
         if not self._ollama_checked:
             self._ollama_checked = True
             try:
                 tags_url = self.OLLAMA_URL.rsplit("/api/", 1)[0] + "/api/tags"
-                with urllib.request.urlopen(tags_url, timeout=2) as response:
+                with urllib.request.urlopen(tags_url, timeout=1.5) as response:
                     installed = json.loads(response.read().decode("utf-8")).get("models", [])
                 names = {item.get("name") for item in installed} | {item.get("model") for item in installed}
                 # Ollama reports custom models as ``name:latest`` even when the
@@ -264,16 +311,51 @@ class UmubyeyiRAG:
         request = urllib.request.Request(
             self.OLLAMA_URL, data=payload, headers={"Content-Type": "application/json"}, method="POST")
         try:
-            with urllib.request.urlopen(request, timeout=90) as response:
+            timeout = float(os.environ.get("OLLAMA_TIMEOUT_SECONDS", "8"))
+            with urllib.request.urlopen(request, timeout=timeout) as response:
                 result = json.loads(response.read().decode("utf-8"))
             draft = ((result.get("message") or {}).get("content") or "").strip()
             return draft if len(draft.split()) >= 6 else ""
         except (OSError, TimeoutError, ValueError, urllib.error.URLError):
             return ""
 
+    def _generate_grounded(self, query: str, evidence: str, lang: str, history=None,
+                           gemini_evidence: str | None = None) -> tuple[str, str]:
+        """Use grounded Gemini, project-fine-tuned fallback, optional Ollama, then retrieval."""
+        # Gemini receives only this message and classifier-selected reviewed evidence. Conversation
+        # history is intentionally kept local because it can contain sensitive details.
+        try:
+            draft = self.gemini_generator.generate(query, gemini_evidence or evidence, lang)
+        except Exception:
+            draft = ""
+        if not draft and self.gemini_generator.available and self.gemini_generator.last_error:
+            # Sanitized operational evidence only: never log the key, message, or passage.
+            print(f"Gemini fallback: {self.gemini_generator.last_error}", file=sys.stderr, flush=True)
+        if draft:
+            return draft, "gemini_grounded"
+        try:
+            draft = self.finetuned_generator.generate(query, evidence, lang)
+        except Exception:
+            # Optional model/dependency failures must never become an HTTP 500.
+            draft = ""
+        if draft:
+            return draft, "finetuned_grounded"
+        # The configured Ollama model did not pass Kinyarwanda quality review.
+        # Fail directly to the retrieved RW passage unless a developer explicitly
+        # opts into experimental local RW generation.
+        if lang == "rw" and os.environ.get("UMU_ALLOW_RW_OLLAMA") != "1":
+            return "", ""
+        try:
+            draft = self._generate_ollama(query, evidence, lang, history)
+        except Exception:
+            draft = ""
+        if draft:
+            return draft, "ollama_grounded"
+        return "", ""
+
     # ------------------------------------------------------------------- orchestration
     def answer(self, query: str, force_lang: str = None, history=None) -> dict:
-        """Return {answer, language, danger, grounded, mode, intent, sources}. Fully local, no API."""
+        """Return the routed, source-attributed response contract."""
         lang = force_lang if force_lang in ("en", "rw") else self.detect_language(query)
 
         if self.is_danger(query):
@@ -281,8 +363,20 @@ class UmubyeyiRAG:
                     "grounded": False, "mode": "safety", "intent": "crisis", "sources": []}
 
         if self.is_greeting(query):
-            return {"answer": self._greeting_reply(lang), "language": lang, "danger": False,
-                    "grounded": False, "mode": "greeting", "intent": "greeting", "sources": []}
+            try:
+                social = self.gemini_generator.generate_social(query, lang)
+            except Exception:
+                social = ""
+            if not social and self.gemini_generator.available and self.gemini_generator.last_error:
+                print(
+                    f"Gemini conversation fallback: {self.gemini_generator.last_error}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+            mode = "gemini_conversation" if social else "greeting_fallback"
+            return {"answer": social or self.GREETING_FAILURE.get(lang, self.GREETING_FAILURE["en"]),
+                    "language": lang, "danger": False, "grounded": False,
+                    "mode": mode, "intent": "greeting", "sources": []}
 
         if self.is_clinical(query):
             return {"answer": self._clinical_message(lang), "language": lang, "danger": False,
@@ -308,11 +402,16 @@ class UmubyeyiRAG:
             return {"answer": self._redirect(lang), "language": lang, "danger": False,
                     "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
 
+        classified_evidence, topic_predictions = self._classified_evidence(query, lang)
+
         if lang == "rw":
             body = (top.get("text_rw") or "").strip()
             if body:
-                draft = self._generate_grounded(query, body, lang, history)
-                body, mode = (draft, "ollama_grounded") if draft else (body, "retrieved_rw")
+                draft, generated_mode = self._generate_grounded(
+                    query, body, lang, history,
+                    gemini_evidence=classified_evidence or self._gemini_context[lang]
+                )
+                body, mode = (draft, generated_mode) if draft else (body, "retrieved_rw")
             else:
                 return {"answer": self._redirect(lang), "language": lang, "danger": False,
                         "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
@@ -321,12 +420,15 @@ class UmubyeyiRAG:
             if not body:
                 return {"answer": self._redirect(lang), "language": lang, "danger": False,
                         "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
-            draft = self._generate_grounded(query, body, lang, history)
-            body, mode = (draft, "ollama_grounded") if draft else (body, "retrieved")
+            draft, generated_mode = self._generate_grounded(
+                query, body, lang, history,
+                gemini_evidence=classified_evidence or self._gemini_context[lang]
+            )
+            body, mode = (draft, generated_mode) if draft else (body, "retrieved")
 
         text = f"{body}\n\n{self.DISCLAIMER.get(lang, self.DISCLAIMER['en'])}"
         return {"answer": text, "language": lang, "danger": False, "grounded": True, "mode": mode,
-                "intent": intent,
+                "intent": intent, "topic_predictions": topic_predictions,
                 "sources": [{"topic": b.get("topic", ""), "source": b.get("source", ""),
                              "url": b.get("url", ""), "sim": round(s, 2)}
                             for b, s in snippets]}

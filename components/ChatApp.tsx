@@ -88,15 +88,20 @@ export default function ChatApp() {
 
     try {
       const res = await sendChat(userMsg);
-      const botMsg = { role: "bot" as const, text: res.answer, danger: res.danger };
+      const botMsg = { role: "bot" as const, text: res.answer, danger: res.danger, mode: res.mode };
       updateThread({ ...t, msgs: [...t.msgs, botMsg] });
       setLastMeta({ lang: res.language, mode: res.mode });
       setRatedThreads((r) => ({ ...r, [t.id]: false }));
       if (sid.current) await logEvent(sid.current, res);
-    } catch (e) {
+    } catch {
+      const fallbackText = lastMeta.lang === "en"
+        ? "Sorry, something went wrong. Please try again."
+        : lastMeta.lang === "rw"
+          ? "Mbabarira, hari ikibazo. Ongera ugerageze."
+          : "Sorry, something went wrong. Mbabarira, hari ikibazo. Ongera ugerageze.";
       updateThread({
         ...t,
-        msgs: [...t.msgs, { role: "bot", text: `Mbabarira, hari ikibazo. (${e instanceof Error ? e.message : "error"})` }],
+        msgs: [...t.msgs, { role: "bot", text: fallbackText }],
       });
     } finally {
       setTyping(false);
