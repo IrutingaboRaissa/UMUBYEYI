@@ -27,6 +27,9 @@ try:
     from sqlalchemy.orm import declarative_base, sessionmaker
 
     _url = os.environ.get("DATABASE_URL", "").strip()
+    # A copied example placeholder is not a configured database.
+    if "user:password@host/" in _url:
+        _url = ""
     if _url:
         # Heroku/Neon sometimes hand out the legacy "postgres://" scheme; SQLAlchemy wants "postgresql://"
         if _url.startswith("postgres://"):
@@ -36,7 +39,7 @@ try:
         _url = f"sqlite:///{Path(__file__).resolve().parents[1] / 'umubyeyi_analytics.db'}"
         BACKEND = "sqlite"
 
-    _connect_args = {"check_same_thread": False} if BACKEND == "sqlite" else {}
+    _connect_args = {"check_same_thread": False} if BACKEND == "sqlite" else {"connect_timeout": 3}
     _engine = create_engine(_url, pool_pre_ping=True, connect_args=_connect_args)
     Base = declarative_base()
 

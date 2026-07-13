@@ -1,0 +1,76 @@
+{
+  "fine_tuned": true,
+  "method": "LoRA supervised fine-tuning (PEFT)",
+  "base_model": "google/mt5-small",
+  "task": "bilingual evidence-conditioned postpartum support generation",
+  "seed": 42,
+  "dataset": {
+    "examples": 168,
+    "topics": 14,
+    "splits": {
+      "train": 120,
+      "validation": 24,
+      "test": 24
+    },
+    "languages": {
+      "en": 84,
+      "rw": 84
+    },
+    "topics_by_split": {
+      "train": [
+        "anxiety_worry",
+        "bonding",
+        "daily_functioning",
+        "emotional_changes",
+        "irritability_anger",
+        "loss_grief",
+        "professional_help",
+        "self_blame_guilt",
+        "sleep_fatigue",
+        "urgent_psychosis"
+      ],
+      "validation": [
+        "overwhelmed",
+        "partner_relationship"
+      ],
+      "test": [
+        "persistent_sadness",
+        "social_support"
+      ]
+    }
+  },
+  "data_statement": "Project-authored prompt augmentation over 14 source-attributed knowledge passages; the 800-row tabular PPD dataset is not used for generator training.",
+  "kinyarwanda_review": "required before real-world use",
+  "accepted_generation_languages": [
+    "en"
+  ],
+  "trainable_parameters": 344064,
+  "total_parameters": 300520832,
+  "trainable_percentage": 0.1145,
+  "epochs_requested": 12.0,
+  "train_runtime_seconds": 2140.03,
+  "training_loss": 27.845299,
+  "baseline_test": {
+    "rouge_l_f1": 0.005,
+    "exact_match": 0.0,
+    "mean_grounding_overlap": 0.0729,
+    "examples": 24
+  },
+  "fine_tuned_test": {
+    "rouge_l_f1": 0.4862,
+    "exact_match": 0.0,
+    "mean_grounding_overlap": 0.6687,
+    "strict_grounding_acceptance": 0.375,
+    "strict_acceptance_by_language": {
+      "en": 0.75,
+      "rw": 0.0
+    },
+    "strict_accepted_english": 9,
+    "strict_accepted_kinyarwanda": 0,
+    "examples": 24
+  },
+  "test_topics_held_out_from_training": [
+    "persistent_sadness",
+    "social_support"
+  ]
+}

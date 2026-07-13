@@ -1,0 +1,234 @@
+{
+  "dataset": "Mendeley Data 10.17632/4nznnrk8cg.3",
+  "task": "Elevated EPDS screening risk (High vs Low/Medium); not diagnosis",
+  "rows": 800,
+  "features": [
+    "Age",
+    "Residence",
+    "Education Level",
+    "Marital status",
+    "Occupation before latest pregnancy",
+    "Monthly income before latest pregnancy",
+    "Occupation After Your Latest Childbirth",
+    "Current monthly income",
+    "Husband's education level",
+    "Husband\u2019s monthly income",
+    "Addiction",
+    "Total children",
+    "Disease before pregnancy",
+    "History of pregnancy loss",
+    "Family type",
+    "Number of household members",
+    "Relationship with the in-laws",
+    "Relationship with husband",
+    "Relationship with the newborn",
+    "Relationship between father and newborn",
+    "Feeling about motherhood",
+    "Recieved Support",
+    "Need for Support",
+    "Major changes or losses during pregnancy",
+    "Abuse",
+    "Trust and share feelings",
+    "Number of the latest pregnancy",
+    "Pregnancy length",
+    "Pregnancy plan",
+    "Regular checkups",
+    "Fear of pregnancy",
+    "Diseases during pregnancy",
+    "Age of newborn",
+    "Age of immediate older children",
+    "Mode of delivery",
+    "Gender of newborn",
+    "Birth compliancy",
+    "Breastfeed",
+    "Newborn illness",
+    "Worry about newborn",
+    "Relax/sleep when newborn is tended ",
+    "Relax/sleep when the newborn is asleep",
+    "Angry after latest child birth",
+    "Feeling for regular activities",
+    "Depression before pregnancy (PHQ2)",
+    "Depression during pregnancy (PHQ2)"
+  ],
+  "excluded_for_leakage": "All concurrent EPDS/PHQ items, scores and derived results",
+  "split": {
+    "train": 560,
+    "validation": 120,
+    "test": 120,
+    "seed": 42
+  },
+  "class_counts": {
+    "not_elevated": 450,
+    "elevated": 350
+  },
+  "validation": {
+    "dummy_baseline": {
+      "accuracy": 0.5667,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "confusion_matrix": [
+        [
+          0,
+          52
+        ],
+        [
+          0,
+          68
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ],
+      "fit_seconds": 0.3039
+    },
+    "logistic_regression": {
+      "accuracy": 0.675,
+      "precision": 0.6066,
+      "recall": 0.7115,
+      "f1_score": 0.6549,
+      "confusion_matrix": [
+        [
+          37,
+          15
+        ],
+        [
+          24,
+          44
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ],
+      "fit_seconds": 0.3949
+    },
+    "decision_tree": {
+      "accuracy": 0.6333,
+      "precision": 0.5952,
+      "recall": 0.4808,
+      "f1_score": 0.5319,
+      "confusion_matrix": [
+        [
+          25,
+          27
+        ],
+        [
+          17,
+          51
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ],
+      "fit_seconds": 0.3207
+    },
+    "random_forest": {
+      "accuracy": 0.7583,
+      "precision": 0.7091,
+      "recall": 0.75,
+      "f1_score": 0.729,
+      "confusion_matrix": [
+        [
+          39,
+          13
+        ],
+        [
+          16,
+          52
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ],
+      "fit_seconds": 6.1192
+    },
+    "extra_trees": {
+      "accuracy": 0.7417,
+      "precision": 0.678,
+      "recall": 0.7692,
+      "f1_score": 0.7207,
+      "confusion_matrix": [
+        [
+          40,
+          12
+        ],
+        [
+          19,
+          49
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ],
+      "fit_seconds": 3.6774
+    },
+    "support_vector_machine": {
+      "accuracy": 0.7417,
+      "precision": 0.6721,
+      "recall": 0.7885,
+      "f1_score": 0.7257,
+      "confusion_matrix": [
+        [
+          41,
+          11
+        ],
+        [
+          20,
+          48
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ],
+      "fit_seconds": 0.4677
+    },
+    "k_nearest_neighbors": {
+      "accuracy": 0.7583,
+      "precision": 0.871,
+      "recall": 0.5192,
+      "f1_score": 0.6506,
+      "confusion_matrix": [
+        [
+          27,
+          25
+        ],
+        [
+          4,
+          64
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ],
+      "fit_seconds": 2.0358
+    }
+  },
+  "selected_model": "random_forest",
+  "test": {
+    "accuracy": 0.8083,
+    "precision": 0.7679,
+    "recall": 0.8113,
+    "f1_score": 0.789,
+    "confusion_matrix": [
+      [
+        43,
+        10
+      ],
+      [
+        13,
+        54
+      ]
+    ],
+    "labels": [
+      "elevated",
+      "not_elevated"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+language,query,expected,predicted
+en,I gave birth a few days ago and keep becoming tearful for no clear reason.,emotional_changes,emotional_changes
+en,Several weeks later I still feel empty and have stopped enjoying everything.,persistent_sadness,overwhelmed
+en,My thoughts race about whether I am doing everything wrong and I cannot calm down.,anxiety_worry,overwhelmed
+en,Every small task feels like too much and I cannot cope with being a new mother.,overwhelmed,overwhelmed
+en,Even when the house is quiet I stay awake all night and have no energy.,sleep_fatigue,sleep_fatigue
+en,I keep telling myself I am a terrible mother and that everything is my fault.,self_blame_guilt,overwhelmed
+en,There is nobody I can talk to and I feel completely on my own.,social_support,social_support
+en,My husband ignores me and we argue because he will not help at home.,partner_relationship,partner_relationship
+en,I am grieving after my baby died and do not know how to carry this pain.,loss_grief,loss_grief
+en,I feel distant from my newborn and worry that no connection is growing.,bonding,bonding
+en,I lose my temper and shout over little things since the birth.,irritability_anger,irritability_anger
+en,"I struggle to wash, eat, focus, or make simple choices during the day.",daily_functioning,urgent_psychosis
+en,How do I find a counsellor or nurse to discuss my emotional health?,professional_help,professional_help
+en,I hear a voice that other people cannot hear and I am becoming confused.,urgent_psychosis,urgent_psychosis
+rw,Hashize iminsi mike mbyaye ariko ndarira kandi ibyiyumvo bigahindagurika.,emotional_changes,emotional_changes
+rw,Hashize ibyumweru byinshi numva nta byishimo mfite kandi nta cyizere.,persistent_sadness,persistent_sadness
+rw,Mpora mfite impungenge n'ubwoba kandi sinshobora gutuza.,anxiety_worry,anxiety_worry
+rw,Kuba umubyeyi mushya byarandenze kandi numva ntashoboye guhangana na byo.,overwhelmed,overwhelmed
+rw,Nabuze ibitotsi nijoro kandi ku manywa nta mbaraga mfite.,sleep_fatigue,sleep_fatigue
+rw,Ndigaya buri gihe nkumva ndi umubyeyi mubi kandi nta cyo maze.,self_blame_guilt,self_blame_guilt
+rw,Numva ndi jyenyine kuko nta nshuti cyangwa umuryango umfasha.,social_support,social_support
+rw,Umugabo wanjye aranyirengagiza kandi dufitanye amakimbirane kuko atamfasha.,partner_relationship,partner_relationship
+rw,Mfite agahinda kenshi nyuma yo gupfusha umwana wanjye.,loss_grief,loss_grief
+rw,Sinumva nkunze umwana kandi numva nitandukanyije na we.,bonding,bonding
+rw,Nyuma yo kubyara mpora ndakara kandi nkagira umujinya mwinshi.,irritability_anger,irritability_anger
+rw,"Sinshobora kurya, kwiyuhagira cyangwa kwibanda ku mirimo ya buri munsi.",daily_functioning,daily_functioning
+rw,Nkeneye kuvugana n'umuforomo cyangwa umujyanama w'ubuzima ku byiyumvo byanjye.,professional_help,professional_help
+rw,Numva amajwi abandi batumva kandi mbona ibintu bitariho.,urgent_psychosis,urgent_psychosis
