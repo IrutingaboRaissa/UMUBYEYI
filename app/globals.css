@@ -191,8 +191,6 @@ html, body {
   margin-bottom: 8px;
 }
 
-.main-toolbar .topnav { flex: 1; margin: 0; }
-
 .new-chat-btn { flex-shrink: 0; white-space: nowrap; }
 
 .sidebar-backdrop {
@@ -543,7 +541,6 @@ html, body {
 
 @media (max-width: 700px) {
   .main { padding: 0.75rem 0.75rem 7rem; }
-  .desktop-topnav { display: none !important; }
   .tipgrid { grid-template-columns: 1fr; }
   .mood-grid { grid-template-columns: 1fr 1fr; }
   .bubble { max-width: 90%; font-size: 15px; }
@@ -570,7 +567,7 @@ html, body {
     transform: none;
     position: relative;
   }
-  .sidebar-nav { display: none; }
+  .main-toolbar { display: none; }
   .menu-toggle { display: none; }
   .sidebar-backdrop { display: none !important; }
   .sidebar-close { display: none; }
