@@ -1,0 +1,166 @@
+{
+  "classifiers": {
+    "evaluation": "untouched stratified participant test set",
+    "full_model": {
+      "selected_model": "random_forest",
+      "accuracy": 0.8083,
+      "precision": 0.7679,
+      "recall": 0.8113,
+      "f1_score": 0.789,
+      "confusion_matrix": [
+        [
+          43,
+          10
+        ],
+        [
+          13,
+          54
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ]
+    },
+    "guided_checkin": {
+      "selected_model": "logistic_regression",
+      "accuracy": 0.7667,
+      "precision": 0.7049,
+      "recall": 0.8113,
+      "f1_score": 0.7544,
+      "confusion_matrix": [
+        [
+          43,
+          10
+        ],
+        [
+          18,
+          49
+        ]
+      ],
+      "labels": [
+        "elevated",
+        "not_elevated"
+      ]
+    }
+  },
+  "generator": {
+    "evaluation": "24 examples from two topics excluded from generator training and validation",
+    "baseline": {
+      "rouge_l_f1": 0.005,
+      "exact_match": 0.0,
+      "mean_grounding_overlap": 0.0729,
+      "examples": 24
+    },
+    "fine_tuned": {
+      "rouge_l_f1": 0.4862,
+      "exact_match": 0.0,
+      "mean_grounding_overlap": 0.6687,
+      "strict_grounding_acceptance": 0.375,
+      "strict_acceptance_by_language": {
+        "en": 0.75,
+        "rw": 0.0
+      },
+      "strict_accepted_english": 9,
+      "strict_accepted_kinyarwanda": 0,
+      "examples": 24
+    },
+    "limitation": "automatic metrics do not measure empathy, clinical safety, or native fluency"
+  },
+  "topic_classifier": {
+    "training_source": "168 project-authored augmented prompts + 70 knowledge-bank representations",
+    "external_validity": "controlled project-authored test; not real-user or clinical validation",
+    "training_examples": 238,
+    "topics": 14,
+    "selected_pipeline": "char_word",
+    "candidate_validation": {
+      "word": {
+        "cases": 34,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "top_3_accuracy": 1.0
+      },
+      "char": {
+        "cases": 34,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "top_3_accuracy": 1.0
+      },
+      "char_word": {
+        "cases": 34,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "top_3_accuracy": 1.0
+      }
+    },
+    "controlled_test": {
+      "cases": 28,
+      "accuracy": 0.8571,
+      "macro_f1": 0.8599,
+      "top_3_accuracy": 0.9643,
+      "by_language": {
+        "en": {
+          "cases": 14,
+          "accuracy": 0.7143,
+          "macro_f1": 0.6476,
+          "top_3_accuracy": 0.9286
+        },
+        "rw": {
+          "cases": 14,
+          "accuracy": 1.0,
+          "macro_f1": 1.0,
+          "top_3_accuracy": 1.0
+        }
+      }
+    }
+  },
+  "retrieval": {
+    "benchmark_type": "project-authored controlled paraphrases; not real-user validation",
+    "kinyarwanda_review": "required",
+    "cases": 28,
+    "by_language": {
+      "en": {
+        "cases": 14,
+        "top_1_accuracy": 0.6429,
+        "top_3_recall": 0.9286,
+        "mean_reciprocal_rank": 0.7738
+      },
+      "rw": {
+        "cases": 14,
+        "top_1_accuracy": 1.0,
+        "top_3_recall": 1.0,
+        "mean_reciprocal_rank": 1.0
+      }
+    },
+    "overall_top_1_accuracy": 0.8214,
+    "overall_top_3_recall": 0.9643
+  },
+  "routing": {
+    "benchmark_type": "project-authored controlled safety/scope cases",
+    "cases": 16,
+    "accuracy": 1.0,
+    "by_category": {
+      "crisis": {
+        "cases": 4,
+        "accuracy": 1.0
+      },
+      "greeting": {
+        "cases": 2,
+        "accuracy": 1.0
+      },
+      "offtopic": {
+        "cases": 3,
+        "accuracy": 1.0
+      },
+      "referral": {
+        "cases": 3,
+        "accuracy": 1.0
+      },
+      "wellbeing": {
+        "cases": 4,
+        "accuracy": 1.0
+      }
+    }
+  },
+  "scope_statement": "Screening-classifier metrics use untouched real participant records. Topic, retrieval and routing cases are controlled project-authored evaluations, not real-user or clinical validation. Generator metrics use untouched topics but synthetic prompt augmentation and source-grounded targets."
+}

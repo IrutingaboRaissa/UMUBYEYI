@@ -1,0 +1,52 @@
+{
+  "timestamp_utc": "2026-07-11T21:07:48.470827+00:00",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.7",
+    "processor": "Intel64 Family 6 Model 142 Stepping 10, GenuineIntel",
+    "logical_cpu_count": 8,
+    "ollama_disabled": true
+  },
+  "benchmarks": {
+    "safety_crisis": {
+      "repeats": 100,
+      "mean_ms": 0.002,
+      "median_ms": 0.002,
+      "p95_ms": 0.002,
+      "min_ms": 0.002,
+      "max_ms": 0.015
+    },
+    "greeting": {
+      "repeats": 100,
+      "mean_ms": 0.022,
+      "median_ms": 0.013,
+      "p95_ms": 0.044,
+      "min_ms": 0.011,
+      "max_ms": 0.089
+    },
+    "english_retrieval": {
+      "repeats": 100,
+      "mean_ms": 4.072,
+      "median_ms": 3.955,
+      "p95_ms": 6.013,
+      "min_ms": 1.948,
+      "max_ms": 7.663
+    },
+    "kinyarwanda_retrieval": {
+      "repeats": 100,
+      "mean_ms": 3.555,
+      "median_ms": 3.335,
+      "p95_ms": 6.52,
+      "min_ms": 1.731,
+      "max_ms": 6.778
+    },
+    "guided_checkin": {
+      "repeats": 100,
+      "mean_ms": 17.238,
+      "median_ms": 15.301,
+      "p95_ms": 24.877,
+      "min_ms": 13.247,
+      "max_ms": 40.868
+    }
+  }
+}

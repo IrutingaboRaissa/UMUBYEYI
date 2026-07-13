@@ -1,8 +1,0 @@
-{
-  "ComplementNB (baseline)": {
-    "accuracy": 0.531,
-    "precision_macro": 0.7503,
-    "recall_macro": 0.4213,
-    "f1_macro": 0.465
-  }
-}
