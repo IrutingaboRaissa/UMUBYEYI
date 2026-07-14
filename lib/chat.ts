@@ -170,6 +170,21 @@ export async function logEvent(sid: string, data: ChatResponse) {
   }).catch(() => {});
 }
 
+export async function generateTitle(userMessage: string, botReply: string, lang?: string): Promise<string> {
+  try {
+    const res = await fetch("/api/title", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_message: userMessage, bot_reply: botReply, lang: lang ?? "en" }),
+    });
+    if (!res.ok) return "";
+    const data = await res.json();
+    return typeof data.title === "string" ? data.title : "";
+  } catch {
+    return "";
+  }
+}
+
 export async function sendFeedback(sid: string, rating: 1 | -1, lang?: string, mode?: string) {
   await fetch("/api/feedback", {
     method: "POST",
