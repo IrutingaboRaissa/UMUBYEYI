@@ -216,6 +216,14 @@ labels and the Kinyarwanda text is NLLB-200 machine translation, so the scores m
 project labels rather than clinical validity. Runtime maps the Top-3 coarse intents to reviewed
 postpartum evidence topics.
 
+The unified notebook also prepares a zero-shot NLLB translation-pivot experiment using
+`facebook/nllb-200-distilled-600M` (`kin_Latn` ↔ `eng_Latn`). It compares direct Kinyarwanda intent
+classification with Kinyarwanda-to-English translation followed by classification and exports cases
+for native-speaker review. NLLB fine-tuning remains gated on independently sourced or human-corrected
+parallel data; retraining NLLB on its own cached translations would be circular. The official
+[Hugging Face NLLB documentation](https://huggingface.co/docs/transformers/en/model_doc/nllb) is
+recorded in `docs/REFERENCES.md` for the final report.
+
 Automatic text metrics cannot establish whether a response is empathetic, natural, or culturally
 appropriate. The Colab artifact `generator_human_review_cases.csv` contains held-out
 outputs and blank 1–5 review fields for relevance, fluency, empathy, grounding, safety, and language
@@ -432,6 +440,7 @@ api/                         deployment Python endpoints
 app/, components/, lib/      Next.js user interface
 data/postpartum_depression/  licensed participant data and dictionary
 data/intent/                 AMOD-derived weak labels and machine translations
+data/translation/            schema and review gate for NLLB parallel fine-tuning data
 data/external/               pinned ESConv provenance (corpus downloaded at runtime)
 data/knowledge/              bilingual source-attributed grounding collection
 models/                      fitted language and screening pipelines
@@ -439,6 +448,7 @@ models/umubyeyi-mt5-lora/    project-trained LoRA adapter and training manifest
 notebooks/umubyeyi.ipynb     unified Colab ML, retrieval, fine-tuning, and evaluation workflow
 ollama/Modelfile             local response-model instructions
 reports/                     metrics, figures, and performance evidence
+docs/REFERENCES.md           technical sources reserved for the final report bibliography
 train_grounded_generator.py  reproducible ESConv/AMOD LoRA fine-tuning
 evaluate_system_layers.py    layered metrics, auditable cases, and consolidated figures
 src/generation_data.py       generator dataset construction and grouped splits
