@@ -49,6 +49,12 @@ screenshots/
 umubyeyi_analytics.db
 *.db
 
+# downloaded Colab run artifacts (models, checkpoints, figures) — regenerate via the notebook
+umubyeyi_colab_results/
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo
+
 # Next.js
 node_modules/
 .next/

@@ -94,7 +94,9 @@ class UmubyeyiRAG:
 
     GREET_WORDS = {"muraho", "mwaramutse", "mwiriwe", "mwiriweho", "murakaza", "bite", "amakuru",
                    "hi", "hello", "hey", "hallo", "hola", "yego"}
-    GREET_PHRASES = ("good morning", "good afternoon", "good evening", "how are you", "muraho",
+    GREET_PHRASES = ("good morning", "good afternoon", "good evening", "how are you",
+                     "how have you been", "how you been", "how are things", "how is it going",
+                     "hows it going", "how s it going", "muraho",
                      "mwaramutse", "mwiriwe", "amakuru", "murakaza neza", "uraho")
     # trailing small-talk fillers so "hi friend", "how are you today", "good morning dear" count as greetings
     GREET_FILLER = {"mama", "neza", "there", "everyone", "all", "friend", "today", "dear", "sis", "sister",
