@@ -7,13 +7,12 @@ self-care support. It is a research prototype and does not diagnose or replace a
 
 ## Submission links
 
-- **Deployed application:** https://firstmumassist-dwc0as2j0-raiss-irutingabos-projects.vercel.app/
+- **Deployed application:** https://firstmumassist-six.vercel.app/
 - **Five-minute technical demo:** `ADD VIDEO URL BEFORE SUBMISSION`
 - **Repository:** https://github.com/IrutingaboRaissa/UMUBYEYI
 
-The video placeholder must be replaced after the final commit is deployed and recorded. Before sharing
-the application with examiners, confirm that Vercel Deployment Protection does not redirect external
-visitors to a Vercel sign-in page.
+The production URL was verified as publicly accessible without Vercel authentication on July 14, 2026.
+The video placeholder must be replaced after the final commit is deployed and recorded.
 
 ## Core functionality
 
