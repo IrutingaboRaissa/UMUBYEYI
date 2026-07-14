@@ -243,10 +243,13 @@ writes its adapter under `models/umubyeyi-mt5-lora/` and evidence under `reports
 `--smoke` only to verify the pipeline quickly; the reported metrics come from the complete run. The
 tabular PPD participant data is never used as generator supervision.
 
-For faster GPU training, open `notebooks/umubyeyi_colab_finetuning.ipynb` in Google Colab, select a
-T4 GPU, and upload the existing `data/knowledge/postpartum_wellbeing.json` when prompted. The notebook
-contains dataset construction, topic-grouped splitting, LoRA training, held-out evaluation, manifest
-creation, and adapter download. Extract its zip into `models/umubyeyi-mt5-lora/` to use it in the app.
+The project now has one end-to-end notebook: `notebooks/umubyeyi.ipynb`. Open it in Google Colab,
+select **Runtime -> Change runtime type -> T4 GPU**, and choose **Runtime -> Run all**. It clones the
+project data automatically and runs data auditing, missing-value preprocessing, seven-model classifier
+comparisons, confusion matrices, explainability, bilingual retrieval, LoRA generator fine-tuning,
+loss curves, held-out evaluation, and artifact export. No API key or manual knowledge-file upload is
+required. The downloaded zip contains the fitted pipelines, LoRA adapter, metrics, loss history, and
+English/Kinyarwanda human-review cases.
 
 ### Performance benchmark
 
@@ -440,7 +443,7 @@ data/postpartum_depression/  licensed participant data and dictionary
 data/knowledge/              bilingual source-attributed grounding collection
 models/                      fitted language and screening pipelines
 models/umubyeyi-mt5-lora/    project-trained LoRA adapter and training manifest
-notebooks/umubyeyi.ipynb     complete executed ML/retrieval workflow
+notebooks/umubyeyi.ipynb     unified Colab ML, retrieval, fine-tuning, and evaluation workflow
 ollama/Modelfile             local response-model instructions
 reports/                     metrics, figures, and performance evidence
 train_grounded_generator.py  reproducible bilingual generator fine-tuning
