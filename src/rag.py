@@ -42,6 +42,14 @@ class UmubyeyiRAG:
     RW_SIM_GATE = 0.20       # focused source-document bank: abstain below a meaningful text match
     WELLBEING_INTENTS = {"self_care_coping", "sleep", "overwhelmed_identity",
                          "sadness_low_mood", "anxiety_worry", "relationship_support"}
+    INTENT_TOPIC_IDS = {
+        "self_care_coping": ("emotional_changes", "daily_functioning", "professional_help"),
+        "sleep": ("sleep_fatigue",),
+        "overwhelmed_identity": ("overwhelmed", "bonding", "irritability_anger"),
+        "sadness_low_mood": ("persistent_sadness", "self_blame_guilt", "loss_grief"),
+        "anxiety_worry": ("anxiety_worry", "professional_help"),
+        "relationship_support": ("social_support", "partner_relationship"),
+    }
     TOP_K = 3
     CRISIS_LINE = "114"
     OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434/api/chat")
@@ -240,25 +248,30 @@ class UmubyeyiRAG:
         return [(self.bank[self._indices[lang][i]], float(sims[i])) for i in local_idx]
 
     def classify_topics(self, text: str, k: int = 3) -> list[dict]:
-        """Return ranked topics from the supervised classifier trained by this project."""
+        """Return ranked coarse intents from the supervised AMOD-derived classifier."""
         return self.topic_classifier.predict(text, k=k)
 
     def _classified_evidence(self, text: str, lang: str) -> tuple[str, list[dict]]:
-        """Build a compact evidence bundle from the classifier's three strongest topics."""
+        """Map coarse intent predictions to reviewed postpartum evidence topics."""
         predictions = self.classify_topics(text, k=3)
         passages = []
         usable_predictions = []
         for prediction in predictions:
-            row = self._bank_by_id.get(prediction["topic_id"])
-            body = (row or {}).get(f"text_{lang}", "").strip()
-            if not row or not body:
-                continue
-            passages.append(f"Topic {row['id']} ({row['topic']}): {body}")
-            usable_predictions.append({
-                "topic_id": row["id"],
-                "topic": row["topic"],
-                "score": round(prediction["score"], 4),
-            })
+            intent = prediction.get("intent", "")
+            mapped_topics = []
+            for topic_id in self.INTENT_TOPIC_IDS.get(intent, ()):
+                row = self._bank_by_id.get(topic_id)
+                body = (row or {}).get(f"text_{lang}", "").strip()
+                if not row or not body:
+                    continue
+                passages.append(f"Topic {row['id']} ({row['topic']}): {body}")
+                mapped_topics.append({"topic_id": row["id"], "topic": row["topic"]})
+            if mapped_topics:
+                usable_predictions.append({
+                    "intent": intent,
+                    "score": round(prediction["score"], 4),
+                    "mapped_topics": mapped_topics,
+                })
         return "\n".join(passages), usable_predictions
 
     def _generate_ollama(self, query: str, evidence: str, lang: str, history=None) -> str:

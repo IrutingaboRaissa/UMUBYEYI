@@ -188,7 +188,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 }
 
 .new-chat-btn { flex-shrink: 0; white-space: nowrap; }
@@ -534,9 +534,9 @@ html, body {
   justify-content: center;
 }
 
-/* Use the drawer on compact laptops too. This prevents browser/OS zoom from
-   leaving a persistent sidebar that crowds the conversation. */
-@media (max-width: 1280px) {
+/* Drawer mode is for phone-width screens only. Laptops and up keep the
+   permanent sidebar below (see the min-width: 769px block). */
+@media (max-width: 768px) {
   .sidebar {
     position: fixed; z-index: 60; height: 100vh; height: 100svh; left: 0; top: 0;
     width: min(300px, 88vw);
@@ -571,7 +571,7 @@ html, body {
   .foot { font-size: 10px; }
 }
 
-@media (min-width: 1281px) {
+@media (min-width: 769px) {
   .sidebar {
     display: flex;
     flex-direction: column;

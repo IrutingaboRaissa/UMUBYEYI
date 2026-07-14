@@ -2,7 +2,7 @@
 
 Umubyeyi is a bilingual English/Kinyarwanda postpartum emotional-well-being assistant for first-time
 mothers. It combines trained screening-risk classifiers, source-grounded retrieval, deterministic
-safety rules, a project-fine-tuned multilingual generator, a guided check-in, mood history, and
+safety rules, a reproducible project fine-tuning pipeline, a guided check-in, mood history, and
 self-care support. It is a research prototype and does not diagnose or replace a health professional.
 
 ## Submission links
@@ -19,8 +19,8 @@ The video placeholder must be replaced after the final commit is deployed and re
 - English and Kinyarwanda emotional-well-being conversations
 - deterministic crisis, acute-health, baby-care, and unrelated-topic routing
 - same-language character n-gram TF-IDF retrieval across 14 source-attributed topics
-- project-trained bilingual topic classifier selecting the three strongest evidence topics
-- locally fine-tuned mT5 LoRA generator constrained to retrieved evidence
+- project-trained bilingual six-intent classifier mapped to reviewed evidence topics
+- mT5 LoRA fine-tuning on genuine ESConv and AMOD responses
 - coverage-controlled grounded Gemini generation with one corrective retry
 - model-generated greetings/small talk; no canned conversational response list
 - strict generated-output grounding validation and direct-passage fallback
@@ -39,7 +39,7 @@ Safety and scope rules                    15 validated answers
        |                                        |
 Language detection                        preprocessing pipeline
        |                                        |
-trained topic classifier: category         trained Logistic Regression
+trained intent classifier: category        trained Logistic Regression
        |                                        |
 Top-3 knowledge-base matches               non-diagnostic result
        |
@@ -51,17 +51,17 @@ grounding/coverage validation -> response or evidence fallback
 The 800 participant records train screening classifiers. They are never used as chatbot answers.
 
 The project-trained models have distinct responsibilities. The screening classifier estimates the
-guided check-in risk category. The bilingual topic classifier determines which of the 14 emotional
-well-being categories best match a free-text message. Retrieval then finds the most relevant reviewed
-passages already present in the knowledge base. Finally, a generator expresses that selected evidence
+guided check-in risk category. The bilingual intent classifier predicts one of six coarse emotional
+categories learned from the AMOD-derived weak labels; those categories map to the 14 reviewed
+postpartum topics. Retrieval then finds the most relevant reviewed passages. Finally, a generator expresses that selected evidence
 as a clear, supportive response; it does not independently choose medical facts. Safety-critical
 crisis and referral decisions remain deterministic rather than being delegated to a text generator.
 
 In the hosted application, Gemini performs the final natural-language realization because it produced
 clearer and more empathetic bilingual wording in development. It is constrained by the topics and
 evidence selected by the project pipeline, and its output must pass project-owned concern-coverage and
-grounding checks. In the local research path, the project-fine-tuned mT5 model can perform this
-generation step before the system falls back to a reviewed source passage.
+grounding checks. The local mT5 path is enabled only after the new ESConv/AMOD Colab run produces an
+adapter with the matching provenance manifest; otherwise the system falls back to reviewed evidence.
 
 ## Prerequisites
 
@@ -122,9 +122,11 @@ Without a key, the app safely continues through its local/retrieval paths.
 
 ### 5. Fine-tuned local response model
 
-The repository includes the compact Umubyeyi LoRA adapter. On first local generation,
-Transformers downloads the Apache-2.0 `google/mt5-small` base checkpoint and applies the adapter.
-Set `UMU_DISABLE_FINETUNED=1` only when intentionally testing retrieval fallback.
+Run `notebooks/umubyeyi.ipynb` on a Colab T4 to produce the current `esconv-amod-v1` LoRA adapter.
+The application deliberately refuses to load the superseded adapter trained on templated prompts.
+After extracting the new artifact under `models/umubyeyi-mt5-lora/`, Transformers downloads the
+`google/mt5-small` base checkpoint and applies the adapter. Set `UMU_DISABLE_FINETUNED=1` when
+intentionally testing retrieval fallback.
 
 Optional secondary Ollama path:
 
@@ -169,7 +171,7 @@ Next.js, normally http://localhost:3000. If port 3000 is occupied, it selects an
 python -m pytest -q
 ```
 
-Current verified result: **66 tests passed**. Strategies include unit, parameterized, boundary-value,
+Current verified result: **67 tests passed**. Strategies include unit, parameterized, boundary-value,
 invalid-input, offline/fallback, bilingual retrieval, safety, response-contract, dependency-injection,
 HTTP integration, indirect/obfuscated crisis messages, Gemini failure fallback, generation-data
 leakage control, layered-evaluation integrity, and generated-output grounding validation.
@@ -188,11 +190,10 @@ safety routing are different tasks. The command writes auditable cases, JSON met
 |---|---|---:|
 | Full screening classifier | 120 untouched participant rows | F1 0.7890 |
 | Practical check-in classifier | 120 untouched participant rows | F1 0.7544 |
-| Bilingual topic classifier | 28 controlled paraphrases | Top-1 0.8571; Top-3 0.9643; macro-F1 0.8599* |
+| Bilingual intent classifier | 180 untouched bilingual cases | English macro-F1 0.7180; Kinyarwanda 0.2762* |
 | English question-to-topic retrieval | 14 controlled paraphrases | Top-1 0.6429; Top-3 0.9286 |
 | Kinyarwanda question-to-topic retrieval | 14 controlled project-authored cases | Top-1 1.0000* |
-| Fine-tuned generator | 24 examples from two untouched topics | ROUGE-L 0.4862; overlap 0.6687 |
-| Generator strict quality gate | same 24 examples | English 0.75; Kinyarwanda 0.00 |
+| ESConv/AMOD generator | conversation/question-grouped test | Metrics pending the documented Colab run |
 | Safety/scope routing | 16 controlled cases across five categories | Accuracy 1.0000* |
 
 `*` Controlled results are software/behavior evidence, not real-user or clinical validity. The
@@ -201,22 +202,22 @@ so their perfect score must not be presented as proof of generalization. English
 shows that the lexical retriever can confuse indirect paraphrases even when the right topic is usually
 within its Top-3 results.
 
-### Project-trained topic classifier
+### Project-trained intent classifier
 
 ```powershell
 python train_topic_classifier.py
 ```
 
-The persisted `models/topic_classifier.joblib` pipeline combines word and character TF-IDF with
-balanced multinomial Logistic Regression. It trains on 168 labelled project-authored prompt examples
-and 70 alternative representations already present in the reviewed knowledge bank (238 total; 14
-topics). A stratified validation split selects the representation; the final model is evaluated on 28
-separately phrased controlled cases. These are reproducible software-evaluation cases, not real-user
-conversations or evidence of clinical validity. Runtime generation uses its Top-3 predictions so a
-multi-concern message can bring several relevant passages into one answer.
+The persisted `models/topic_classifier.joblib` pipeline combines word and character TF-IDF with the
+best of seven probabilistic classifiers. It uses 596 deduplicated bilingual question pairs derived
+from `Amod/mental_health_counseling_conversations`: 417 train, 89 validation, and 90 untouched test
+rows. English and Kinyarwanda versions always remain in the same split. The labels are keyword weak
+labels and the Kinyarwanda text is NLLB-200 machine translation, so the scores measure reproduction of
+project labels rather than clinical validity. Runtime maps the Top-3 coarse intents to reviewed
+postpartum evidence topics.
 
 Automatic text metrics cannot establish whether a response is empathetic, natural, or culturally
-appropriate. `reports/system_evaluation/generator_human_review_template.csv` contains all 24 held-out
+appropriate. The Colab artifact `generator_human_review_cases.csv` contains held-out
 outputs and blank 1–5 review fields for relevance, fluency, empathy, grounding, safety, and language
 correctness. Scores must only be reported after named reviewers complete the sheet; blank fields are
 deliberately not replaced with model-generated ratings.
@@ -243,10 +244,13 @@ writes its adapter under `models/umubyeyi-mt5-lora/` and evidence under `reports
 `--smoke` only to verify the pipeline quickly; the reported metrics come from the complete run. The
 tabular PPD participant data is never used as generator supervision.
 
-For faster GPU training, open `notebooks/umubyeyi_colab_finetuning.ipynb` in Google Colab, select a
-T4 GPU, and upload the existing `data/knowledge/postpartum_wellbeing.json` when prompted. The notebook
-contains dataset construction, topic-grouped splitting, LoRA training, held-out evaluation, manifest
-creation, and adapter download. Extract its zip into `models/umubyeyi-mt5-lora/` to use it in the app.
+The project now has one end-to-end notebook: `notebooks/umubyeyi.ipynb`. Open it in Google Colab,
+select **Runtime -> Change runtime type -> T4 GPU**, and choose **Runtime -> Run all**. It clones the
+project data automatically and runs data auditing, missing-value preprocessing, seven-model classifier
+comparisons, confusion matrices, explainability, bilingual retrieval, LoRA generator fine-tuning,
+loss curves, held-out evaluation, and artifact export. No API key or manual knowledge-file upload is
+required. The downloaded zip contains the fitted pipelines, LoRA adapter, metrics, loss history, and
+English/Kinyarwanda human-review cases.
 
 ### Performance benchmark
 
@@ -280,10 +284,62 @@ DOI `10.17632/4nznnrk8cg.3`, CC BY 4.0.
 The binary target is elevated EPDS screening risk: High versus Low/Medium. All concurrent EPDS/PHQ
 items, totals, and derived labels are excluded to prevent target leakage.
 
+### Data preparation and missing values
+
+The raw file contains 800 rows, 70 columns, no duplicate rows and 4,312 missing cells. Rows with
+missing predictors were not discarded, because doing so would unnecessarily reduce an already modest
+dataset. Preprocessing is part of each scikit-learn `Pipeline`:
+
+1. The target is converted to `elevated` for EPDS High and `not_elevated` for EPDS Low/Medium.
+2. The identifier, target, concurrent questionnaire items, totals and derived results are removed to
+   prevent target leakage, leaving 46 predictors for the full experiment.
+3. The data is stratified into 560 training, 120 validation and 120 untouched test rows before any
+   imputation is learned.
+4. Numeric predictors use median imputation followed by standardisation.
+5. Categorical predictors use most-frequent imputation followed by one-hot encoding. Unknown test or
+   production categories are ignored safely, and categories seen fewer than twice are grouped.
+6. Each candidate pipeline learns its imputation values, scaling values and category vocabulary only
+   from its training input. The untouched test data therefore cannot influence preprocessing or model
+   selection.
+7. After validation F1 selects the winning algorithm, that configuration is refitted on training plus
+   validation rows and evaluated once on the test set.
+
+![Features with the most missing values](reports/ppd_classifier/figures/03_missing_values.png)
+
 - stratified split: 560 training / 120 validation / 120 untouched test
 - seed: 42
 - candidates: Dummy, Logistic Regression, Decision Tree, Random Forest, Extra Trees, SVM, and KNN
 - selection: validation F1-score for the `elevated` class
+
+### Full 46-predictor model comparison — validation set
+
+| Candidate | Accuracy | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|
+| Dummy baseline | 0.5667 | 0.0000 | 0.0000 | 0.0000 |
+| Logistic Regression | 0.6750 | 0.6066 | 0.7115 | 0.6549 |
+| Decision Tree | 0.6333 | 0.5952 | 0.4808 | 0.5319 |
+| **Random Forest — selected** | **0.7583** | **0.7091** | **0.7500** | **0.7290** |
+| Extra Trees | 0.7417 | 0.6780 | 0.7692 | 0.7207 |
+| Support Vector Machine | 0.7417 | 0.6721 | 0.7885 | 0.7257 |
+| K-Nearest Neighbors | 0.7583 | 0.8710 | 0.5192 | 0.6506 |
+
+![Full screening model validation comparison](reports/ppd_classifier/figures/05_validation_model_comparison.png)
+
+### Reduced 15-input check-in comparison — validation set
+
+| Candidate | Accuracy | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|
+| Dummy baseline | 0.5667 | 0.0000 | 0.0000 | 0.0000 |
+| **Logistic Regression — selected** | **0.7417** | **0.6780** | **0.7692** | **0.7207** |
+| Decision Tree | 0.7250 | 0.6792 | 0.6923 | 0.6857 |
+| Random Forest | 0.7250 | 0.6727 | 0.7115 | 0.6916 |
+| Extra Trees | 0.7000 | 0.6379 | 0.7115 | 0.6727 |
+| Support Vector Machine | 0.7250 | 0.6667 | 0.7308 | 0.6972 |
+| K-Nearest Neighbors | 0.7000 | 0.6667 | 0.6154 | 0.6400 |
+
+![Guided check-in model validation comparison](reports/ppd_checkin/figures/05_validation_model_comparison.png)
+
+### Selected models — untouched test set
 
 | Experiment | Selected model | Accuracy | Precision | Recall | F1 |
 |---|---|---:|---:|---:|---:|
@@ -292,47 +348,37 @@ items, totals, and derived labels are excluded to prevent target leakage.
 
 These are held-out experimental results, not clinical validation.
 
+
 ## Fine-tuned grounded generator
 
-`google/mt5-small` was adapted with supervised LoRA fine-tuning for bilingual evidence-conditioned
-postpartum support generation. This is genuine parameter training: 344,064 adapter parameters were
-updated, rather than only changing a prompt or Modelfile.
+The current notebook fine-tunes `google/mt5-small` with LoRA on genuine conversational targets rather
+than generated templates:
 
-- generator examples: 168 (84 English / 84 Kinyarwanda)
-- split unit: complete knowledge topic, preventing paraphrases of one answer crossing splits
-- train / validation / untouched test: 120 / 24 / 24 examples across 10 / 2 / 2 topics
-- validation loss: 11.42 after epoch 1 to 1.034 after epoch 12
-- held-out ROUGE-L F1: 0.0050 base to 0.4862 fine-tuned
-- held-out mean evidence overlap: 0.0729 base to 0.6687 fine-tuned
+- **ESConv:** original supporter turns from 1,300 emotional-support conversations, capped at six
+  supporter turns per conversation. Official commit
+  `f262d062ad74cb39b17ea476facc81568ddcba24`; academic research use only.
+- **AMOD:** original counselor responses for questions retained by the project's six weak intent
+  labels. Hugging Face revision `d7e86f0813c5690181b41f97403c3674aa55dcef`.
+- **Postpartum knowledge base:** 14 reviewed English/Kinyarwanda topics used only for retrieval. It is
+  not expanded into templated training conversations.
 
-Raw generation review is still mandatory. The strict validator accepted 9/24 held-out outputs; all
-accepted outputs were English, while Kinyarwanda raw generation remained insufficiently fluent and
-therefore routes to grounded Gemini when configured, then to the source passage on API/validation
-failure. This is a documented limitation, not evidence of bilingual clinical readiness. Metrics and
-raw generations are retained in `reports/generator/` for audit.
+Complete ESConv conversations and repeated AMOD questions are assigned to one split, preventing turns
+or alternate counselor responses from crossing training and evaluation. The notebook evaluates the
+base and fine-tuned model with held-out ROUGE-L, Distinct-2, loss curves, and blank human-review fields.
+No post-change generator score is claimed until the unified Colab notebook is executed and its artifact
+is retained.
 
-This deployment decision followed evaluation rather than replacing the fine-tuning experiment. LoRA
-substantially improved factual overlap, but the held-out Kinyarwanda outputs did not pass the strict
-quality gate and often communicated the evidence too mechanically for an emotionally supportive
-conversation. Because the product goal is to help a mother feel heard as well as to transmit grounded
-information, the hosted prototype uses Gemini to phrase the project-selected evidence in a more
-natural and accessible way. Gemini is an external generator and was not trained by this project; the
-project contribution is the trained classification, evidence selection, validation, fallback and
-safety pipeline around it.
+Both conversational datasets are English and are not postpartum-specific. Consequently, the trained
+generator is presented as an English emotional-support adaptation, not a bilingual clinical model.
+AMOD's Kinyarwanda questions support intent-classification research only; they do not provide
+Kinyarwanda answer targets. The hosted application therefore keeps grounded Gemini/direct retrieval
+for Kinyarwanda and discloses that Gemini is an external model.
 
-### Why synthetic augmentation was used
+### Data provenance
 
-The 168 generator examples are not real mother-chatbot conversations. They are six project-authored
-question templates per language applied to 14 source-attributed evidence topics; target facts remain
-the corresponding evidence passage. This provides reproducible supervised fine-tuning without using
-sensitive patient conversations, but it limits linguistic diversity and external validity.
-
-A scoped dataset search found adjacent resources—English mental-health dialogue, English synthetic
-maternal dialogue, Kinyarwanda speech, and tourism translation—but no resource identified that was
-simultaneously real conversational data, Kinyarwanda, postpartum-emotional-wellbeing-specific,
-appropriately licensed, and suitable for answer generation. This is recorded as “no suitable dataset
-identified under the project criteria,” not “no such dataset exists.” See
-`data/knowledge/DATASET_SEARCH_RECORD.md` for the inclusion criteria and examined alternatives.
+Detailed source, license, version, transformation, and checksum information is stored in
+`data/external/README.md` and `data/intent/README.md`. ESConv is downloaded from its official
+repository at runtime and verified with SHA-256. The repository does not redistribute the corpus.
 
 ## Deployment plan
 
@@ -385,13 +431,15 @@ failure handling, safety, and evidence.
 api/                         deployment Python endpoints
 app/, components/, lib/      Next.js user interface
 data/postpartum_depression/  licensed participant data and dictionary
+data/intent/                 AMOD-derived weak labels and machine translations
+data/external/               pinned ESConv provenance (corpus downloaded at runtime)
 data/knowledge/              bilingual source-attributed grounding collection
 models/                      fitted language and screening pipelines
 models/umubyeyi-mt5-lora/    project-trained LoRA adapter and training manifest
-notebooks/umubyeyi.ipynb     complete executed ML/retrieval workflow
+notebooks/umubyeyi.ipynb     unified Colab ML, retrieval, fine-tuning, and evaluation workflow
 ollama/Modelfile             local response-model instructions
 reports/                     metrics, figures, and performance evidence
-train_grounded_generator.py  reproducible bilingual generator fine-tuning
+train_grounded_generator.py  reproducible ESConv/AMOD LoRA fine-tuning
 evaluate_system_layers.py    layered metrics, auditable cases, and consolidated figures
 src/generation_data.py       generator dataset construction and grouped splits
 src/finetuned_generator.py   lazy inference and strict grounding validator
@@ -412,11 +460,13 @@ benchmark_system.py          reproducible runtime benchmark
   Rwanda-relevant evidence.
 - Project-produced Kinyarwanda passages require native-speaker and maternal-health review.
 - No reviewed Kinyarwanda gold evaluation set or formal Rwandan user study has been completed.
-- The mT5 LoRA adapter is fine-tuned by this project, but its 168 augmented examples originate from
-  only 14 evidence topics and do not constitute clinical conversational validation.
-- Raw Kinyarwanda generation did not pass the strict quality gate in held-out evaluation; the current
-  hybrid therefore uses grounded Gemini when configured and falls back to the source passage if the
-  API or its output fails validation.
+- ESConv and AMOD provide genuine English responses but are neither postpartum-specific nor Rwandan;
+  their use teaches general response behaviour rather than clinical or local validity.
+- The intent labels are keyword weak labels, and the cached Kinyarwanda questions are NLLB-200 machine
+  translations. The untouched Kinyarwanda macro-F1 is 0.2762 and requires substantial improvement.
+- No human-authored Kinyarwanda response corpus is used for generator fine-tuning. The current hybrid
+  therefore uses grounded Gemini when configured and falls back to the source passage if the API or
+  its output fails validation.
 - Gemini is an externally hosted model, not a project-trained model. Sending a message to it requires
   clear user disclosure, data minimization, secure key handling, and documented API availability/cost.
 - The optional Ollama model remains pretrained and instruction-configured, not fine-tuned.
@@ -424,7 +474,7 @@ benchmark_system.py          reproducible runtime benchmark
 
 Future work should prioritize ethical Rwanda-specific data collection, professional and native-speaker
 review, usability testing, model calibration, fairness analysis, multilingual semantic retrieval, and a
-larger reviewed bilingual conversational corpus for a stronger second fine-tuning experiment.
+human-authored Kinyarwanda conversational responses for a stronger multilingual fine-tuning experiment.
 
 ## Safety notice
 
