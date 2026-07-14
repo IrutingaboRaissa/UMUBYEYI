@@ -1,4 +1,4 @@
-"""Runtime wrapper for the project-trained bilingual wellbeing topic classifier."""
+"""Runtime wrapper for the project-trained bilingual wellbeing intent classifier."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -7,7 +7,7 @@ import joblib
 
 
 class TopicClassifier:
-    """Load the supervised classifier and return ranked topic probabilities."""
+    """Load the supervised classifier and return ranked intent probabilities."""
 
     def __init__(self, model_path: Path):
         self.model_path = Path(model_path)
@@ -24,6 +24,6 @@ class TopicClassifier:
         classifier = self.pipeline.named_steps["classifier"]
         ranked = probabilities.argsort()[::-1][:k]
         return [
-            {"topic_id": str(classifier.classes_[index]), "score": float(probabilities[index])}
+            {"intent": str(classifier.classes_[index]), "score": float(probabilities[index])}
             for index in ranked
         ]

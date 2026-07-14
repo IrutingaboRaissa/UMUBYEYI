@@ -1,47 +1,87 @@
 {
-  "training_source": "168 project-authored augmented prompts + 70 knowledge-bank representations",
-  "external_validity": "controlled project-authored test; not real-user or clinical validation",
-  "training_examples": 238,
-  "topics": 14,
-  "selected_pipeline": "char_word",
+  "task": "six-class bilingual emotional-intent classification",
+  "source": "Amod/mental_health_counseling_conversations-derived project file",
+  "source_revision": "d7e86f0813c5690181b41f97403c3674aa55dcef",
+  "label_status": "project-authored keyword weak labels; not human annotations",
+  "kinyarwanda_status": "NLLB-200 machine translations; native review required",
+  "raw_rows": 724,
+  "rows_after_exact_kinyarwanda_deduplication": 596,
+  "split_rows": {
+    "train": 417,
+    "validation": 89,
+    "test": 90
+  },
+  "classes": [
+    "anxiety_worry",
+    "overwhelmed_identity",
+    "relationship_support",
+    "sadness_low_mood",
+    "self_care_coping",
+    "sleep"
+  ],
+  "selected_pipeline": "Extra Trees",
   "candidate_validation": {
-    "word": {
-      "cases": 34,
-      "accuracy": 1.0,
-      "macro_f1": 1.0,
-      "top_3_accuracy": 1.0
+    "Dummy baseline": {
+      "cases": 178,
+      "accuracy": 0.3258,
+      "macro_f1": 0.0819,
+      "top_3_accuracy": 0.5281
     },
-    "char": {
-      "cases": 34,
-      "accuracy": 1.0,
-      "macro_f1": 1.0,
-      "top_3_accuracy": 1.0
+    "Complement NB": {
+      "cases": 178,
+      "accuracy": 0.4775,
+      "macro_f1": 0.3949,
+      "top_3_accuracy": 0.8483
     },
-    "char_word": {
-      "cases": 34,
-      "accuracy": 1.0,
-      "macro_f1": 1.0,
-      "top_3_accuracy": 1.0
+    "Logistic Regression": {
+      "cases": 178,
+      "accuracy": 0.5056,
+      "macro_f1": 0.4796,
+      "top_3_accuracy": 0.8427
+    },
+    "Calibrated Linear SVM": {
+      "cases": 178,
+      "accuracy": 0.5056,
+      "macro_f1": 0.4742,
+      "top_3_accuracy": 0.8258
+    },
+    "Random Forest": {
+      "cases": 178,
+      "accuracy": 0.5506,
+      "macro_f1": 0.5183,
+      "top_3_accuracy": 0.8876
+    },
+    "Extra Trees": {
+      "cases": 178,
+      "accuracy": 0.6011,
+      "macro_f1": 0.5545,
+      "top_3_accuracy": 0.8933
+    },
+    "K-Nearest Neighbors": {
+      "cases": 178,
+      "accuracy": 0.3989,
+      "macro_f1": 0.3871,
+      "top_3_accuracy": 0.7528
     }
   },
-  "controlled_test": {
-    "cases": 28,
-    "accuracy": 0.8571,
-    "macro_f1": 0.8599,
-    "top_3_accuracy": 0.9643,
-    "by_language": {
-      "en": {
-        "cases": 14,
-        "accuracy": 0.7143,
-        "macro_f1": 0.6476,
-        "top_3_accuracy": 0.9286
-      },
-      "rw": {
-        "cases": 14,
-        "accuracy": 1.0,
-        "macro_f1": 1.0,
-        "top_3_accuracy": 1.0
-      }
+  "untouched_test": {
+    "combined": {
+      "cases": 180,
+      "accuracy": 0.5833,
+      "macro_f1": 0.5108,
+      "top_3_accuracy": 0.85
+    },
+    "english": {
+      "cases": 90,
+      "accuracy": 0.7444,
+      "macro_f1": 0.718,
+      "top_3_accuracy": 0.9778
+    },
+    "kinyarwanda": {
+      "cases": 90,
+      "accuracy": 0.4222,
+      "macro_f1": 0.2762,
+      "top_3_accuracy": 0.7222
     }
   }
 }

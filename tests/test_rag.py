@@ -221,10 +221,13 @@ def test_gemini_receives_evidence_selected_by_trained_topic_classifier(monkeypat
     result = rag.answer("I feel a little sad today", force_lang="en")
     assert result["mode"] == "gemini_grounded"
     predictions = rag._default.classify_topics("I feel a little sad today", k=3)
-    expected_ids = [item["topic_id"] for item in predictions]
-    assert len(expected_ids) == 3
+    expected_ids = [
+        topic_id for item in predictions
+        for topic_id in rag._default.INTENT_TOPIC_IDS[item["intent"]]
+    ]
+    assert len(predictions) == 3
     assert all(f"Topic {topic_id} " in captured["evidence"] for topic_id in expected_ids)
-    assert len([line for line in captured["evidence"].splitlines() if line.startswith("Topic ")]) == 3
+    assert len([line for line in captured["evidence"].splitlines() if line.startswith("Topic ")]) == len(expected_ids)
 
 
 def test_multi_concern_message_selects_relevant_topics():
@@ -232,6 +235,6 @@ def test_multi_concern_message_selects_relevant_topics():
         "I feel sad all the time since giving birth. I gained weight and feel ashamed of how I look, "
         "so I am afraid to return to my yoga club and see my friends."
     )
-    predicted = {item["topic_id"] for item in rag._default.classify_topics(message, k=3)}
-    assert {"persistent_sadness", "self_blame_guilt", "social_support"}.issubset(predicted)
+    predicted = {item["intent"] for item in rag._default.classify_topics(message, k=3)}
+    assert {"sadness_low_mood", "relationship_support"}.issubset(predicted)
 
