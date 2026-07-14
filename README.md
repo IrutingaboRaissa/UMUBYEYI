@@ -8,7 +8,7 @@ self-care support. It is a research prototype and does not diagnose or replace a
 ## Submission links
 
 - **Deployed application:** https://firstmumassist-six.vercel.app/
-- **Five-minute technical demo:** `ADD VIDEO URL BEFORE SUBMISSION`
+- **Five-minute technical demo:** https://drive.google.com/file/d/144gI9wkDh3voYUJjtKdA2V9lA9tSV1fz/view?usp=drive_link
 - **Repository:** https://github.com/IrutingaboRaissa/UMUBYEYI
 
 The production URL was verified as publicly accessible without Vercel authentication on July 14, 2026.
