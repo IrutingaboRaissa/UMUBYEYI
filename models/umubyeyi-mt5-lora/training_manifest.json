@@ -1,4 +1,6 @@
 {
+  "superseded": true,
+  "replacement_dataset_version": "esconv-amod-v1",
   "fine_tuned": true,
   "method": "LoRA supervised fine-tuning (PEFT)",
   "base_model": "google/mt5-small",

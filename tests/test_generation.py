@@ -4,25 +4,55 @@ from pathlib import Path
 from finetuned_generator import (
     FineTunedGenerator, grounding_overlap, validate_grounded_generation,
 )
-from generation_data import build_generation_examples, dataset_summary
+from generation_data import (
+    build_amod_response_examples, build_esconv_examples, dataset_summary,
+    format_generator_input,
+)
 
 
-def test_generation_examples_are_bilingual_and_topic_grouped():
-    examples = build_generation_examples(variants_per_language=2)
+def test_esconv_examples_keep_conversations_grouped_and_targets_original():
+    conversations = [{
+        "situation": "I feel overwhelmed.",
+        "problem_type": "ongoing depression",
+        "dialog": [
+            {"speaker": "seeker", "annotation": {}, "content": "I feel exhausted."},
+            {"speaker": "supporter", "annotation": {"strategy": "Reflection of feelings"},
+             "content": "It sounds like this has taken a lot out of you."},
+            {"speaker": "seeker", "annotation": {}, "content": "Yes, it has."},
+            {"speaker": "supporter", "annotation": {"strategy": "Question"},
+             "content": "What support would feel most useful today?"},
+        ],
+    }]
+    examples = build_esconv_examples(conversations)
     summary = dataset_summary(examples)
-    assert summary["languages"]["en"] == summary["languages"]["rw"]
-    assert summary["topics"] == 14
-    topic_splits = {}
+    assert summary["datasets"] == {"ESConv": 2}
+    assert {row["target"] for row in examples} == {
+        "It sounds like this has taken a lot out of you.",
+        "What support would feel most useful today?",
+    }
+    conversation_splits = {}
     for example in examples:
-        topic_splits.setdefault(example["topic_id"], set()).add(example["split"])
-    assert all(len(splits) == 1 for splits in topic_splits.values())
+        conversation_splits.setdefault(example["group_id"], set()).add(example["split"])
+    assert all(len(splits) == 1 for splits in conversation_splits.values())
 
 
-def test_generator_targets_are_traceable_to_evidence():
-    for example in build_generation_examples(variants_per_language=1):
-        assert example["evidence"] in example["target"]
-        assert example["source"]
-        assert example["url"].startswith("https://")
+def test_amod_responses_are_real_source_targets_and_question_grouped():
+    source = [
+        {"Context": "I feel sad", "Response": "Thank you for sharing that."},
+        {"Context": "I feel sad", "Response": "It may help to speak with someone you trust."},
+    ]
+    intents = [{"Context": "I feel sad", "intent": "sadness_low_mood"}]
+    examples = build_amod_response_examples(source, intents)
+    assert len(examples) == 2
+    assert len({row["group_id"] for row in examples}) == 1
+    assert {row["target"] for row in examples} == {row["Response"] for row in source}
+
+
+def test_runtime_prompt_contains_retrieved_evidence_without_a_fixed_answer():
+    prompt = format_generator_input("I feel sad", "Persistent sadness deserves support.", "en")
+    assert "Persistent sadness deserves support." in prompt
+    assert "I feel sad" in prompt
+    assert prompt.endswith("Response:")
 
 
 def test_grounding_overlap_rejects_unrelated_generation():
