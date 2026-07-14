@@ -1,139 +1,192 @@
-"""Build leakage-controlled bilingual examples for grounded generator fine-tuning.
+"""Load genuine conversational supervision for Umubyeyi's response generator.
 
-The 800-row PPD table is intentionally not used here: it has risk-factor columns,
-not conversational answers.  Generator supervision is derived from the separate,
-source-attributed postpartum knowledge collection.  Prompt variations are synthetic;
-the answer content remains the corresponding evidence passage.
+ESConv supplies multi-turn emotional-support responses. AMOD supplies counselling
+question/response pairs and a separately cached, weak-labelled bilingual intent
+subset. The reviewed postpartum collection remains retrieval evidence and is not
+expanded into templated training conversations.
 """
 from __future__ import annotations
 
 import hashlib
 import json
-import random
+import urllib.request
+from collections import Counter, defaultdict
 from pathlib import Path
+from typing import Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_BANK = ROOT / "data" / "knowledge" / "postpartum_wellbeing.json"
 
-PROMPT_TEMPLATES = {
-    "en": [
-        "I need emotional support with {terms}.",
-        "After giving birth, I have been struggling with {terms}.",
-        "Can you help me understand {terms}?",
-        "I am a new mother dealing with {terms}.",
-        "What can I do when I experience {terms}?",
-        "Please support me with {terms}.",
-    ],
-    "rw": [
-        "Nkeneye ubufasha ku bijyanye na {terms}.",
-        "Nyuma yo kubyara ndimo guhangana na {terms}.",
-        "Wamfasha gusobanukirwa {terms}?",
-        "Ndi umubyeyi mushya mpanganye na {terms}.",
-        "Nakora iki iyo mfite {terms}?",
-        "Mfasha ku bijyanye na {terms}.",
-    ],
-}
-
-ACKNOWLEDGEMENTS = {
-    "en": [
-        "Thank you for sharing this.",
-        "I hear that this is difficult.",
-        "You are not alone in facing this.",
-    ],
-    "rw": [
-        "Urakoze kubivuga.",
-        "Ndumva ko ibi bikugoye.",
-        "Nturi wenyine muri ibi.",
-    ],
-}
+ESCONV_COMMIT = "f262d062ad74cb39b17ea476facc81568ddcba24"
+ESCONV_SHA256 = "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af"
+ESCONV_URL = (
+    "https://raw.githubusercontent.com/thu-coai/Emotional-Support-Conversation/"
+    f"{ESCONV_COMMIT}/ESConv.json"
+)
+AMOD_DATASET = "Amod/mental_health_counseling_conversations"
+AMOD_REVISION = "d7e86f0813c5690181b41f97403c3674aa55dcef"
+AMOD_INTENTS = ROOT / "data" / "intent" / "amod_kinyarwanda.csv"
 
 
-def format_generator_input(query: str, evidence: str, lang: str) -> str:
-    """Return the exact evidence-conditioned format used in training and inference."""
+def _normalise(text: str) -> str:
+    return " ".join(str(text).split()).strip()
+
+
+def grouped_split(group_id: str, seed: int = 42) -> str:
+    """Deterministically assign a complete conversation/question to one split."""
+    digest = hashlib.sha256(f"{seed}|{group_id}".encode("utf-8")).hexdigest()
+    bucket = int(digest[:8], 16) % 100
+    if bucket < 15:
+        return "test"
+    if bucket < 30:
+        return "validation"
+    return "train"
+
+
+def format_generator_input(
+    query: str, evidence: str = "", lang: str = "en", history: str = ""
+) -> str:
+    """Format training and runtime prompts without embedding a hard-coded answer."""
     language = "Kinyarwanda" if lang == "rw" else "English"
-    return (
-        "Generate a brief, empathetic postpartum emotional-support answer. "
-        "Use only the evidence and answer in the requested language. Do not diagnose.\n"
-        f"Language: {language}\nEvidence: {evidence.strip()}\n"
-        f"Mother: {query.strip()}\nAnswer:"
-    )
+    evidence_text = _normalise(evidence) or "No external evidence supplied."
+    history_text = _normalise(history)
+    parts = [
+        "Write an empathetic emotional-support response.",
+        "Do not diagnose or invent medical facts.",
+        f"Language: {language}",
+        f"Evidence: {evidence_text}",
+    ]
+    if history_text:
+        parts.append(f"Conversation: {history_text}")
+    parts.extend([f"User: {_normalise(query)}", "Response:"])
+    return "\n".join(parts)
 
 
-def topic_splits(topic_ids: list[str], seed: int = 42) -> dict[str, str]:
-    """Split by complete topic so held-out answers are not seen during training."""
-    ids = sorted(set(topic_ids))
-    random.Random(seed).shuffle(ids)
-    n = len(ids)
-    n_test = max(1, round(n * 0.15))
-    n_validation = max(1, round(n * 0.15))
-    result: dict[str, str] = {}
-    for index, topic_id in enumerate(ids):
-        if index < n_test:
-            result[topic_id] = "test"
-        elif index < n_test + n_validation:
-            result[topic_id] = "validation"
-        else:
-            result[topic_id] = "train"
-    return result
+def download_esconv(destination: Path) -> Path:
+    """Download the pinned official ESConv file and verify its exact checksum."""
+    destination = Path(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if not destination.exists():
+        urllib.request.urlretrieve(ESCONV_URL, destination)
+    digest = hashlib.sha256(destination.read_bytes()).hexdigest()
+    if digest != ESCONV_SHA256:
+        destination.unlink(missing_ok=True)
+        raise ValueError(f"ESConv checksum mismatch: expected {ESCONV_SHA256}, got {digest}")
+    return destination
 
 
-def build_generation_examples(
-    bank_path: Path = DEFAULT_BANK, variants_per_language: int = 6, seed: int = 42
+def load_esconv(path: Path) -> list[dict]:
+    path = Path(path)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    if digest != ESCONV_SHA256:
+        raise ValueError(f"ESConv checksum mismatch: expected {ESCONV_SHA256}, got {digest}")
+    rows = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(rows, list) or not rows or "dialog" not in rows[0]:
+        raise ValueError("Unexpected ESConv schema")
+    return rows
+
+
+def build_esconv_examples(
+    conversations: Iterable[dict], max_supporter_turns: int = 6, seed: int = 42
 ) -> list[dict]:
-    """Create bilingual examples with provenance and topic-grouped splits."""
-    bank = json.loads(Path(bank_path).read_text(encoding="utf-8"))
-    if not 1 <= variants_per_language <= len(PROMPT_TEMPLATES["en"]):
-        raise ValueError("variants_per_language must be between 1 and 6")
-    required = {"id", "topic", "source", "url", "text_en", "text_rw", "queries_en", "queries_rw"}
-    for row in bank:
-        missing = required - row.keys()
-        if missing:
-            raise ValueError(f"Knowledge row {row.get('id', '<unknown>')} missing: {sorted(missing)}")
-
-    splits = topic_splits([row["id"] for row in bank], seed)
+    """Create response pairs while keeping every conversation in one split."""
+    if max_supporter_turns < 1:
+        raise ValueError("max_supporter_turns must be positive")
     examples: list[dict] = []
-    for row in bank:
-        for lang in ("en", "rw"):
-            evidence = row[f"text_{lang}"].strip()
-            terms = row[f"queries_{lang}"].strip()
-            if not evidence or not terms:
+    for conversation_index, conversation in enumerate(conversations):
+        conversation_id = f"esconv-{conversation_index:04d}"
+        split = grouped_split(conversation_id, seed)
+        situation = _normalise(conversation.get("situation", ""))
+        history: list[str] = []
+        supporter_count = 0
+        for turn_index, turn in enumerate(conversation.get("dialog", [])):
+            speaker = str(turn.get("speaker", "")).lower()
+            content = _normalise(turn.get("content", ""))
+            if not content:
                 continue
-            for variant, template in enumerate(PROMPT_TEMPLATES[lang][:variants_per_language]):
-                query = template.format(terms=terms)
-                acknowledgement = ACKNOWLEDGEMENTS[lang][variant % len(ACKNOWLEDGEMENTS[lang])]
-                target = f"{acknowledgement} {evidence}"
-                example_id = hashlib.sha256(
-                    f"{row['id']}|{lang}|{variant}|{seed}".encode("utf-8")
-                ).hexdigest()[:16]
+            if speaker == "supporter" and history and supporter_count < max_supporter_turns:
+                supporter_count += 1
+                annotation = turn.get("annotation") or {}
+                strategy = annotation.get("strategy") or "Other"
+                recent_history = " ".join(history[-6:])
+                latest_user = next(
+                    (item.split(":", 1)[1].strip() for item in reversed(history)
+                     if item.startswith("User:")),
+                    situation,
+                )
                 examples.append({
-                    "id": example_id,
-                    "topic_id": row["id"],
-                    "topic": row["topic"],
-                    "language": lang,
-                    "split": splits[row["id"]],
-                    "input": format_generator_input(query, evidence, lang),
-                    "target": target,
-                    "query": query,
-                    "evidence": evidence,
-                    "source": row["source"],
-                    "url": row["url"],
-                    "supervision": "project-authored prompt augmentation + source-grounded passage",
-                    "review_status": row.get("review_status", "unspecified"),
+                    "id": f"{conversation_id}-turn-{turn_index:02d}",
+                    "group_id": conversation_id,
+                    "dataset": "ESConv",
+                    "split": split,
+                    "language": "en",
+                    "query": latest_user,
+                    "history": recent_history,
+                    "evidence": "",
+                    "input": format_generator_input(latest_user, "", "en", recent_history),
+                    "target": content,
+                    "strategy": strategy,
+                    "problem_type": conversation.get("problem_type", "unspecified"),
+                    "source": "Liu et al. (2021), Emotional Support Conversation",
+                    "source_url": "https://github.com/thu-coai/Emotional-Support-Conversation",
                 })
+            role = "Supporter" if speaker == "supporter" else "User"
+            history.append(f"{role}: {content}")
+    return examples
+
+
+def build_amod_response_examples(
+    source_rows: Iterable[dict], intent_rows: Iterable[dict],
+    max_responses_per_question: int = 2, seed: int = 42,
+) -> list[dict]:
+    """Build English counselling pairs for the weak-labelled in-scope AMOD questions."""
+    intent_by_question = {
+        _normalise(row.get("Context", "")): str(row.get("intent", "")).strip()
+        for row in intent_rows if _normalise(row.get("Context", ""))
+    }
+    response_counts: defaultdict[str, int] = defaultdict(int)
+    examples: list[dict] = []
+    for row_index, row in enumerate(source_rows):
+        question = _normalise(row.get("Context", ""))
+        response = _normalise(row.get("Response", ""))
+        if not question or not response or question not in intent_by_question:
+            continue
+        if response_counts[question] >= max_responses_per_question:
+            continue
+        response_counts[question] += 1
+        group_hash = hashlib.sha256(question.encode("utf-8")).hexdigest()[:16]
+        examples.append({
+            "id": f"amod-{group_hash}-{response_counts[question]}",
+            "group_id": f"amod-{group_hash}",
+            "dataset": "AMOD",
+            "split": grouped_split(f"amod-{group_hash}", seed),
+            "language": "en",
+            "query": question,
+            "history": "",
+            "evidence": "",
+            "input": format_generator_input(question, "", "en"),
+            "target": response,
+            "strategy": "Counsellor response",
+            "problem_type": intent_by_question[question],
+            "source": "Amod/mental_health_counseling_conversations",
+            "source_url": (
+                "https://huggingface.co/datasets/"
+                "Amod/mental_health_counseling_conversations"
+            ),
+        })
     return examples
 
 
 def dataset_summary(examples: list[dict]) -> dict:
-    summary = {"examples": len(examples), "topics": len({x["topic_id"] for x in examples})}
-    summary["splits"] = {
-        split: sum(x["split"] == split for x in examples)
-        for split in ("train", "validation", "test")
+    """Return auditable counts for a combined conversation dataset."""
+    return {
+        "examples": len(examples),
+        "groups": len({row["group_id"] for row in examples}),
+        "datasets": dict(Counter(row["dataset"] for row in examples)),
+        "splits": dict(Counter(row["split"] for row in examples)),
+        "languages": dict(Counter(row["language"] for row in examples)),
+        "strategies": dict(Counter(row.get("strategy", "") for row in examples)),
+        "groups_by_split": {
+            split: len({row["group_id"] for row in examples if row["split"] == split})
+            for split in ("train", "validation", "test")
+        },
     }
-    summary["languages"] = {
-        lang: sum(x["language"] == lang for x in examples) for lang in ("en", "rw")
-    }
-    summary["topics_by_split"] = {
-        split: sorted({x["topic_id"] for x in examples if x["split"] == split})
-        for split in ("train", "validation", "test")
-    }
-    return summary

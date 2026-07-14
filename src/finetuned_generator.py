@@ -71,9 +71,15 @@ class FineTunedGenerator:
     def available(self) -> bool:
         if os.environ.get("VERCEL") == "1" or os.environ.get("UMU_DISABLE_FINETUNED") == "1":
             return False
-        return (self.adapter_path / "adapter_config.json").exists() and (
-            self.adapter_path / "training_manifest.json"
-        ).exists()
+        manifest_path = self.adapter_path / "training_manifest.json"
+        if not (self.adapter_path / "adapter_config.json").exists() or not manifest_path.exists():
+            return False
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return False
+        # Do not silently run the superseded adapter trained on templated prompts.
+        return manifest.get("training_dataset_version") == "esconv-amod-v1"
 
     def _load(self) -> bool:
         if self._attempted:

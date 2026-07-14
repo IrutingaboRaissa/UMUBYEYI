@@ -146,6 +146,7 @@ def load_metrics() -> dict:
     topic_classifier = json.loads(
         (ROOT / "reports/topic_classifier/metrics.json").read_text(encoding="utf-8")
     )
+    current_generator = generator.get("training_dataset_version") == "esconv-amod-v1"
     return {
         "classifiers": {
             "evaluation": "untouched stratified participant test set",
@@ -153,9 +154,10 @@ def load_metrics() -> dict:
             "guided_checkin": {"selected_model": checkin["selected_model"], **checkin["test"]},
         },
         "generator": {
-            "evaluation": "24 examples from two topics excluded from generator training and validation",
-            "baseline": generator["baseline_test"],
-            "fine_tuned": generator["fine_tuned_test"],
+            "evaluation": "conversation/question-grouped held-out ESConv and AMOD responses",
+            "available": current_generator,
+            "baseline": generator.get("baseline_test") if current_generator else None,
+            "fine_tuned": generator.get("fine_tuned_test") if current_generator else None,
             "limitation": "automatic metrics do not measure empathy, clinical safety, or native fluency",
         },
         "topic_classifier": topic_classifier,
@@ -185,21 +187,27 @@ def create_figures(metrics: dict) -> None:
     # Project-trained topic classifier.
     rkeys = ["accuracy", "top_3_accuracy", "macro_f1"]
     rnames = ["Top-1", "Top-3", "Macro-F1"]
-    for offset, lang, color in [(-.18, "en", colors["green"]), (.18, "rw", colors["peach"])]:
-        row = metrics["topic_classifier"]["controlled_test"]["by_language"][lang]
+    for offset, lang, color in [(-.18, "english", colors["green"]), (.18, "kinyarwanda", colors["peach"])]:
+        row = metrics["topic_classifier"]["untouched_test"][lang]
         axes[0, 1].bar([i + offset for i in range(3)], [row[k] for k in rkeys], .36,
-                       label="English" if lang == "en" else "Kinyarwanda", color=color)
+                       label="English" if lang == "english" else "Kinyarwanda", color=color)
     axes[0, 1].set_xticks(range(3), rnames); axes[0, 1].legend(fontsize=8)
-    axes[0, 1].set_title("Trained topic classifier: controlled cases")
+    axes[0, 1].set_title("Bilingual intent classifier: untouched test")
 
     # Generator.
     baseline, tuned = metrics["generator"]["baseline"], metrics["generator"]["fine_tuned"]
-    axes[1, 0].bar([-.18, .82], [baseline["rouge_l_f1"], baseline["mean_grounding_overlap"]],
-                   .36, label="Base mT5", color="#B9A7BC")
-    axes[1, 0].bar([.18, 1.18], [tuned["rouge_l_f1"], tuned["mean_grounding_overlap"]],
-                   .36, label="Fine-tuned", color=colors["green"])
-    axes[1, 0].set_xticks([0, 1], ["ROUGE-L", "Evidence overlap"]); axes[1, 0].legend(fontsize=8)
-    axes[1, 0].set_title("Generator: held-out topics")
+    if metrics["generator"]["available"] and baseline and tuned:
+        axes[1, 0].bar([-.18, .82], [baseline["rouge_l_f1"], baseline["distinct_2"]],
+                       .36, label="Base mT5", color="#B9A7BC")
+        axes[1, 0].bar([.18, 1.18], [tuned["rouge_l_f1"], tuned["distinct_2"]],
+                       .36, label="Fine-tuned", color=colors["green"])
+        axes[1, 0].set_xticks([0, 1], ["ROUGE-L", "Distinct-2"])
+        axes[1, 0].legend(fontsize=8)
+        axes[1, 0].set_title("Generator: held-out conversations")
+    else:
+        axes[1, 0].text(.5, .5, "Run the unified Colab notebook\nfor ESConv/AMOD metrics",
+                        ha="center", va="center", transform=axes[1, 0].transAxes)
+        axes[1, 0].set_title("Generator evaluation pending")
 
     # Safety and scope routing.
     category_rows = metrics["routing"]["by_category"]
@@ -216,24 +224,11 @@ def create_figures(metrics: dict) -> None:
     fig.savefig(OUT / "layered_evaluation_summary.png", dpi=180, bbox_inches="tight")
     plt.close(fig)
 
-    # Aggregate overlap hides the Kinyarwanda failure, so show acceptance separately.
-    acceptance = tuned["strict_acceptance_by_language"]
-    fig, ax = plt.subplots(figsize=(7, 4.5))
-    bars = ax.bar(["English", "Kinyarwanda"], [acceptance["en"], acceptance["rw"]],
-                  color=[colors["green"], colors["peach"]])
-    ax.bar_label(bars, labels=[f"{100*bar.get_height():.0f}%" for bar in bars], padding=4)
-    ax.set_ylim(0, 1); ax.set_ylabel("Strict sentence-grounding acceptance")
-    ax.set_title("Fine-tuned generator quality gate by language")
-    ax.grid(axis="y", alpha=.2); fig.tight_layout()
-    fig.savefig(OUT / "generator_acceptance_by_language.png", dpi=180, bbox_inches="tight")
-    plt.close(fig)
-
-
-def create_human_review_sheet() -> None:
+def create_human_review_sheet(generator_available: bool) -> None:
     """Export held-out outputs without inventing human-quality scores."""
     generations = json.loads(
         (ROOT / "reports/generator/test_generations.json").read_text(encoding="utf-8")
-    )
+    ) if generator_available else []
     fields = [
         "case_id", "language", "topic", "prediction", "reference", "evidence",
         "relevance_1_to_5", "fluency_1_to_5", "empathy_1_to_5", "grounding_1_to_5",
@@ -247,11 +242,11 @@ def create_human_review_sheet() -> None:
         for index, row in enumerate(generations, start=1):
             writer.writerow({
                 "case_id": f"GEN-{index:02d}",
-                "language": row["language"],
-                "topic": row["topic"],
-                "prediction": row["prediction"],
+                "language": row.get("language", "en"),
+                "topic": row.get("problem_type", row.get("topic", "")),
+                "prediction": row.get("fine_tuned_prediction", row.get("prediction", "")),
                 "reference": row["reference"],
-                "evidence": row["evidence"],
+                "evidence": row.get("evidence", ""),
             })
 
 def main() -> None:
@@ -266,9 +261,9 @@ def main() -> None:
     metrics["retrieval"], retrieval_cases = evaluate_retrieval(rag._default)
     metrics["routing"], routing_cases = evaluate_routing(rag._default)
     metrics["scope_statement"] = (
-        "Screening-classifier metrics use untouched real participant records. Topic, retrieval and "
-        "routing cases are controlled project-authored evaluations, not real-user or clinical validation. Generator "
-        "metrics use untouched topics but synthetic prompt augmentation and source-grounded targets."
+        "Screening metrics use untouched participant records. Intent metrics use AMOD-derived weak "
+        "labels and NLLB-translated Kinyarwanda. Retrieval and routing cases are controlled project "
+        "evaluations. Generator metrics require a completed grouped ESConv/AMOD Colab run."
     )
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "metrics.json").write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -276,11 +271,11 @@ def main() -> None:
         "retrieval": retrieval_cases, "routing": routing_cases,
     }, indent=2, ensure_ascii=False), encoding="utf-8")
     create_figures(metrics)
-    create_human_review_sheet()
+    create_human_review_sheet(metrics["generator"]["available"])
     print(json.dumps({
         "classifier_full_f1": metrics["classifiers"]["full_model"]["f1_score"],
         "classifier_checkin_f1": metrics["classifiers"]["guided_checkin"]["f1_score"],
-        "topic_classifier": metrics["topic_classifier"]["controlled_test"],
+        "topic_classifier": metrics["topic_classifier"]["untouched_test"],
         "retrieval": metrics["retrieval"],
         "routing": metrics["routing"],
         "generator_fine_tuned": metrics["generator"]["fine_tuned"],

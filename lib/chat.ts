@@ -85,8 +85,7 @@ export function newThread(): Thread {
 
 export function loadThreads(): { threads: Thread[]; currentId: string } {
   if (typeof window === "undefined") {
-    const t = newThread();
-    return { threads: [t], currentId: t.id };
+    return { threads: [], currentId: "" };
   }
   let threads: Thread[] = [];
   try {
@@ -97,8 +96,7 @@ export function loadThreads(): { threads: Thread[]; currentId: string } {
     }
   } catch { /* ignore */ }
   if (!threads.length) {
-    const t = newThread();
-    return { threads: [t], currentId: t.id };
+    return { threads: [], currentId: "" };
   }
   const savedCurrent = localStorage.getItem(STORE_CURRENT_KEY);
   const currentId = savedCurrent && threads.some((t) => t.id === savedCurrent)

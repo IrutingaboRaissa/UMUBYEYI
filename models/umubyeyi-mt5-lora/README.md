@@ -12,9 +12,16 @@ tags:
 - postpartum
 ---
 
-# Umubyeyi mT5 LoRA generator
+# Superseded Umubyeyi mT5 LoRA experiment
 
-This adapter is the project-fine-tuned generator for Umubyeyi, a research prototype for
+This directory records the earlier templated-prompt experiment for audit purposes. It is not the
+current generator artifact. `src/finetuned_generator.py` refuses to load it because its manifest does
+not contain `training_dataset_version: esconv-amod-v1`.
+
+Run `notebooks/umubyeyi.ipynb` on Colab to replace this directory with the current adapter trained on
+original ESConv supporter turns and in-scope AMOD counselor responses.
+
+This adapter was an earlier project-fine-tuned generator experiment for Umubyeyi, a research prototype for
 English/Kinyarwanda postpartum emotional-well-being support. It generates from a retrieved,
 source-attributed passage; it is not intended to answer from model memory.
 
