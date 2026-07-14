@@ -20,7 +20,8 @@ node_modules/
 *.key
 
 # Private docs (capstone report, slides) - keep local, off the public repo
-docs/
+docs/*
+!docs/REFERENCES.md
 *_turnitin_submission.docx
 
 # Large external models (not part of the repo)
@@ -30,6 +31,9 @@ afroxlmr-kinyarwanda-intent/
 
 # Official third-party training data is downloaded from pinned upstream versions
 data/external/ESConv.json
+
+# Reviewer-corrected translations stay local unless reviewer permission is documented
+data/translation/nllb_human_reviewed_parallel.csv
 
 # Fine-tuned generator weights (307MB > GitHub 100MB limit) — regenerate via train_local.py / notebook
 models/umubyeyi-generator/
