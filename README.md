@@ -280,10 +280,62 @@ DOI `10.17632/4nznnrk8cg.3`, CC BY 4.0.
 The binary target is elevated EPDS screening risk: High versus Low/Medium. All concurrent EPDS/PHQ
 items, totals, and derived labels are excluded to prevent target leakage.
 
+### Data preparation and missing values
+
+The raw file contains 800 rows, 70 columns, no duplicate rows and 4,312 missing cells. Rows with
+missing predictors were not discarded, because doing so would unnecessarily reduce an already modest
+dataset. Preprocessing is part of each scikit-learn `Pipeline`:
+
+1. The target is converted to `elevated` for EPDS High and `not_elevated` for EPDS Low/Medium.
+2. The identifier, target, concurrent questionnaire items, totals and derived results are removed to
+   prevent target leakage, leaving 46 predictors for the full experiment.
+3. The data is stratified into 560 training, 120 validation and 120 untouched test rows before any
+   imputation is learned.
+4. Numeric predictors use median imputation followed by standardisation.
+5. Categorical predictors use most-frequent imputation followed by one-hot encoding. Unknown test or
+   production categories are ignored safely, and categories seen fewer than twice are grouped.
+6. Each candidate pipeline learns its imputation values, scaling values and category vocabulary only
+   from its training input. The untouched test data therefore cannot influence preprocessing or model
+   selection.
+7. After validation F1 selects the winning algorithm, that configuration is refitted on training plus
+   validation rows and evaluated once on the test set.
+
+![Features with the most missing values](reports/ppd_classifier/figures/03_missing_values.png)
+
 - stratified split: 560 training / 120 validation / 120 untouched test
 - seed: 42
 - candidates: Dummy, Logistic Regression, Decision Tree, Random Forest, Extra Trees, SVM, and KNN
 - selection: validation F1-score for the `elevated` class
+
+### Full 46-predictor model comparison — validation set
+
+| Candidate | Accuracy | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|
+| Dummy baseline | 0.5667 | 0.0000 | 0.0000 | 0.0000 |
+| Logistic Regression | 0.6750 | 0.6066 | 0.7115 | 0.6549 |
+| Decision Tree | 0.6333 | 0.5952 | 0.4808 | 0.5319 |
+| **Random Forest — selected** | **0.7583** | **0.7091** | **0.7500** | **0.7290** |
+| Extra Trees | 0.7417 | 0.6780 | 0.7692 | 0.7207 |
+| Support Vector Machine | 0.7417 | 0.6721 | 0.7885 | 0.7257 |
+| K-Nearest Neighbors | 0.7583 | 0.8710 | 0.5192 | 0.6506 |
+
+![Full screening model validation comparison](reports/ppd_classifier/figures/05_validation_model_comparison.png)
+
+### Reduced 15-input check-in comparison — validation set
+
+| Candidate | Accuracy | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|
+| Dummy baseline | 0.5667 | 0.0000 | 0.0000 | 0.0000 |
+| **Logistic Regression — selected** | **0.7417** | **0.6780** | **0.7692** | **0.7207** |
+| Decision Tree | 0.7250 | 0.6792 | 0.6923 | 0.6857 |
+| Random Forest | 0.7250 | 0.6727 | 0.7115 | 0.6916 |
+| Extra Trees | 0.7000 | 0.6379 | 0.7115 | 0.6727 |
+| Support Vector Machine | 0.7250 | 0.6667 | 0.7308 | 0.6972 |
+| K-Nearest Neighbors | 0.7000 | 0.6667 | 0.6154 | 0.6400 |
+
+![Guided check-in model validation comparison](reports/ppd_checkin/figures/05_validation_model_comparison.png)
+
+### Selected models — untouched test set
 
 | Experiment | Selected model | Accuracy | Precision | Recall | F1 |
 |---|---|---:|---:|---:|---:|
