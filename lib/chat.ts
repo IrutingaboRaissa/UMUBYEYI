@@ -54,14 +54,6 @@ export const CRISIS_LINE = "114";
 export const STORE_KEY = "umubyeyi_threads_v3";
 export const STORE_CURRENT_KEY = "umubyeyi_current_v3";
 
-export const MOODS = [
-  ["😔", "Agahinda · Sad", "Numva mfite agahinda."],
-  ["😟", "Guhangayika · Anxious", "Mfite guhangayika kwinshi."],
-  ["😩", "Nananiwe · Tired", "Numva nananiwe cyane."],
-  ["🌧️", "Ndi ngenyine · Alone", "Numva ndi ngenyine, nta wundi mfite."],
-  ["🙂", "Meze neza · Okay", "Numva meze neza uyu munsi."],
-] as const;
-
 export const TIPS = [
   ["🤝", "Shaka ubufasha", "Reach out", "Ganira n'umuntu wizeye cyangwa umukozi w'ubuzima.", "Talk to someone you trust or a health worker."],
   ["👪", "Wubake abagufasha", "Build support", "Egera uwo mwashakanye, umuryango n'incuti.", "Lean on your partner, family, and friends."],
