@@ -20,6 +20,7 @@ export default function ChatApp() {
   const [consented, setConsented] = useState(false);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [currentId, setCurrentId] = useState("");
+  const [draftThread, setDraftThread] = useState<Thread | null>(null);
   const [view, setView] = useState<View>("chat");
   const [panelOpen, setPanelOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -46,15 +47,21 @@ export default function ChatApp() {
   useEffect(() => {
     sid.current = sessionId();
     const { threads: loaded, currentId: cid } = loadThreads();
-    setThreads(loaded);
-    setCurrentId(cid);
+    if (loaded.length) {
+      setThreads(loaded);
+      setCurrentId(cid);
+    } else {
+      const t = newThread();
+      setDraftThread(t);
+      setCurrentId(t.id);
+    }
     if (loaded.some((t) => t.msgs.length > 1)) setConsented(true);
     hydrated.current = true;
     try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
-    if (!hydrated.current || !threads.length) return;
+    if (!hydrated.current) return;
     saveThreads(threads, currentId);
   }, [threads, currentId]);
 
@@ -62,7 +69,8 @@ export default function ChatApp() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [threads, typing, currentId]);
 
-  const current = threads.find((t) => t.id === currentId) ?? threads[0];
+  const current = threads.find((t) => t.id === currentId)
+    ?? (draftThread?.id === currentId ? draftThread : threads[0]);
   const isRated = current ? ratedThreads[current.id] ?? false : true;
 
   const setCurrent = useCallback((id: string) => {
@@ -82,6 +90,7 @@ export default function ChatApp() {
     const t = { ...current, msgs: [...current.msgs, { role: "user" as const, text: userMsg }] };
     if (!t.title) t.title = userMsg.slice(0, 40);
     updateThread(t);
+    if (draftThread?.id === t.id) setDraftThread(null);
     setInput("");
     setTyping(true);
     setRatedThreads((r) => ({ ...r, [t.id]: true }));
@@ -110,7 +119,7 @@ export default function ChatApp() {
 
   const startNewChat = () => {
     const t = newThread();
-    setThreads((prev) => sortThreads([t, ...prev]));
+    setDraftThread(t);
     setCurrentId(t.id);
     setMenuThreadId(null);
     setPanelOpen(false);
@@ -132,10 +141,16 @@ export default function ChatApp() {
   const confirmDelete = () => {
     if (!deleteTarget) return;
     const remaining = threads.filter((t) => t.id !== deleteTarget.id);
-    let next = remaining;
-    if (!next.length) next = [newThread()];
-    setThreads(sortThreads(next));
-    if (currentId === deleteTarget.id) setCurrentId(next[0].id);
+    setThreads(sortThreads(remaining));
+    if (currentId === deleteTarget.id) {
+      if (remaining.length) {
+        setCurrentId(remaining[0].id);
+      } else {
+        const t = newThread();
+        setDraftThread(t);
+        setCurrentId(t.id);
+      }
+    }
     setDeleteTarget(null);
     setMenuThreadId(null);
   };
@@ -175,7 +190,7 @@ export default function ChatApp() {
 
   return (
     <div className="app-shell">
-      {panelOpen && <div className="sidebar-backdrop" onClick={() => setPanelOpen(false)} aria-hidden />}
+      {panelOpen && <div className="sidebar-backdrop" aria-hidden />}
 
       <aside className={`sidebar ${panelOpen ? "open" : ""}`}>
         <div className="sidebar-header">
