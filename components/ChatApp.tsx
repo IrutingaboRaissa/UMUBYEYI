@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat, sendFeedback,
-  logEvent, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
+  generateTitle, logEvent, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
 
 type View = "chat" | "checkin" | "selfcare" | "about";
@@ -32,8 +32,8 @@ export default function ChatApp() {
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [ratedThreads, setRatedThreads] = useState<Record<string, boolean>>({});
   const [checkin, setCheckin] = useState<Record<string, string | number>>(() => {
-    const initial: Record<string, string | number> = { Age: 25 };
-    for (const [key, , options] of CHECKIN_FIELDS) initial[key] = options[0];
+    const initial: Record<string, string | number> = { Age: "" };
+    for (const [key] of CHECKIN_FIELDS) initial[key] = "";
     return initial;
   });
   const [screenResult, setScreenResult] = useState<ScreenResponse | null>(null);
@@ -72,6 +72,7 @@ export default function ChatApp() {
   const current = threads.find((t) => t.id === currentId)
     ?? (draftThread?.id === currentId ? draftThread : threads[0]);
   const isRated = current ? ratedThreads[current.id] ?? false : true;
+  const checkinReady = checkin.Age !== "" && CHECKIN_FIELDS.every(([key]) => checkin[key] !== "");
 
   const setCurrent = useCallback((id: string) => {
     setCurrentId(id);
@@ -87,6 +88,7 @@ export default function ChatApp() {
   const handleSend = async (text: string) => {
     if (!text.trim() || typing || !current) return;
     const userMsg = text.trim();
+    const isFirstMessage = !current.title;
     const t = { ...current, msgs: [...current.msgs, { role: "user" as const, text: userMsg }] };
     if (!t.title) t.title = userMsg.slice(0, 40);
     updateThread(t);
@@ -102,6 +104,12 @@ export default function ChatApp() {
       setLastMeta({ lang: res.language, mode: res.mode });
       setRatedThreads((r) => ({ ...r, [t.id]: false }));
       if (sid.current) await logEvent(sid.current, res);
+      if (isFirstMessage) {
+        generateTitle(userMsg, res.answer, res.language).then((title) => {
+          if (!title) return;
+          setThreads((prev) => prev.map((th) => (th.id === t.id ? { ...th, title } : th)));
+        });
+      }
     } catch {
       const fallbackText = lastMeta.lang === "en"
         ? "Sorry, something went wrong. Please try again."
@@ -341,10 +349,19 @@ export default function ChatApp() {
                   }}>{mood}</button>
                 ))}
               </div>
-              {moodHistory.length > 0 && <div className="disc">
-                Recent: {moodHistory.slice(0, 7).map((entry) => entry.mood).join(" · ")}
-                <br />Stored only on this device. Discuss persistent distress with a health worker.
-              </div>}
+              {moodHistory.length > 0 && (
+                <div className="disc">
+                  <div>Recent:</div>
+                  <div className="mood-history">
+                    {moodHistory.slice(0, 7).map((entry, i) => (
+                      <span key={`${entry.date}-${i}`} className="mood-pill" style={{ animationDelay: `${i * 45}ms` }}>
+                        {entry.mood}
+                      </span>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 8 }}>Stored only on this device. Discuss persistent distress with a health worker.</div>
+                </div>
+              )}
             </div>
             <div className="section-h">Inama zo kwita ku mutima · Self-care tips</div>
             <div className="tipgrid">
@@ -372,27 +389,46 @@ export default function ChatApp() {
               <div className="s">Optional screening support · not a diagnosis · answers are not stored</div>
             </div></div>
             <div className="card">
-              <p>This research check-in estimates whether your answers resemble the dataset&apos;s elevated screening-risk group. It cannot diagnose postpartum depression.</p>
+              <p>
+                Subiza buri kibazo hakurikijwe uko byifashe mu byumweru bishize, hanyuma ukande &quot;Reba ibisubizo.&quot;
+                <br />
+                <span className="subtext">
+                  Answer every question below based on how things have actually been recently, then press &quot;Check result.&quot;
+                  This research check-in estimates whether your answers resemble the dataset&apos;s elevated screening-risk
+                  group — it cannot diagnose postpartum depression, and nothing you enter is stored.
+                </span>
+              </p>
               <label className="thread-menu-label">Age</label>
               <input className="thread-rename-input" type="number" min={18} max={60}
-                value={checkin.Age} onChange={(e) => setCheckin({ ...checkin, Age: Number(e.target.value) })} />
+                placeholder="Urugero: 25 · e.g. 25"
+                value={checkin.Age} onChange={(e) => setCheckin({ ...checkin, Age: e.target.value })} />
               <div className="tipgrid" style={{ marginTop: 14 }}>
                 {CHECKIN_FIELDS.map(([key, label, options]) => (
                   <label className="tip" key={key}>
                     <span className="tt">{label}</span>
-                    <select className="thread-rename-input" value={String(checkin[key])}
-                      onChange={(e) => setCheckin({ ...checkin, [key]: e.target.value })}>
+                    <select
+                      className="thread-rename-input"
+                      value={String(checkin[key])}
+                      style={checkin[key] === "" ? { color: "#A08E97" } : undefined}
+                      onChange={(e) => setCheckin({ ...checkin, [key]: e.target.value })}
+                    >
+                      <option value="" disabled hidden>Hitamo · Select</option>
                       {options.map((option) => <option key={option} value={option}>{option}</option>)}
                     </select>
                   </label>
                 ))}
               </div>
-              <button className="btn btn-primary" disabled={screening} onClick={async () => {
+              <button className="btn btn-primary" disabled={screening || !checkinReady} onClick={async () => {
                 setScreening(true); setScreenError(""); setScreenResult(null);
                 try { setScreenResult(await sendScreen(checkin)); }
                 catch (e) { setScreenError(e instanceof Error ? e.message : "Unable to complete check-in"); }
                 finally { setScreening(false); }
               }}>{screening ? "Checking…" : "Reba ibisubizo · Check result"}</button>
+              {!checkinReady && (
+                <div className="subtext" style={{ marginTop: 8 }}>
+                  Subiza ibibazo byose hejuru kugira ngo ubone ibisubizo. · Answer all the questions above to see your result.
+                </div>
+              )}
               {screenError && <div className="card danger">{screenError}</div>}
               {screenResult && <div className={`card ${screenResult.elevated ? "danger" : ""}`}>
                 <b>{screenResult.elevated ? "Additional support recommended" : "No elevated risk classified"}</b>

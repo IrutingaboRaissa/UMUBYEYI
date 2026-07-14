@@ -49,6 +49,8 @@ class LocalApiHandler(BaseHTTPRequestHandler):
                 self._event(body)
             elif self.path == "/api/feedback":
                 self._feedback(body)
+            elif self.path == "/api/title":
+                self._title(body)
             else:
                 self._json(404, {"error": "Endpoint not found"})
         except ValueError as exc:
@@ -87,6 +89,16 @@ class LocalApiHandler(BaseHTTPRequestHandler):
         if db:
             db.log_feedback(sid, rating, body.get("language"), body.get("mode"))
         self._json(200, {"ok": True})
+
+    def _title(self, body):
+        user_message = (body.get("user_message") or "").strip()
+        bot_reply = (body.get("bot_reply") or "").strip()
+        lang = body.get("lang") if body.get("lang") in ("en", "rw") else "en"
+        if not user_message:
+            self._json(400, {"error": "user_message required"})
+            return
+        title = rag._default.gemini_generator.generate_title(user_message, bot_reply, lang)
+        self._json(200, {"title": title})
 
     def _json(self, status, payload):
         data = b"" if status == 204 else json.dumps(payload, ensure_ascii=False).encode("utf-8")
