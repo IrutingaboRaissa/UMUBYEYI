@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, MOODS, TIPS,
+  AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat, sendFeedback,
   logEvent, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
@@ -273,6 +273,9 @@ export default function ChatApp() {
             </div>
 
             <div className="chat-area">
+              {current.msgs.length === 0 && (
+                <div className="chat-welcome">Welcome to Umubyeyi</div>
+              )}
               {current.msgs.map((m, i) => (
                 <div key={i} className={`row ${m.role === "user" ? "me" : ""}`}>
                   <div className={`bubble ${m.role === "user" ? "me" : "bot"} ${m.danger ? "danger" : ""}`}>
@@ -299,15 +302,6 @@ export default function ChatApp() {
               </div>
             )}
 
-            {current.msgs.length <= 1 && (
-              <div className="mood-grid">
-                {MOODS.map(([emo, lbl, q]) => (
-                  <button key={lbl} onClick={() => handleSend(q)} disabled={typing}>
-                    {emo} {lbl}
-                  </button>
-                ))}
-              </div>
-            )}
           </>
         )}
 
