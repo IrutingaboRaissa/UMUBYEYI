@@ -10,10 +10,10 @@ import {
 type View = "chat" | "checkin" | "selfcare" | "about";
 
 const NAV: { id: View; label: string }[] = [
-  { id: "chat", label: "Ikiganiro" },
+  { id: "chat", label: "Ikiganiro · Chat" },
   { id: "checkin", label: "Isuzuma · Check-in" },
-  { id: "selfcare", label: "Kwiyitaho" },
-  { id: "about", label: "Ibyerekeye" },
+  { id: "selfcare", label: "Kwiyitaho · Self-care" },
+  { id: "about", label: "Ibyerekeye · About" },
 ];
 
 export default function ChatApp() {
@@ -256,13 +256,6 @@ export default function ChatApp() {
           <button className="menu-toggle" onClick={() => setPanelOpen(true)} aria-label="Open menu">
             ☰
           </button>
-          <div className="topnav desktop-topnav">
-            {NAV.map(({ id, label }) => (
-              <button key={id} type="button" className={view === id ? "active" : ""} onClick={() => setView(id)}>
-                {label}
-              </button>
-            ))}
-          </div>
         </div>
 
         {view === "chat" && current && (
