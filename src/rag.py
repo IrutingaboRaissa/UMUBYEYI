@@ -398,13 +398,25 @@ class UmubyeyiRAG:
             return ""
 
     def _generate(self, query: str, evidence: str, lang: str, history=None) -> tuple[str, str]:
-        """Use our own fine-tuned generator first, then optional local Ollama, then retrieval.
+        """Use grounded Gemini first (reliable in both languages), then our own
+        fine-tuned generator, then optional local Ollama, then retrieval.
 
-        No third-party LLM API produces wellbeing-answer content: the fine-tuned
-        model generates freely from its own weights (see finetuned_generator.py),
-        and Ollama runs entirely on the local machine. Retrieval (the reviewed
-        source passage itself) is the final, always-available fallback.
+        Gemini receives only this message and the classifier-selected reviewed
+        evidence, never the raw conversation history (it can contain sensitive
+        details), and its output must pass a strict local coverage/grounding
+        check before use. The project's own fine-tuned model remains a real,
+        documented fallback layer -- it was demoted from primary after
+        repeated mid-conversation reliability problems in practice.
         """
+        try:
+            draft = self.gemini_generator.generate(query, evidence, lang)
+        except Exception:
+            draft = ""
+        if not draft and self.gemini_generator.available and self.gemini_generator.last_error:
+            # Sanitized operational evidence only: never log the key, message, or passage.
+            print(f"Gemini fallback: {self.gemini_generator.last_error}", file=sys.stderr, flush=True)
+        if draft:
+            return draft, "gemini_grounded"
         try:
             draft = self.finetuned_generator.generate(query, lang, history)
         except Exception:
