@@ -180,7 +180,18 @@ def test_deterministic_paths_work_with_network_disabled(monkeypatch):
     assert rag.answer("hi", force_lang="en")["mode"] == "greeting_fallback"
 
 
-def test_finetuned_generator_is_used_first_for_english():
+def test_gemini_is_used_first_for_english(monkeypatch):
+    def grounded(query, evidence, lang):
+        return "I hear how heavy today feels. Your feelings matter. Would you like to share more?"
+
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", grounded)
+    result = rag.answer("I feel a little sad today", force_lang="en")
+    assert result["mode"] == "gemini_grounded"
+    assert result["grounded"] is True
+
+
+def test_finetuned_generator_is_used_when_gemini_fails(monkeypatch):
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
     monkeypatch_target = rag._default.finetuned_generator
 
     class Stub:
@@ -196,8 +207,9 @@ def test_finetuned_generator_is_used_first_for_english():
         rag._default.finetuned_generator = monkeypatch_target
 
 
-def test_rw_skips_unreviewed_ollama_when_finetuned_has_no_rw_support(monkeypatch):
+def test_rw_skips_unreviewed_ollama_when_gemini_and_finetuned_have_no_rw_support(monkeypatch):
     monkeypatch.delenv("UMU_ALLOW_RW_OLLAMA", raising=False)
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
     monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
     monkeypatch.setattr(
         rag._default,
@@ -210,6 +222,7 @@ def test_rw_skips_unreviewed_ollama_when_finetuned_has_no_rw_support(monkeypatch
 
 
 def test_generator_exception_falls_back_instead_of_raising_500(monkeypatch):
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
     monkeypatch.setattr(
         rag._default.finetuned_generator,
         "generate",
@@ -230,6 +243,7 @@ def test_ollama_is_opt_in_and_cannot_delay_default_fallback(monkeypatch):
 
 
 def test_retrieval_fallback_is_the_reviewed_passage_not_a_canned_wrapper(monkeypatch):
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
     monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
     top, _ = rag.retrieve("I feel a little sad today", k=1, lang="en")[0]
 
@@ -241,6 +255,7 @@ def test_retrieval_fallback_is_the_reviewed_passage_not_a_canned_wrapper(monkeyp
 
 def test_ollama_receives_evidence_selected_by_trained_topic_classifier(monkeypatch):
     captured = {}
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
     monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
     monkeypatch.setenv("UMU_ENABLE_OLLAMA", "1")
 
@@ -290,12 +305,6 @@ def test_explicit_offtopic_pivot_redirects_even_mid_wellbeing_thread():
     assert result["mode"] == "offtopic"
 
 
-def test_wellbeing_answer_generation_never_calls_gemini():
-    """The core wellbeing-answer cascade must not depend on any third-party LLM API --
-    only our own fine-tuned model, local Ollama, or the reviewed retrieved passage."""
-    import inspect
-    src = inspect.getsource(rag.UmubyeyiRAG._generate)
-    assert "gemini" not in src.lower()
 
 
 def test_multi_concern_message_selects_relevant_topics():

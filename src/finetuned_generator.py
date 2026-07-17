@@ -4,6 +4,8 @@ from __future__ import annotations
 import json
 import os
 import re
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 try:  # package import in training scripts; top-level import in Vercel/local API
@@ -13,6 +15,15 @@ except ImportError:  # pragma: no cover - exercised by the deployed top-level im
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ADAPTER = ROOT / "models" / "umubyeyi-bloomz-lora"
+
+
+def grounding_overlap(answer: str, evidence: str) -> float:
+    """Fraction of meaningful generated words supported by the supplied evidence."""
+    words = re.findall(r"[^\W\d_]{3,}", answer.lower(), flags=re.UNICODE)
+    evidence_words = set(re.findall(r"[^\W\d_]{3,}", evidence.lower(), flags=re.UNICODE))
+    if not words:
+        return 0.0
+    return sum(word in evidence_words for word in words) / len(words)
 
 
 def _history_text(history, max_turns: int = 6) -> str:
@@ -59,9 +70,18 @@ class FineTunedGenerator:
         return self._manifest
 
     @property
+    def _remote_url(self) -> str:
+        """URL of the Hugging Face Space hosting this same model, for the
+        deployed (Vercel) build which cannot bundle PyTorch/Transformers
+        within its 500MB serverless function limit. See hf_space/."""
+        return os.environ.get("UMU_REMOTE_GENERATOR_URL", "").strip().rstrip("/")
+
+    @property
     def available(self) -> bool:
-        if os.environ.get("VERCEL") == "1" or os.environ.get("UMU_DISABLE_FINETUNED") == "1":
+        if os.environ.get("UMU_DISABLE_FINETUNED") == "1":
             return False
+        if os.environ.get("VERCEL") == "1":
+            return bool(self._remote_url)
         if not (self.adapter_path / "adapter_config.json").exists():
             return False
         if not (self.adapter_path / "training_manifest.json").exists():
@@ -100,6 +120,51 @@ class FineTunedGenerator:
             self._tokenizer = None
             return False
 
+    def _generate_remote(self, query: str, lang: str, history=None) -> str:
+        """Call the Hugging Face Space hosting this same model over HTTP.
+
+        Gradio's API is a two-step async contract: POST submits the job and
+        returns an event_id, then GET streams Server-Sent Events until a
+        "complete" event carries the result. Any failure (space asleep,
+        network error, timeout, malformed stream) returns "" so the caller
+        falls through to its next fallback -- never a crash.
+        """
+        space_url = self._remote_url
+        if not space_url:
+            return ""
+        timeout = float(os.environ.get("UMU_REMOTE_GENERATOR_TIMEOUT_SECONDS", "20"))
+        try:
+            payload = json.dumps({
+                "data": [query, lang, json.dumps(history or [])]
+            }).encode("utf-8")
+            post_request = urllib.request.Request(
+                f"{space_url}/call/generate", data=payload,
+                headers={"Content-Type": "application/json"}, method="POST",
+            )
+            with urllib.request.urlopen(post_request, timeout=timeout) as response:
+                event_id = json.loads(response.read().decode("utf-8")).get("event_id")
+            if not event_id:
+                return ""
+
+            get_request = urllib.request.Request(f"{space_url}/call/generate/{event_id}")
+            with urllib.request.urlopen(get_request, timeout=timeout) as response:
+                event_type = None
+                for raw_line in response:
+                    line = raw_line.decode("utf-8").strip()
+                    if not line:
+                        continue
+                    if line.startswith("event:"):
+                        event_type = line[len("event:"):].strip()
+                    elif line.startswith("data:"):
+                        if event_type == "error":
+                            return ""
+                        if event_type == "complete":
+                            data = json.loads(line[len("data:"):].strip())
+                            return str(data[0]).strip() if data else ""
+            return ""
+        except (OSError, TimeoutError, ValueError, urllib.error.URLError):
+            return ""
+
     def generate(self, query: str, lang: str, history=None) -> str:
         # Capabilities are recorded from held-out evaluation. This checkpoint was
         # only fine-tuned and evaluated on English (see accepted_generation_languages
@@ -108,6 +173,8 @@ class FineTunedGenerator:
         accepted_languages = manifest.get("accepted_generation_languages", ["en"])
         if lang not in accepted_languages:
             return ""
+        if os.environ.get("VERCEL") == "1":
+            return self._generate_remote(query, lang, history)
         if not self._load():
             return ""
         prompt = format_generator_input(query, "", lang, _history_text(history)) + "\n"
