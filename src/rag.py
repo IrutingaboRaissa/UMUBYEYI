@@ -398,25 +398,27 @@ class UmubyeyiRAG:
             return ""
 
     def _generate(self, query: str, evidence: str, lang: str, history=None) -> tuple[str, str]:
-        """Use grounded Gemini first (reliable in both languages), then our own
+        """Use Gemini first (reliable in both languages), then our own
         fine-tuned generator, then optional local Ollama, then retrieval.
 
-        Gemini receives only this message and the classifier-selected reviewed
-        evidence, never the raw conversation history (it can contain sensitive
-        details), and its output must pass a strict local coverage/grounding
-        check before use. The project's own fine-tuned model remains a real,
-        documented fallback layer -- it was demoted from primary after
-        repeated mid-conversation reliability problems in practice.
+        Gemini answers from its own general knowledge rather than being
+        constrained to reproduce the project's 14-topic passages -- see
+        gemini_generator.py's module docstring for why. It still only
+        receives this message, never the raw conversation history (which can
+        contain sensitive details). The project's own fine-tuned model
+        remains a real, documented fallback layer -- it was demoted from
+        primary after repeated mid-conversation reliability problems in
+        practice.
         """
         try:
-            draft = self.gemini_generator.generate(query, evidence, lang)
+            draft = self.gemini_generator.generate(query, lang)
         except Exception:
             draft = ""
         if not draft and self.gemini_generator.available and self.gemini_generator.last_error:
             # Sanitized operational evidence only: never log the key, message, or passage.
             print(f"Gemini fallback: {self.gemini_generator.last_error}", file=sys.stderr, flush=True)
         if draft:
-            return draft, "gemini_grounded"
+            return draft, "gemini_general"
         try:
             draft = self.finetuned_generator.generate(query, lang, history)
         except Exception:

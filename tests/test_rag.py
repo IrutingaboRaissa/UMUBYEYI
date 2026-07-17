@@ -181,12 +181,12 @@ def test_deterministic_paths_work_with_network_disabled(monkeypatch):
 
 
 def test_gemini_is_used_first_for_english(monkeypatch):
-    def grounded(query, evidence, lang):
+    def general(query, lang):
         return "I hear how heavy today feels. Your feelings matter. Would you like to share more?"
 
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", grounded)
+    monkeypatch.setattr(rag._default.gemini_generator, "generate", general)
     result = rag.answer("I feel a little sad today", force_lang="en")
-    assert result["mode"] == "gemini_grounded"
+    assert result["mode"] == "gemini_general"
     assert result["grounded"] is True
 
 

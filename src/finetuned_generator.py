@@ -17,15 +17,6 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ADAPTER = ROOT / "models" / "umubyeyi-bloomz-lora"
 
 
-def grounding_overlap(answer: str, evidence: str) -> float:
-    """Fraction of meaningful generated words supported by the supplied evidence."""
-    words = re.findall(r"[^\W\d_]{3,}", answer.lower(), flags=re.UNICODE)
-    evidence_words = set(re.findall(r"[^\W\d_]{3,}", evidence.lower(), flags=re.UNICODE))
-    if not words:
-        return 0.0
-    return sum(word in evidence_words for word in words) / len(words)
-
-
 def _history_text(history, max_turns: int = 6) -> str:
     """Match the "Role: content" shape the generator was trained on (see
     build_esconv_examples in generation_data.py)."""
