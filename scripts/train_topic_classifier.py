@@ -25,7 +25,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.svm import LinearSVC
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "data" / "intent" / "amod_kinyarwanda.csv"
 MODEL_PATH = ROOT / "models" / "topic_classifier.joblib"
 REPORT_DIR = ROOT / "reports" / "topic_classifier"
