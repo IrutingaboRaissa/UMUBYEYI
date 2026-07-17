@@ -59,7 +59,8 @@ export default function ChatApp() {
   const [moodHistory, setMoodHistory] = useState<{ mood: string; date: string }[]>([]);
   const [moodTip, setMoodTip] = useState<{ mood: string; en: string; rw: string } | null>(null);
   const lastMoodTipIndex = useRef<Record<string, number>>({});
-  const [welcomeQuote] = useState(() => AFFIRM[Math.floor(Math.random() * AFFIRM.length)]);
+  // Fixed, not rotated: "Asking for help is a sign of strength, not weakness."
+  const welcomeQuote = AFFIRM[4];
   const bottomRef = useRef<HTMLDivElement>(null);
   const sid = useRef("");
   const hydrated = useRef(false);
@@ -200,26 +201,28 @@ export default function ChatApp() {
   if (!consented) {
     return (
       <div className="hero">
-        <div className="hero-illustration"><MotherBabyMark /></div>
-        <div className="logo"><Mark size={44} /></div>
-        <h1>Muraho, mama.</h1>
-        <div className="tag">Ntabwo uri wenyine · you&apos;re not alone</div>
-        <p className="lead">Ndi hano kukwitaho uko wiyumva. Vugana nanjye mu Kinyarwanda cyangwa Icyongereza.</p>
-        <p className="leadEn">I&apos;m here to care for how you feel. Talk with me in Kinyarwanda or English.</p>
-        <div className="wcard">
-          <div className="wrow">
-            <b>Umufasha w&apos;imibereho myiza yo mu mutima gusa.</b><br />
-            <span>A wellness companion for your mental wellbeing only — not for medical, baby-care, or other challenges.</span>
+        <div className="hero-visual"><MotherBabyMark /></div>
+        <div className="hero-content">
+          <div className="logo"><Mark size={44} /></div>
+          <h1>Muraho, mama.</h1>
+          <div className="tag">Ntabwo uri wenyine · you&apos;re not alone</div>
+          <p className="lead">Ndi hano kukwitaho uko wiyumva. Vugana nanjye mu Kinyarwanda cyangwa Icyongereza.</p>
+          <p className="leadEn">I&apos;m here to care for how you feel. Talk with me in Kinyarwanda or English.</p>
+          <div className="wcard">
+            <div className="wrow">
+              <b>Umufasha w&apos;imibereho myiza yo mu mutima gusa.</b><br />
+              <span>A wellness companion for your mental wellbeing only — not for medical, baby-care, or other challenges.</span>
+            </div>
+            <div className="wrow">
+              <b>Ku bibazo by&apos;umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara {CRISIS_LINE}.</b><br />
+              <span>For physical or baby concerns, see a health worker; in a crisis call {CRISIS_LINE} · chats stay on this device.</span>
+            </div>
           </div>
-          <div className="wrow">
-            <b>Ku bibazo by&apos;umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara {CRISIS_LINE}.</b><br />
-            <span>For physical or baby concerns, see a health worker; in a crisis call {CRISIS_LINE} · chats stay on this device.</span>
+          <div style={{ marginTop: 20 }}>
+            <button className="btn btn-primary" onClick={() => setConsented(true)}>
+              Tangira ikiganiro · Start →
+            </button>
           </div>
-        </div>
-        <div style={{ marginTop: 20 }}>
-          <button className="btn btn-primary" onClick={() => setConsented(true)}>
-            Tangira ikiganiro · Start →
-          </button>
         </div>
       </div>
     );
@@ -319,6 +322,7 @@ export default function ChatApp() {
                 <div className="s">Umufasha w&apos;imibereho myiza yo mu mutima · a mental-wellbeing companion</div>
               </div>
               <div className="actions">
+                <button className="btn btn-sm" onClick={() => startNewChat()}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("breathe")}>Guhumeka · Breathe</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
@@ -378,6 +382,7 @@ export default function ChatApp() {
                 <div className="s">Wowe wanitaye ku mwana - noneho niwiyiteho</div>
               </div>
               <div className="actions">
+                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
@@ -411,23 +416,23 @@ export default function ChatApp() {
               )}
               {moodHistory.length > 0 && (
                 <div className="disc">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span>Recent:</span>
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      onClick={() => {
-                        setMoodHistory([]);
-                        localStorage.removeItem("umubyeyi_moods_v1");
-                      }}
-                    >
-                      Siba amateka · Clear history
-                    </button>
-                  </div>
+                  <div>Recent:</div>
                   <div className="mood-history">
                     {moodHistory.slice(0, 7).map((entry, i) => (
-                      <span key={`${entry.date}-${i}`} className="mood-pill" style={{ animationDelay: `${i * 45}ms` }}>
+                      <span key={`${entry.date}-${i}`} className="mood-pill mood-pill-removable" style={{ animationDelay: `${i * 45}ms` }}>
                         {entry.mood}
+                        <button
+                          type="button"
+                          className="mood-pill-remove"
+                          aria-label={`Remove ${entry.mood} entry`}
+                          onClick={() => {
+                            const next = moodHistory.filter((_, j) => j !== i);
+                            setMoodHistory(next);
+                            localStorage.setItem("umubyeyi_moods_v1", JSON.stringify(next));
+                          }}
+                        >
+                          ×
+                        </button>
                       </span>
                     ))}
                   </div>
@@ -461,6 +466,7 @@ export default function ChatApp() {
               <div className="s">Optional screening support · not a diagnosis · answers are not stored</div>
             </div>
               <div className="actions">
+                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
@@ -554,6 +560,7 @@ export default function ChatApp() {
               <div className="s">Based on the Edinburgh Postnatal Depression Scale (EPDS-10) · not a diagnosis</div>
             </div>
               <div className="actions">
+                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
@@ -568,6 +575,7 @@ export default function ChatApp() {
               <div className="s">Trends from your wellness test, mood check-ins, and guided check-in</div>
             </div>
               <div className="actions">
+                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
@@ -581,6 +589,7 @@ export default function ChatApp() {
               <div className="av"><Mark /></div>
               <div><div className="t">Ibyerekeye Umubyeyi</div><div className="s">About</div></div>
               <div className="actions">
+                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
