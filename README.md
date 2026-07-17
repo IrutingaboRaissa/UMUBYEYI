@@ -300,17 +300,20 @@ not a fallback-only measurement — see `reports/performance/local_benchmark.jso
 
 | Runtime path | Median latency |
 |---|---:|
-| Crisis safety routing | 0.016 ms |
+| Crisis safety routing | 0.008 ms |
 | Greeting (Gemini disabled/unavailable, fallback text) | 0.011 ms |
-| English message (real fine-tuned BLOOMZ generation) | 4568.6 ms |
-| Kinyarwanda message (direct retrieval, no generation) | 68.6 ms |
-| Guided check-in prediction + live SHAP explanation | 648.0 ms |
+| English message (real fine-tuned BLOOMZ generation) | 5243.5 ms |
+| Kinyarwanda message (direct retrieval, no generation) | 159.1 ms |
+| Guided check-in prediction + live SHAP explanation | 1167.2 ms |
 
 English responses are slow here specifically because this environment runs the real fine-tuned
 BLOOMZ-560m model on CPU rather than falling back to retrieval — the multi-second cost of genuine local
 generation, not a regression. Kinyarwanda stays fast because it is answered by direct retrieval (no
 generator is trained for Kinyarwanda yet). These numbers exclude Gemini network and Ollama generation
-latency, since neither runs in this configuration.
+latency, since neither runs in this configuration. Repeated runs on the same machine vary by roughly
+20-100% on the generation-dependent paths (CPU load, thermal state, background processes) — this is
+expected variance for a CPU-bound generation workload, not a bug; treat these as one representative
+run, not an exact reproducible constant.
 
 ## Supervised machine-learning experiments
 
