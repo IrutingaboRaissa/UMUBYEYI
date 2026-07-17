@@ -2,8 +2,9 @@
   "fine_tuned": true,
   "training_dataset_version": "esconv-v1",
   "method": "LoRA supervised fine-tuning (PEFT)",
-  "base_model": "google/mt5-small",
-  "task": "English emotional-support response generation",
+  "architecture": "decoder-only causal LM (replaces the earlier mT5 encoder-decoder adapter)",
+  "base_model": "bigscience/bloomz-560m",
+  "task": "English emotional-support response generation, free-form (no retrieval evidence conditioning)",
   "seed": 42,
   "dataset": {
     "examples": 7795,
@@ -44,41 +45,42 @@
     }
   },
   "target_statement": "Targets are original ESConv supporter turns; no templated or model-generated answers are used. The AMOD-derived file under data/intent/ trains the separate bilingual intent classifier only and supplies no generator targets.",
-  "knowledge_statement": "The 14-topic postpartum collection is used for retrieval evidence only.",
+  "knowledge_statement": "The 14-topic postpartum collection is used as retrieval evidence for the deterministic safety/scope layer; this generator is not conditioned on it and answers freely from its own fine-tuned weights, the way a general-purpose fine-tuned LLM would.",
+  "base_model_selection_rationale": "BLOOM/BLOOMZ was chosen over mT5/mT0 and over other decoder-only multilingual models (mGPT, XGLM) because BLOOM's real training corpus (ROOTS) is the only one of these with confirmed Kinyarwanda coverage, verified directly against the model card. That coverage is small (~0.003% of ROOTS), so this is the best-evidenced available choice, not a claim of strong Kinyarwanda fluency.",
   "accepted_generation_languages": [
     "en"
   ],
-  "kinyarwanda_limitation": "The intent model uses NLLB machine-translated questions. No human-authored Kinyarwanda response corpus was available, so RW response generation remains behind grounded Gemini or direct retrieval and requires native review.",
-  "trainable_parameters": 344064,
-  "total_parameters": 300520832,
-  "training_loss": 6.372355826787636,
+  "kinyarwanda_limitation": "No real Kinyarwanda supervised conversational corpus was available to fine-tune or evaluate against (see data/knowledge/DATASET_SEARCH_RECORD.md), so this generator only produces English. Kinyarwanda responses come directly from the reviewed, source-attributed retrieval passage (no generation, no third-party LLM), pending a validated Kinyarwanda conversational corpus and native-speaker review.",
+  "trainable_parameters": 786432,
+  "total_parameters": 560001024,
+  "training_loss": 2.6992751215234656,
   "validation_loss_by_epoch": [
-    4.3605,
-    4.2075,
-    4.1767
+    2.7904,
+    2.7514,
+    2.7423
   ],
   "baseline_test": {
-    "rouge_l_f1": 0.0,
-    "distinct_2": 0.2727272727272727,
-    "mean_response_words": 1.22,
+    "rouge_l_f1": 0.06483984694550449,
+    "distinct_2": 0.8073836276083467,
+    "mean_response_words": 7.23,
     "examples": 100
   },
   "fine_tuned_test": {
-    "rouge_l_f1": 0.1149548306238782,
-    "distinct_2": 0.3723076923076923,
-    "mean_response_words": 7.5,
+    "rouge_l_f1": 0.12849513372528043,
+    "distinct_2": 0.6912216083486802,
+    "mean_response_words": 17.29,
     "examples": 100
   },
   "second_generator": {
     "base_model": "google/flan-t5-small",
-    "note": "A second base model fine-tuned identically on the same data as a comparison point, not the model used in the deployed pipeline.",
+    "note": "A second base model fine-tuned identically on the same data, in the same notebook run, as a real architecture-comparison point -- not the model used in the deployed pipeline. See models/umubyeyi-mt5-lora/ for the analogous earlier mT5 comparison artifact.",
     "trainable_parameters": 344064,
     "total_parameters": 77305216,
-    "training_loss": 3.146057275484435,
+    "final_logged_step_loss": 3.0983,
     "validation_loss_by_epoch": [
-      2.9534,
-      2.9256,
-      2.918
+      2.9553,
+      2.9262,
+      2.9182
     ],
     "baseline_test": {
       "rouge_l_f1": 0.10277007103342788,
@@ -87,9 +89,9 @@
       "examples": 100
     },
     "fine_tuned_test": {
-      "rouge_l_f1": 0.1424931563271868,
-      "distinct_2": 0.4755582377791189,
-      "mean_response_words": 17.57,
+      "rouge_l_f1": 0.14954695430628884,
+      "distinct_2": 0.4226457399103139,
+      "mean_response_words": 18.84,
       "examples": 100
     }
   }

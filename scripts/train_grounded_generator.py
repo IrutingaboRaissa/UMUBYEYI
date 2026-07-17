@@ -10,10 +10,12 @@ import argparse
 import json
 import os
 import random
+import sys
 import time
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 DEFAULT_OUTPUT = ROOT / "models" / "umubyeyi-mt5-lora"
 REPORT_DIR = ROOT / "reports" / "generator"
 ESCONV_CACHE = ROOT / "data" / "external" / "ESConv.json"
@@ -134,7 +136,7 @@ def main() -> None:
         AutoModelForSeq2SeqLM, AutoTokenizer, DataCollatorForSeq2Seq,
         EarlyStoppingCallback, Seq2SeqTrainer, Seq2SeqTrainingArguments,
     )
-    from src.generation_data import (
+    from generation_data import (
         ESCONV_COMMIT, ESCONV_SHA256, build_esconv_examples, dataset_summary,
         download_esconv, load_esconv,
     )
