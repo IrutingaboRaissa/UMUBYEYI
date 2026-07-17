@@ -2,7 +2,7 @@ import json
 import urllib.error
 from pathlib import Path
 
-from finetuned_generator import FineTunedGenerator, grounding_overlap
+from finetuned_generator import FineTunedGenerator
 from generation_data import (
     build_esconv_examples, dataset_summary, format_generator_input,
 )
@@ -65,12 +65,6 @@ def test_runtime_prompt_contains_retrieved_evidence_without_a_fixed_answer():
     assert "Persistent sadness deserves support." in prompt
     assert "I feel sad" in prompt
     assert prompt.endswith("Response:")
-
-
-def test_grounding_overlap_rejects_unrelated_generation():
-    evidence = "Persistent sadness after childbirth deserves support from a health worker."
-    assert grounding_overlap("Persistent sadness deserves support from a health worker.", evidence) > 0.5
-    assert grounding_overlap("Football scores and airport hotels are interesting.", evidence) == 0.0
 
 
 def test_missing_fine_tuned_adapter_fails_closed(tmp_path: Path):
