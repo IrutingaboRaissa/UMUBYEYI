@@ -203,7 +203,7 @@ generated-output validation.
 ### Layered model evaluation
 
 ```powershell
-python evaluate_system_layers.py
+python scripts/evaluate_system_layers.py
 ```
 
 No single accuracy score describes the system because classification, retrieval, generation, and
@@ -229,7 +229,7 @@ within its Top-3 results.
 ### Project-trained intent classifier
 
 ```powershell
-python train_topic_classifier.py
+python scripts/train_topic_classifier.py
 ```
 
 The persisted `models/topic_classifier.joblib` pipeline combines word and character TF-IDF with the
@@ -266,13 +266,13 @@ The current Next.js production build completes successfully.
 ### Reproduce model training
 
 ```powershell
-python train_ppd_classifier.py
-python train_checkin_classifier.py
-python train_grounded_generator.py
+python scripts/train_ppd_classifier.py
+python scripts/train_checkin_classifier.py
+python scripts/train_grounded_generator.py
 ```
 
 These commands regenerate the screening pipelines and the mT5 architecture-comparison generator (the
-`train_grounded_generator.py` script trains `google/mt5-small`, not the active BLOOMZ generator). Use
+`scripts/train_grounded_generator.py` script trains `google/mt5-small`, not the active BLOOMZ generator). Use
 `--smoke` only to verify the pipeline quickly; the reported metrics come from the complete run. The
 tabular PPD participant data is never used as generator supervision.
 
@@ -288,25 +288,29 @@ metrics, loss history, and English/Kinyarwanda human-review cases.
 ### Performance benchmark
 
 ```powershell
-python benchmark_system.py
+python scripts/benchmark_system.py
 ```
 
 The command records OS, Python version, processor, logical CPU count and 100-run latency summaries in
 `reports/performance/local_benchmark.json`. Run it on a second machine or operating system before the
 defense and retain both result files for cross-environment evidence.
 
-Current Windows 11 / Python 3.13.7 / 8-logical-CPU fallback-mode medians:
+Current Windows 11 / Python 3.13.7 / 8-logical-CPU medians (real fine-tuned BLOOMZ generation on CPU,
+not a fallback-only measurement — see `reports/performance/local_benchmark.json`):
 
 | Runtime path | Median latency |
 |---|---:|
-| Crisis safety routing | 0.002 ms |
-| Greeting | 0.013 ms |
-| English retrieval response | 3.955 ms |
-| Kinyarwanda retrieval response | 3.335 ms |
-| Guided check-in prediction | 15.301 ms |
+| Crisis safety routing | 0.016 ms |
+| Greeting (Gemini disabled/unavailable, fallback text) | 0.011 ms |
+| English message (real fine-tuned BLOOMZ generation) | 4568.6 ms |
+| Kinyarwanda message (direct retrieval, no generation) | 68.6 ms |
+| Guided check-in prediction + live SHAP explanation | 648.0 ms |
 
-These are steady-state fallback measurements and exclude fine-tuned BLOOMZ, Gemini network, and Ollama
-generation latency.
+English responses are slow here specifically because this environment runs the real fine-tuned
+BLOOMZ-560m model on CPU rather than falling back to retrieval — the multi-second cost of genuine local
+generation, not a regression. Kinyarwanda stays fast because it is answered by direct retrieval (no
+generator is trained for Kinyarwanda yet). These numbers exclude Gemini network and Ollama generation
+latency, since neither runs in this configuration.
 
 ## Supervised machine-learning experiments
 
@@ -502,9 +506,10 @@ notebooks/umubyeyi.ipynb          unified Colab ML, retrieval, fine-tuning, and 
 ollama/Modelfile                  local response-model instructions
 reports/                          metrics, figures, and performance evidence
 docs/REFERENCES.md                technical sources reserved for the final report bibliography
-train_grounded_generator.py       reproducible ESConv LoRA fine-tuning (mT5 comparison path)
-evaluate_system_layers.py         layered metrics, auditable cases, and consolidated figures
-build_shap_background.py          builds the SHAP background sample from the training split
+scripts/                          standalone training/eval/benchmark scripts (not runtime imports)
+scripts/train_grounded_generator.py  reproducible ESConv LoRA fine-tuning (mT5 comparison path)
+scripts/evaluate_system_layers.py    layered metrics, auditable cases, and consolidated figures
+scripts/build_shap_background.py     builds the SHAP background sample from the training split
 src/generation_data.py            generator dataset construction and grouped splits
 src/finetuned_generator.py        lazy BLOOMZ inference — free-form generation, own weights
 src/gemini_generator.py           Gemini scoped to greeting small talk and chat titles only
@@ -514,7 +519,7 @@ src/screening.py                  OOP check-in service
 src/visualizations.py             OOP experiment visualizer
 tests/                            automated unit and integration tests
 local_api.py                      OOP local HTTP adapter
-benchmark_system.py               reproducible runtime benchmark
+scripts/benchmark_system.py       reproducible runtime benchmark
 ```
 
 ## Limitations and responsible use

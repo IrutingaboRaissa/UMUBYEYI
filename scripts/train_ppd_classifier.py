@@ -5,6 +5,7 @@ scores, and derived results are excluded from predictors to prevent target leaka
 The output is a research screening-risk model, not a diagnostic model.
 """
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -23,9 +24,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from src.visualizations import create_experiment_figures, create_test_confusion_figure
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from visualizations import create_experiment_figures, create_test_confusion_figure  # noqa: E402
 DATA = ROOT / "data" / "postpartum_depression" / "PPD_dataset_v3.csv"
 MODELS = ROOT / "models"
 REPORTS = ROOT / "reports" / "ppd_classifier"
