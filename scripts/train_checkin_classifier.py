@@ -1,5 +1,6 @@
 """Train the reduced-input model used by Umubyeyi's optional guided check-in."""
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -13,10 +14,11 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
-from train_ppd_classifier import DATA, SEED, make_pipeline, metrics
-from src.visualizations import create_experiment_figures, create_test_confusion_figure
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 
-ROOT = Path(__file__).resolve().parent
+from train_ppd_classifier import DATA, SEED, make_pipeline, metrics  # noqa: E402
+from visualizations import create_experiment_figures, create_test_confusion_figure  # noqa: E402
 FEATURES = [
     "Age",
     "Relationship with husband",

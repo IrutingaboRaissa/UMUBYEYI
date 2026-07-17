@@ -3,21 +3,24 @@ import json
 import os
 import platform
 import statistics
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 os.environ.setdefault("UMU_DISABLE_OLLAMA", "1")
 
-from src.rag import UmubyeyiRAG
-from src.screening import ScreeningService
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 
-ROOT = Path(__file__).resolve().parent
+from rag import UmubyeyiRAG
+from screening import ScreeningService
+
 OUTPUT = ROOT / "reports" / "performance" / "local_benchmark.json"
 
 
 def checkin_answers():
-    from src.screening import FEATURES
+    from screening import FEATURES
     values = {name: "No" for name in FEATURES}
     values.update({
         "Age": 27, "Relationship with husband": "Good",
