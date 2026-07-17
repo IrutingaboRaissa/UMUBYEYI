@@ -49,8 +49,13 @@ screenshots/
 umubyeyi_analytics.db
 *.db
 
-# downloaded Colab run artifacts (models, checkpoints, figures) — regenerate via the notebook
+# downloaded Colab run artifacts (models, checkpoints, figures) — regenerate via the notebook.
+# Windows auto-suffixes re-downloads as "umubyeyi_colab_results (1)", "(2)", etc.
 umubyeyi_colab_results/
+umubyeyi_colab_results*/
+
+# Word lock files for open .docx documents (e.g. ~$ubyeyi_...docx) — never real content
+~$*
 
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
