@@ -1,14 +1,16 @@
 # Vercel Python functions. Keep this root file lightweight: Vercel discovers and
-# installs it automatically for every api/*.py function.
+# installs it automatically for every api/*.py function -- all endpoints share this
+# one dependency set, so it must fit the 500MB bundle limit even for endpoints that
+# don't need every package.
 scikit-learn==1.9.0
 joblib>=1.3
 numpy>=2.0
 pandas>=2.2
 SQLAlchemy>=2.0
 psycopg2-binary>=2.9
-shap>=0.52
-# Pinned explicitly: shap's own unconstrained "numba"/"llvmlite" deps let some resolvers
-# (seen on Vercel's uv-based build) land on ancient pre-built versions with no Python 3.12
-# wheel, forcing a source build that fails. Pinning modern versions here wins resolution.
-numba>=0.60
-llvmlite>=0.43
+# shap (and its hard numba/llvmlite dependencies) are intentionally NOT installed here:
+# together they pushed the deployed bundle past Vercel's 500MB limit (542MB measured).
+# src/explain.py already gates SHAP off on Vercel by default (UMU_ENABLE_SHAP=1 opt-in)
+# and lazily imports it inside a try/except, so a missing install here fails closed --
+# explainability_available is simply False on the deployed app, no crash. SHAP still
+# runs locally and in the Colab notebook via requirements-local.txt.

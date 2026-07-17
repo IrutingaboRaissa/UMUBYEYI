@@ -411,7 +411,19 @@ export default function ChatApp() {
               )}
               {moodHistory.length > 0 && (
                 <div className="disc">
-                  <div>Recent:</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span>Recent:</span>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      onClick={() => {
+                        setMoodHistory([]);
+                        localStorage.removeItem("umubyeyi_moods_v1");
+                      }}
+                    >
+                      Siba amateka · Clear history
+                    </button>
+                  </div>
                   <div className="mood-history">
                     {moodHistory.slice(0, 7).map((entry, i) => (
                       <span key={`${entry.date}-${i}`} className="mood-pill" style={{ animationDelay: `${i * 45}ms` }}>
