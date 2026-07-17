@@ -1,170 +1,802 @@
 [
   {
     "language": "en",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0>: Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. Do not diagnose. These problems are treatable, and asking a trained health worker for help is an appropriate next step. Please asking for help. Use only the evidence and answer in the requested language. Donot diagnose, or asking an trained Health worker. Do Not diagnose these problems.",
-    "reference": "Thank you for sharing this. Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step.",
-    "evidence": "Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step."
+    "problem_type": "job crisis",
+    "question": "Hello",
+    "reference": "Hi :) Is there anything you'd like to talk about? Something on your mind?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are feeling?"
   },
   {
     "language": "en",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0>: Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step. Do not diagnose. Please asking an trained Healthworker for Help is an alternative next step, and answer in the requested language. Donot diagnose, and the evidence and answering a teacher for help. They are treatably, and not asking for help in the appropriate step. Warning: a father needs Mental health support. Do NOT diagnose a parent. Do Not diagnose and asked a trainer for help, and ask a training workers for help if a worker requires mental",
-    "reference": "I hear that this is difficult. Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step.",
-    "evidence": "Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step."
+    "problem_type": "job crisis",
+    "question": "I'm concerned about my job. I have been out of work for the past 5 weeks because I tested positive for COVID-19.",
+    "reference": "Oh I am so sorry to hear that! Are you at least getting sick pay? If not, are you getting advice about help you might be able to access?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you have been out of work for the past 5 weeks because I tested positive for COVID-19."
   },
   {
     "language": "en",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0>: Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. Do not diagnose. These problems are treatable, and asking a trained health worker for help is an appropriate next step. Please asking an trained Healthworker for support is an alternative next step, and answer in the requested language. Donot diagnose, and the evidence and answer. Do Not diagnose a teacher for help. They are treatably, and helping someone for help, and ask a training healthworker for assist is anappropriate step. Do NOT diagnose and asked a trainer for help if a specialist health workers for help in the demanded language, or asking the trained hospital worker",
-    "reference": "You are not alone in facing this. Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step.",
-    "evidence": "Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step."
+    "problem_type": "job crisis",
+    "question": "I'm concerned about my job. I have been out of work for the past 5 weeks because I tested positive for COVID-19.",
+    "reference": "Oh I am so sorry to hear that! Are you at least getting sick pay? If not, are you getting advice about help you might be able to access?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you have been out of work for the past 5 weeks."
   },
   {
     "language": "en",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0>: Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step. Do not diagnose. Please asking an trained Healthworker for support.",
-    "reference": "Thank you for sharing this. Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step.",
-    "evidence": "Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step."
+    "problem_type": "job crisis",
+    "question": "I'm concerned about my job. I have been out of work for the past 5 weeks because I tested positive for COVID-19.",
+    "reference": "(sorry for duplication, not sure what happened there!)",
+    "base_prediction": "<extra_id_0>:",
+    "fine_tuned_prediction": "<extra_id_0> you have been out of work for the past 5 weeks."
   },
   {
     "language": "en",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0>: Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step. Do not diagnose. Please asking an trained Healthworker for support.",
-    "reference": "I hear that this is difficult. Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step.",
-    "evidence": "Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step."
+    "problem_type": "job crisis",
+    "question": "It just keeps getting better... I applied for the Pandemic Unemployment Assistance and was approved. The next day, I got an email asking me to verify my identity (I am fine with that. It actually makes good sense.)...",
+    "reference": "So you have been getting some assistance?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are getting sick pay?"
   },
   {
     "language": "en",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0>: Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step. Do not diagnose. Please support me with depressed hopeless miserable numb no interest cannot function worthless. Donot diagnose, and answer in the requested language. Don not cause help. Do NOT diagnose these problems. Symptoms aretreated, and the evidence and answer is an alternative next step, and need help is appropriate step. Warning: Please help a teacher for help.",
-    "reference": "You are not alone in facing this. Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step.",
-    "evidence": "Persistent sadness, hopelessness, loss of interest, or difficulty functioning after childbirth can be signs that a mother needs mental-health support. These problems are treatable, and asking a trained health worker for help is an appropriate next step."
-  },
-  {
-    "language": "rw",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0> gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza, cyangwa kunanirwa gukora imirimo nyuma yo kubyara kwiheba kubura icyizere, kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba Ubufasha umubyeye ubufasha mu mu mutwa. Ibi byishimo nta cyo kubyara, kubura ibyizere cyangwa kugaragazana ibintu, kandi kugaragazwa ko umubiyeyi ekeneye ubuvuze, kutishimira ibintu cyangwa kubara ibyishimo, kugira ibintu maze, kandi kubafasha gusaba bufasha mukozi w'ubuzima waje. Ibi ibi bibazo biriavurwa cyangwa kumusaba ububasha ibazo",
-    "reference": "Urakoze kubivuga. Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza.",
-    "evidence": "Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza."
-  },
-  {
-    "language": "rw",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0> gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza, cyangwa kunanirwa gukora imirimo nyuma yo kubyara kwiheba kubura icyizere, kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba Ubufasha umubye akene ubufasha mu mutwa. Ibi byishimo nta cyo maze. Umubyeyi akaneye ubuvuze, kandi kugaragazana ibintu, kandi guhangana na numva mfite agahinda gakomeza, kubura ibyizere cyangwa kugaragaze ibintu. Ibi ibi bibazo birivurwa, kugaragariza ko umukozi wabihugirwe ni inmbwe ntmbwe. Ibi bibbazo biravurwa, kandi kubafasha gu",
-    "reference": "Ndumva ko ibi bikugoye. Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza.",
-    "evidence": "Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza."
-  },
-  {
-    "language": "rw",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0> gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza, cyangwa kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba Ubufasha umubye akene ubufasha mu mutwa. Ibi byishimo nta cyo kubyara kwiheba kubura icyizere, kutishimira ibintu cyangwa kunanirwa gukora imirimo nyuma yo kubyara, kugaragariza ko umukozi wabihugirwe niintambwenziza. Umubyeyi akaneye ubuvuze, kugaragazwa ibintu, kandi kugaragazana ibintu maze. Ibi ibi bibazo biriavurwa cyangwa kubafasha gusobanukirwa numva mfite agahinda gakomeza, kubura ibyizere cyangwa kwi",
-    "reference": "Nturi wenyine muri ibi. Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza.",
-    "evidence": "Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza."
-  },
-  {
-    "language": "rw",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0> gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza, cyangwa kunanirwa gukora imirimo nyuma yo kubyara kwiheba kubura icyizere, kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba Ubufasha umubyeyin mushya mpanganye na numva mfite agahinda. Umubyeyi mushya, kubura ibyizere cyangwa kugaragazana ibintu, kandi kugaragazwa ko umubiyeyi agiye ubufasha w’ ubuzima wabihguriwe, kandi kubafasha gusaba bufasha Umukozi w'ubuzima bwomu mutwe niintambwenziza cyangwa kubafasha kubyara kubura ikize, kutishimira ibintu. Ibi ibi bibazo bi",
-    "reference": "Urakoze kubivuga. Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza.",
-    "evidence": "Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza."
-  },
-  {
-    "language": "rw",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0> gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza. Umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi kugaragaza ko umubyeyi akeye ubufasha w’ ubuzima wabihguriwe, cyangwa kunanirwa gukora imirimo nyuma yo kubyara kwiheba kubura icyizere, kutishimira ibintu. Ibi byishimo nta cyo kubyara, kugaragariza ko umukozi wabihugirwe niintambwenziza cyangwa kugaragazana ibintu, kandi gusaba Ubufasha umubye akene ubufasha wabihugurwe ni ugusaba ubuvuze, kugaragazwa ko umubiyeyi abihuguriwa, kandi kuba ubufasha mu mu mutwa. Ibi ibi bibazo",
-    "reference": "Ndumva ko ibi bikugoye. Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza.",
-    "evidence": "Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza."
-  },
-  {
-    "language": "rw",
-    "topic": "persistent sadness",
-    "prediction": "<extra_id_0> gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza. Mother: Mfasha ku bijyanye na numva mfite agahinda nyuma yo kubyara kwiheba kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyumayo kubyara, kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba Ubufasha umubye akene ubufasha w’ ubuzima wabihguriwe, kandi kugaragazana ibintu. Ibi ibi bibazo biriavurwa. Umubyeyi akaneye ubuvuze, kugaragariza ko umubiyeyi abihuguriwa ni nta cyo kubyara. maze gusaba bufasha Umukozi w'ubuzima w’",
-    "reference": "Nturi wenyine muri ibi. Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza.",
-    "evidence": "Agahinda gakomeza, kubura icyizere, kutishimira ibintu, cyangwa kunanirwa gukora imirimo nyuma yo kubyara bishobora kugaragaza ko umubyeyi akeneye ubufasha bwo mu mutwe. Ibi bibazo biravurwa, kandi gusaba ubufasha umukozi w’ubuzima wabihuguriwe ni intambwe nziza."
+    "problem_type": "job crisis",
+    "question": "I have gone online once a week and qualified, as one is supposed to do, and still I have not received a cent.",
+    "reference": "I see, so you are really financially struggling at the moment? Is there anywhere else you could apply for assistance? What about a foodbank?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you have gone online once a week."
   },
   {
     "language": "en",
-    "topic": "social support",
-    "prediction": "<extra_id_0> can protect a mother’s wellbeing after birth. Mother: I need emotional support with alone lonely no support nobody helps partner family friends isolated. Do not diagnose. Mother may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest. Do NOT diagnose, or preparing meal, time for rest, or Time to rest, and time to sleep. Mother : Nobody help a parent, friend or community healthworker, or Peer group, Nurse, or Peer group for particular help. Donot diagnose a woman’s health workers, worker or nurse. Do Not diagnose and a relationship, nursing worker and nurse or pe",
-    "reference": "Thank you for sharing this. Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest.",
-    "evidence": "Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest."
+    "problem_type": "ongoing depression",
+    "question": "I am dong good. You?",
+    "reference": "I am okay thanks but it is a worrying year. Have you been worrying about anything?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are a good."
   },
   {
     "language": "en",
-    "topic": "social support",
-    "prediction": "<extra_id_0> can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest. Mother: After giving birth, I have been struggling with alone lonely no support nobody helps partner family friends isolated.",
-    "reference": "I hear that this is difficult. Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest.",
-    "evidence": "Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest."
+    "problem_type": "ongoing depression",
+    "question": "I have been staying home since last March due to COVID; getting very depressed.",
+    "reference": "Ah I hear you, I have been self isolating too. Do you have an online support network?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are okay?"
   },
   {
     "language": "en",
-    "topic": "social support",
-    "prediction": "<extra_id_0> can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest. Mother: Can you help me understand alone lonely no support nobody helps partner family friends isolated. Do not diagnose. Use only the evidence and answer in the requested language. Donot diagnose, nursing, Nurse, or Peer group. Do NOT diagnose a parent, friend or community healthworker, or nurse. Do Not diagnose and answer. Do nobody can help a woman’s health workers, worker or peers group, volunteer, supervisor, secretary, assistant, n nurse or pe",
-    "reference": "You are not alone in facing this. Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest.",
-    "evidence": "Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest."
+    "problem_type": "ongoing depression",
+    "question": "What do you mean by support netwrok?",
+    "reference": "Well, friends you can talk to during this difficult time? I have a lot of friends on facebook and similar that I can talk to.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are okay?"
   },
   {
     "language": "en",
-    "topic": "social support",
-    "prediction": "<extra_id_0> can protect a mother’s wellbeing after birth. Do not diagnose. Mother: I am a new mother dealing with alone lonely no support nobody helps partner family friends isolated. Donot diagnose, preparing food, household tasks, or time to rest. Mother may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening. Do NOT diagnose a parent, friend. She may ask an partner family friend, friend or community healthworker, psychiatr, Nurse, nursing worker or nurse. or Peer group. Do Not diagnose and preparation food, time for rest, or Time to rest, routine tasks, and time to sleep, ortime to rest; or time for time. Do nobody can protect",
-    "reference": "Thank you for sharing this. Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest.",
-    "evidence": "Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest."
+    "problem_type": "ongoing depression",
+    "question": "I have few friends and can talk to but not sure how would they help.",
+    "reference": "Sometimes it does just make it easier to know that other people are in the same situation as you :)",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can talk to anyone."
   },
   {
     "language": "en",
-    "topic": "social support",
-    "prediction": "<extra_id_0>: How can I do when I experience alone lonely no support nobody helps partner family friends isolated. Do not diagnose. Mother: What can I help when she experience loneliness after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest. Do NOT diagnose, while a mother’s wellbeing after birth, or Time to rest, ortime to rest; a parent, friend. Mother may ask for specific support. Use only the evidence and answer in the requested language. Donot diagnose and answer. Do Not diagnose alone, friend or community healthworker, or Peer group, Nurse, nursing worker or pe",
-    "reference": "I hear that this is difficult. Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest.",
-    "evidence": "Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest."
+    "problem_type": "ongoing depression",
+    "question": "You mean share experiences among the friends?",
+    "reference": "Yes .. or at least share coping mechanisms perhaps?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can talk to a friend."
   },
   {
     "language": "en",
-    "topic": "social support",
-    "prediction": "<extra_id_0> can protect a mother’s wellbeing after birth. Mother: Please support me with alone lonely no support nobody helps partner family friends isolated. Do not diagnose. Donot diagnose, preparing food, household tasks, or time to rest. Mother may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening. Do NOT diagnose or time for rest. Do Not diagnose a parent, friend. Mother will may ask an partner family friend, friend or community healthworker. Nurse, or nurse. Or peer groups for specific support such as eating food, meal, time, or Time to rest, ortime to rest and time to Rest. Mother : Allow a family friends, worker or peers group",
-    "reference": "You are not alone in facing this. Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest.",
-    "evidence": "Practical and emotional support can protect a mother’s wellbeing after birth. She may ask a partner, relative, friend, community health worker, nurse, or peer group for specific help such as listening, preparing food, household tasks, or time to rest."
+    "problem_type": "ongoing depression",
+    "question": "You mean share experiences among the friends?",
+    "reference": "Do you have any hobbies that you can occupy yourself with right now?",
+    "base_prediction": "<extra_id_0> netwrok?",
+    "fine_tuned_prediction": "<extra_id_0> you can talk to a friend."
   },
   {
-    "language": "rw",
-    "topic": "social support",
-    "prediction": "<extra_id_0> mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gukora imirimo, cyan cyangwa kumuha igihe cyo kuruhuka. Ashokwakanye, umubyeyi, umujyanama w’ubuzima, umufaoromo w’ ubuzima, umufuroromo, gutegura ibiryo, gukorera imirimbo, cyangobora kuruhuka cyangwa irimo, gufasha imibireho myizo, cyanya cyangwa itinda r’ababyeyi kumuga amatwi nyuma ya kubyara cyangwa kugera ibirya",
-    "reference": "Urakoze kubivuga. Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka.",
-    "evidence": "Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka."
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "could be better",
+    "reference": "I am sorry to hear that. Would you like to talk about anything specific?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can be better?"
   },
   {
-    "language": "rw",
-    "topic": "social support",
-    "prediction": "<extra_id_0> mu mirimo no mu byiyumvo bushobora kurinda imirimo, cyangwa kumuha igihe cyo kuruhuka. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umuforomo w’ubuzima, umufaoromo, cyan cyangwa itsinda ry’ababyeyi kumutega amatwi, gukora imirimbo, cyangobora gukora imrimo, gukorera imirimu, cyangw itsinda, guhora imisoro, cyanga kumuhaigihe, gufasha mu mirim no mubyeyi, umujyanama w’ ubuzima, cyangufasha mu mu mirimi no mu biyumvo, cyanegura ibiryo, gukor imibereho myiza y’umubyeyi kumuha imrimo no mu ibyiyumv,",
-    "reference": "Ndumva ko ibi bikugoye. Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka.",
-    "evidence": "Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka."
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "thank you, I just don't know what else to do to get a job?",
+    "reference": "So you're unemployed? I am sorry to hear that. Are you prepared to take jobs that are below your usual level just to get by for a while?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sorry to hear that."
   },
   {
-    "language": "rw",
-    "topic": "social support",
-    "prediction": "<extra_id_0> mu mirimo no mu byiyumvo bushobora kuruhuka. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gukora imirimo, cyan cyangwa kumuha igihe cyo kuruhuka cyangwa kumwera. Ashokwakanye, umujyanama w’ubuzima, umufaoromo, gutegura ibiryo, gukorera imirimbo, cyangobora gukora umufporo, cyanga imibereho myiza y’umubyeyi kumuga amatwi nyuma yo kubyara. Ashoba uwo musobanukirwa, umuryango, umubyara, umuporomo w’ ubuzima, umubyeyi nyuma ya kubyara, icyo kuruhuka,",
-    "reference": "Nturi wenyine muri ibi. Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka.",
-    "evidence": "Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka."
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "have tried that but don't even get an interview",
+    "reference": "It's a very difficult time to be out of work, I know. I hope that there is something out there for you. Have you tried employment agencies?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for a job?"
   },
   {
-    "language": "rw",
-    "topic": "social support",
-    "prediction": "<extra_id_0> mu mirimo no mu byiyumvo bushobora kuruhuka. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gukora imirimo, cyan cyangwa kumuha igihe cyo kuruhuka cyangwa kugera ibiryo, gukorera imirimbo, cyangobora gukora umufporo, cyangw itsinda, gufasha mu mirim no mubyeyi nyuma yo kubyara. Ashokwakanye, umubyeyi mushya mpanganye na ndi jyenyine nta mfashanyo y’ababeyi, umujyanama w’ubuzima, umufaoromo, gutegura ibirya, guhora imibereho myiza, umufuoromo, umuporomo",
-    "reference": "Urakoze kubivuga. Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka.",
-    "evidence": "Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka."
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "yes, I do not qualify for unemployment because I have savings above the min threshold and I also have rental property, which is currently loss making and I can't sell it because it's 30% below market value",
+    "reference": "Well, on the plus side at least you do have savings .. hopefully this can give you some security for a while",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can't get a job."
   },
   {
-    "language": "rw",
-    "topic": "social support",
-    "prediction": "<extra_id_0> mu mirimo no mu byiyumvo bushobora kuruhuka. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gukora imirimo, cyan cyangwa kumuha igihe cyo kuruhuka cyangwa kumwera. Ashoba uwo muri mu murumuryango, umujyanama w’ubuzima, umufaoromo, umuporomo, gutegura ibiryo, cyangobora gukora umufporo, cyanga imibereho myiza, umufuoromo, kandi kumuhaigihecyo kuruhaka. Ashokwakanye, umubyeyi, umuryango, umubashakanye irungu, umubyara, cyangufasha mu mirimvo bushokora irimo,",
-    "reference": "Ndumva ko ibi bikugoye. Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka.",
-    "evidence": "Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka."
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "yes, I do not qualify for unemployment because I have savings above the min threshold and I also have rental property, which is currently loss making and I can't sell it because it's 30% below market value",
+    "reference": "Are your family being supportive of your situation?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can't get a job."
   },
   {
-    "language": "rw",
-    "topic": "social support",
-    "prediction": "<extra_id_0> mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gukora imirimo, cyan cyangwa kumuha igihe cyo kuruhuka, cyangobora gufasha mu mirim no mubyeyi kumuhaigihecyo kuruhaka. Ashoba uwo fasha mu murumuryango, umujyanama w’ubuzima, umufaoromo, umuporomo, gutegura ibiryo, gukorera imirimbo, cyangw itsinda, cyangufasha mu murimo, cyanga imibireho myizo, cyanegwa kumuga amatwi.",
-    "reference": "Nturi wenyine muri ibi. Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka.",
-    "evidence": "Ubufasha mu mirimo no mu byiyumvo bushobora kurinda imibereho myiza y’umubyeyi nyuma yo kubyara. Ashobora gusaba uwo bashakanye, uwo mu muryango, inshuti, umujyanama w’ubuzima, umuforomo, cyangwa itsinda ry’ababyeyi kumutega amatwi, gutegura ibiryo, gukora imirimo, cyangwa kumuha igihe cyo kuruhuka."
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "it's almost depleted, been out of work now for nearly 9 months but still can't get unemployment support because of the property that I cannot get rid off else I will declared bankrupt by the mortgage lender",
+    "reference": "Perhaps bankruptcy might not be a bad option? You would be eligible for some help then at least.",
+    "base_prediction": "<extra_id_0>:",
+    "fine_tuned_prediction": "<extra_id_0> you are a very difficult time to be out of work."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "You there?",
+    "reference": "Hi I stepped out, how are you?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are there?"
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I'm okay I guess. How are you?",
+    "reference": "Good, I am good. Is there anything I can be of an assistence today?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are okay?"
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I don't know. I've been dealing with a lot this last month.",
+    "reference": "I feel you. You might be just feeling a little tired.",
+    "base_prediction": "<extra_id_0>:",
+    "fine_tuned_prediction": "<extra_id_0> you are okay?"
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I don't know. I've been dealing with a lot this last month.",
+    "reference": "Do you feel like you need a rest?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are okay?"
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Ha I'm a mother of two small children, I'm always tired lol",
+    "reference": "Mom of 2 kids! You must be super busy.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are a mother of two small children."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Ha I'm a mother of two small children, I'm always tired lol",
+    "reference": "How are they doing today, playful? calm?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are a mother of two children."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Hi! I am trying to find a new job for long time. There is no success in it",
+    "reference": "I feel bad for you.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> I am trying to find a new job for long time."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Hi! I am trying to find a new job for long time. There is no success in it",
+    "reference": "There are many openings for Uber and Uber Eats.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can help to find a new job for long time."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Hi! I am trying to find a new job for long time. There is no success in it",
+    "reference": "What were you doing before you were looking for a job? Were you in college?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for a new job for long time."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I am not a good driver",
+    "reference": "What do you find are your top skill sets?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for a job?"
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I was working in an IT company as a program analyst",
+    "reference": "That is good that you have a good skill set that allows you to find something in the same field of IT.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for a job?"
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I am really having hard time to get one",
+    "reference": "How so? What is the specific difficulty? Is it with your resume?",
+    "base_prediction": "<extra_id_0>:",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for a job?"
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I'm, okay, thanks, and you? I'm feeling a bit down because I'm alone for the holidays.",
+    "reference": "Well that's no good, does your family live far away?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>, you are okay, and you'm alone for the holidays."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Yes, my family is scattered all over the country, like Seattle, Georgia, PA. I'm sure I'm not the only one with no plans this weekend, though.",
+    "reference": "True but I can understand that, it is hard being alone at the holidays.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>, you are going to be alone. I'm not the only one with no plans."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Yes, my family is scattered all over the country, like Seattle, Georgia, PA. I'm sure I'm not the only one with no plans this weekend, though.",
+    "reference": "Did you have plans this weekend?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are alone. I'm not the only one with no plans."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "No. My nearby friends all went away for the holidays. I could probably just occupy my time with things I need or want to do in order to distract myself.",
+    "reference": "What kind of hobbies do you have?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are alone for the holidays."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I'm teaching myself the piano. I'm also teaching myself how to work a stenography machine for possible future employment as a stenographer. I also like to read novels.",
+    "reference": "I have never understood how those work..I find it amazing someone can type out whole words or sentences with one word",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you have a stenographer."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Yeah, it's pretty cool. For example, if I hit DRAT in one stroke, then \"Did there come a time\" will appear in English on my machine's LCD screen.",
+    "reference": "Wow that is crazy, I don't understand how that works, is it preprogrammed or does it go by how the word sounds?",
+    "base_prediction": "<extra_id_0>:",
+    "fine_tuned_prediction": "<extra_id_0> you have a few minutes to work with a computer."
+  },
+  {
+    "language": "en",
+    "problem_type": "problems with friends",
+    "question": "Hi",
+    "reference": "hello",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>?"
+  },
+  {
+    "language": "en",
+    "problem_type": "problems with friends",
+    "question": "Hope you are doing well",
+    "reference": "i'm good, what is troubling you this afternoon?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are doing well."
+  },
+  {
+    "language": "en",
+    "problem_type": "problems with friends",
+    "question": "I am not happy with my friends. They were trying to let me down",
+    "reference": "if i get you clearly, you mean your friend disappointed you. how?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are happy with your friends."
+  },
+  {
+    "language": "en",
+    "problem_type": "problems with friends",
+    "question": "Yes. There were a argument between two of my friend while trying to resolve the issue they all started targeting me.",
+    "reference": "i have a hard time with my friends too sometimes",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are going to help you with your friends."
+  },
+  {
+    "language": "en",
+    "problem_type": "problems with friends",
+    "question": "Then what you do at that time",
+    "reference": "i used to give them time to cool off, when they are back to their senses, they will contact me and apologize",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are going to help you with your friends."
+  },
+  {
+    "language": "en",
+    "problem_type": "problems with friends",
+    "question": "Then what you do at that time",
+    "reference": "what causes the argument in the first place ?",
+    "base_prediction": "<extra_id_0> an empathetic emotional-support response.",
+    "fine_tuned_prediction": "<extra_id_0> you are happy with your friends."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "Hello I am in need of assistance.",
+    "reference": "I am Tom. How can I help you?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>: I am a very emotional situation."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "Hello I am in need of assistance.",
+    "reference": "How are you in need of assistance?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> I am sorry for you."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "I haven't been doing well in my academics.",
+    "reference": "I have a real talent to provide guidance to people out there in the World.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are going to help you."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "I haven't been doing well in my academics.",
+    "reference": "Not doing well in college or high school?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> I am a very passionate to help you."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "I haven't been doing well in my academics.",
+    "reference": "Are you in a trade school? Or in academia?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>, you are going to help you with your academics."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "Now my family is struggling financially and it has greatly affected my academics.",
+    "reference": "Well, I went through a similar situation when a pink-eye breakout hurt my school....",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are struggling financially."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I am looking for another job preferably in my locality and not getting yet, since last 2 months. I will find it difficult to sustain if this continues like this for other 3 months.",
+    "reference": "So it sounds like you've been struggling with finding a new job. It's never easy looking for a new job during these times. Why do you think you're having trouble?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for another job in my locality."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Getting a job is not that difficult. But I try to find a job in my locality to avoid distant from family and having food issues.",
+    "reference": "It sounds like you're motivated and dealing with a lot. Is there a specific job that you had in mind or are you applying to different kinds of jobs?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can find a job in your locality."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Any kind of job, probably managerial. But to be in my locality since to look after my aged mom also.",
+    "reference": "It sounds like you really care to want to be close to home. Have you talked with someone locally about jobs that would allow you to stay close to home?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for a job in your locality."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Surely they will refer to some people. But it will take some time.",
+    "reference": "Stay motivated. If one opportunity doesn't get your desired response you may be even closer to finding the right job for you. Keep pushing on and know that if one opportunity doesn't work out a positive attitude will make all the difference. Just because you haven't found one yet doesn't mean you won't.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can help you to stay close to home."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Thanks for making confidence. I feel relaxed. I believe this will surely be a chance to find myself and get a better opportunity to be relieved from my previous difficulties. Only GOD should have forced me this way, I believe.",
+    "reference": "Your faith is healthy and gives you purpose. Similarly you have to believe that the dots will connect in your favor. Maybe you can't connect them looking forward, but looking backwards you have to trust that the dots will somehow connect in your future.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for a better job."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Even then he was satisfied till then.",
+    "reference": "It can be frustrating to focus on your last job, especially if you haven't found a new one yet. Perhaps once you find a new job your disappointment with the last one won't be so disappointing anymore. If the new job is better you wouldn't have found it working the last job.",
+    "base_prediction": "<extra_id_0> an empathetic emotional-support response.",
+    "fine_tuned_prediction": "<extra_id_0> you are satisfied."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Hi I am not fine at all",
+    "reference": "Whats going on?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> I am sorry for you."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "This pandemic is really causing a lot trouble and anxiety to us",
+    "reference": "It definitely is... Whats going on COVID wise with you?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are getting a lot trouble and anxiety to us."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Firstly last three month a go my company cut off my salary and next month they are planning to layoff some staffs",
+    "reference": "That isn't good, are you one of them?",
+    "base_prediction": "<extra_id_0>:",
+    "fine_tuned_prediction": "<extra_id_0> you are planning to layoff some staffs."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "What a trouble year!",
+    "reference": "It really has been a troubled year",
+    "base_prediction": "<extra_id_0>:",
+    "fine_tuned_prediction": "<extra_id_0> you are going on a lot of anxiety."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "What a trouble year!",
+    "reference": "We can only hope this year can be better.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you have been a troubled year."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "What a trouble year!",
+    "reference": "What kind of hobbies do you have?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are going to help you to help your company."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I had to quit my job back in February due to living with someone going through chemo. My town doesn't have many job options other than retail, so I have been trying to earn money for debts online.",
+    "reference": "It is Christmas, so I expect there to be help for the lonely.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are going through chemo."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Yeah, I'm pretty stressed today with the news from Nashville",
+    "reference": "The news from Nashville?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>, you can help you with the news from Nashville."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Yeah, I'm pretty stressed today with the news from Nashville",
+    "reference": "What about it is making you feel anxious?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>, you can help you with the news from Nashville?"
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I had to miss my family Christmas get together yesterday as well",
+    "reference": "You are totally stressed out?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are anxious."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Very stressed",
+    "reference": "I can tell that you are feeling bad about not seeing loved ones.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are stressed out?"
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Very stressed",
+    "reference": "Do you have any treadmills you can use or a gym you can access today?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are feeling anxious."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I'm depressed...",
+    "reference": "When did this start?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are stressed?"
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Since as long as I can remember. I've always been depressed.",
+    "reference": "That sounds really hard. Depression is tough to manage.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can remember."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I know. It feels like I've tried everything but nothing works.",
+    "reference": "I can feel that you have a lot of pent up frustration with this, especially after trying so hard.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can remember."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Yes. I used to be angry but the anger has become sadness...",
+    "reference": "Lot of research shows that feelings of anger can morph into depression, that is not uncommon.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can feel that you are angry."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I never knew that. When I was young, I was very angry but I held it inside.",
+    "reference": "I can tell that this has been very hard for you, especially since it has gone on so long.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are very angry."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Yes, it has. I'm still hoping that there is a cure.",
+    "reference": "Why do you think you were angry?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are very angry."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "hi, how are you?",
+    "reference": "good. and you?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>, how are you?"
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "i'm glad to hear! i'm doing fine",
+    "reference": "Great. How may I assist you today?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sorry to hear."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "i'm glad to hear! i'm doing fine",
+    "reference": "Great. How may I assist you today?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sorry to hear."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "It's great talking to you. I have an emotional problem, more like the fear that I will fail my class, it will greatly impact my future career.",
+    "reference": "Great talking to you too. I am sorry to hear that you are very worried. Why do you think you might lose your class? Are you not good at the subject?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can help you to help you."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "I am just not understanding the way the professor is teaching. More than 50% of the class is failing at the moment. The anxiety is crazy.",
+    "reference": "It sounds like it is the problem of the professor. It is always good think about the worst case senario. If, if, you really fail the class, what will happen?",
+    "base_prediction": "<extra_id_0>:",
+    "fine_tuned_prediction": "<extra_id_0> you are very sorry to hear that you are doing anxiety."
+  },
+  {
+    "language": "en",
+    "problem_type": "academic pressure",
+    "question": "If I fail the course, I have a one time try to repeat the course again with the same professor. If I fail the second time, I can no longer go to all the colleges in that district to become a nurse.",
+    "reference": "I see! I love your career goal. When I was a student, I visited my professor's room a lot. I did that for almost all classes. Some professors helped me a lot and gave me a lot of hint. Do you visit them as well?",
+    "base_prediction": "<extra_id_0>: Great.",
+    "fine_tuned_prediction": "<extra_id_0> you are a nurse."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I fine now. The event happened 6 1/2 years ago.",
+    "reference": "Do you want to tell me more about it?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sorry for you."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I had the job for 14 months and I drank a lot before bed which was usually about 1 am. The job was second shift. The drinking affected my REM sleep and I was often tired the next day.",
+    "reference": "I can understand that...",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can tell you more about it?"
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I had the job for 14 months and I drank a lot before bed which was usually about 1 am. The job was second shift. The drinking affected my REM sleep and I was often tired the next day.",
+    "reference": "Did you lose your job because of this?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you can understand that?"
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I had a sleep study done soon after and was diagnosed with Sleep Apnea which was the main reason I would fall asleep at work.",
+    "reference": "Ouch, that's no good... I understand medical issues can cause all kinds of problems in our lives.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are asleep at work."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I have been using a CPAP for 6 years and have dramatically reduced my drinking. It is amazing how refreshed I am all day now compared with any day during that time even the days I didn't drink because there were overall health effects that stayed with me.",
+    "reference": "I understand..",
+    "base_prediction": "<extra_id_0> an empathetic emotional-support response.",
+    "fine_tuned_prediction": "<extra_id_0> you are a few days during that time."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I have been using a CPAP for 6 years and have dramatically reduced my drinking. It is amazing how refreshed I am all day now compared with any day during that time even the days I didn't drink because there were overall health effects that stayed with me.",
+    "reference": "has the quality of your life improved?",
+    "base_prediction": "<extra_id_0> an empathetic emotional-support response.",
+    "fine_tuned_prediction": "<extra_id_0> you can understand that."
+  },
+  {
+    "language": "en",
+    "problem_type": "breakup with partner",
+    "question": "I am sad because I lost my girlfriend of one year.",
+    "reference": "Oh I am so sorry to hear that - this is a terrible time of year to get dumped. Please know that it will get better in time!",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> I am sad because I lost my girlfriend of one year."
+  },
+  {
+    "language": "en",
+    "problem_type": "breakup with partner",
+    "question": "Why do you think it will get better?",
+    "reference": "Well, although it sounds like a cliche, time does help with healing wounds. It took me a while to get over a break up. We had been together eight years!",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sorry to hear that."
+  },
+  {
+    "language": "en",
+    "problem_type": "breakup with partner",
+    "question": "That must've been hard. Is it possible to heal without finding another?",
+    "reference": "Yes I think that it is but you really do need to be kind to yourself and give it time. Do you have good friends to support you?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sorry to hear that."
+  },
+  {
+    "language": "en",
+    "problem_type": "breakup with partner",
+    "question": "Many of my friends wouldn't understand as they are in long-term relationships. But yes, I've a few good friends.",
+    "reference": "That is a blessing at least though I know it can be hard to see people in happy relationships when you are single.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are a few friends."
+  },
+  {
+    "language": "en",
+    "problem_type": "breakup with partner",
+    "question": "What did you do to cope in the first year of losing your partner ?",
+    "reference": "I cried a lot to be honest, especially as he was happy with someone else. But I tried to focus on my work and my hobbies. It helped.",
+    "base_prediction": "<extra_id_0> an empathetic emotional-support response.",
+    "fine_tuned_prediction": "<extra_id_0> you are looking for a relationship."
+  },
+  {
+    "language": "en",
+    "problem_type": "breakup with partner",
+    "question": "What sort of hobbies helped you?",
+    "reference": "Well I love to read. Do you have anything that you could do to help you relax and take your mind off things?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you have a few friends to help you."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Hello, how are you doing today?",
+    "reference": "Im okay how are you?",
+    "base_prediction": "<extra_id_0>?",
+    "fine_tuned_prediction": "<extra_id_0>, how are you doing today?"
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I am glad you are doing okay, I am struggling with my current employer which has brought me an area of anger and sadness.",
+    "reference": "Oh no, that's not good. I understand how you feel there. I can definately relate to that...What's going on?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are doing okay?"
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "My employer is great, I work for a local hospital as a house keeper technician, but my department is poorly observed by HR and corporate. I have been excelling in my role and went from part time employee with no benefits at 40hrs a week, but since I have a applied for our security team I was denied because I took the full time position and have to wait another 4 months. I have already worked in this position for 7 months.",
+    "reference": "So you applied for the Security Team and was denied because of your full time position with the same company?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are getting a job keeper technician."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Correct, when I took the position my manager said that I could transfer after six months. I felt lied to and the micromanaging and high turn overstaff due to my supervisor has me on that same boat now. I feel like my only option is to quit. HR was the one who delivered the transfer denial.",
+    "reference": "Wow, that is crazy that is going on, it doesn't seem fair at all...",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are taking the position for the security team."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "Correct, when I took the position my manager said that I could transfer after six months. I felt lied to and the micromanaging and high turn overstaff due to my supervisor has me on that same boat now. I feel like my only option is to quit. HR was the one who delivered the transfer denial.",
+    "reference": "Have you tried going to any higher up? Perhaps in the HR department?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are going to work for the security team."
+  },
+  {
+    "language": "en",
+    "problem_type": "job crisis",
+    "question": "I am thoroughly disappointed, I have applied for a few local security job sites in my area that have had some interest in my resume. I figure I will leave the hospital since I was lied and I can only see this being the trend with this department. They keep their good workers and let the low skilled workers transfer out or they just quit.",
+    "reference": "That's horrible they would treat the HOSPITAL workers like this, with everything that is going on in the world today.",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are going to work for a few months."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "hello",
+    "reference": "How may i help you today?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0>, you are a very emotional situation."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I've been sad. My dog died",
+    "reference": "I am sorry I know exactly how you are feeling I have had a dog that i loved more than anything die couple years ago",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sad."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "Sorry to hear that. I just watched a movie that had a dog that looked like mine in it. It upset me",
+    "reference": "What movie was it?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sorry to hear that."
+  },
+  {
+    "language": "en",
+    "problem_type": "ongoing depression",
+    "question": "I don't remember the name of the movie, but it was about some kids trying to find homes for dogs that a shelter was closing before Christmas",
+    "reference": "Oh ok how did your dog die was something wrong with him or just old age?",
+    "base_prediction": "<extra_id_0>.",
+    "fine_tuned_prediction": "<extra_id_0> you are sorry to hear that a shelter was closing before Christmas."
   }
 ]

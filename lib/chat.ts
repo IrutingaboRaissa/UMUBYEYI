@@ -13,6 +13,12 @@ export type Thread = {
   msgs: Msg[];
 };
 
+export type ConcernSignal = {
+  level: "none" | "mild" | "moderate" | "elevated";
+  score: number;
+  basis: string[];
+};
+
 export type ChatResponse = {
   answer: string;
   language: string;
@@ -23,6 +29,14 @@ export type ChatResponse = {
   sources: { topic: string; source: string; sim: number }[];
   topic_predictions?: { topic_id: string; topic: string; score: number }[];
   latency_ms?: number;
+  concern_signal?: ConcernSignal;
+};
+
+export type Explanation = {
+  feature: string;
+  feature_label: string;
+  contribution: number;
+  direction: "increases" | "decreases";
 };
 
 export type ScreenResponse = {
@@ -31,9 +45,19 @@ export type ScreenResponse = {
   message_en: string;
   message_rw: string;
   disclaimer: string;
+  explainability_available?: boolean;
+  explanation?: Explanation[] | null;
 };
 
-export const CHECKIN_FIELDS = [
+// Each option is either a plain string (submitted value === displayed label) or a
+// [value, label] pair when the value the trained model expects would be confusing to show
+// verbatim -- e.g. the PHQ-2 items must submit clinical "Negative"/"Positive" (matching the
+// dataset's own encoding, "Positive" meaning a positive depression screen) while the label
+// shown to the mother needs to be an unambiguous yes/no question, since "Positive" reads as
+// good news everywhere else in this form.
+export type CheckinOption = string | readonly [string, string];
+
+export const CHECKIN_FIELDS: readonly (readonly [string, string, readonly CheckinOption[]])[] = [
   ["Relationship with husband", "Relationship with partner", ["Good", "Neutral", "Bad"]],
   ["Relationship with the newborn", "Connection with your baby", ["Good", "Neutral", "Bad"]],
   ["Feeling about motherhood", "How you feel about motherhood", ["Positive", "Neutral", "Negative"]],
@@ -46,9 +70,19 @@ export const CHECKIN_FIELDS = [
   ["Relax/sleep when the newborn is asleep", "Can you rest when the baby sleeps?", ["Yes", "No"]],
   ["Angry after latest child birth", "Have you often felt angry or hard to calm?", ["No", "Yes"]],
   ["Feeling for regular activities", "How do ordinary activities feel?", ["Nothing (no difficulty)", "Tired", "Anxious", "Fearful"]],
-  ["Depression before pregnancy (PHQ2)", "Low mood before pregnancy screening", ["Negative", "Positive"]],
-  ["Depression during pregnancy (PHQ2)", "Low mood during pregnancy screening", ["Negative", "Positive"]],
+  ["Depression before pregnancy (PHQ2)", "Before this pregnancy, did you often feel down or lose interest in things?",
+    [["Negative", "No"], ["Positive", "Yes"]]],
+  ["Depression during pregnancy (PHQ2)", "During this pregnancy, did you often feel down or lose interest in things?",
+    [["Negative", "No"], ["Positive", "Yes"]]],
 ] as const;
+
+export function optionValue(option: CheckinOption): string {
+  return typeof option === "string" ? option : option[0];
+}
+
+export function optionLabel(option: CheckinOption): string {
+  return typeof option === "string" ? option : option[1];
+}
 
 export const CRISIS_LINE = "114";
 export const STORE_KEY = "umubyeyi_threads_v3";
@@ -64,6 +98,36 @@ export const TIPS = [
   ["🧘", "Humeka utuze", "Breathe", "Guhumeka gahoro bishobora gutuza umutima.", "A few slow breaths can calm a hard moment."],
   ["💬", "Vuga uko wiyumva", "Share openly", "Vuga ibyiyumvo byawe utagira ipfunwe.", "Speak your feelings without guilt; it's a strength."],
 ] as const;
+
+// Real, hand-authored supportive copy per mood (same category as TIPS/AFFIRM above, not a
+// dataset) so picking the same mood again doesn't always show the identical tip.
+export const MOOD_TIPS: Record<string, readonly (readonly [string, string])[]> = {
+  Great: [
+    ["Write down what helped you feel this way today - it's worth remembering.", "Andika icyagutumye wiyumva utyo uyu munsi - birakwiye kwibukwa."],
+    ["Share this good moment with someone who cares about you.", "Sangira uku kwiyumva neza n'umuntu ukwitaho."],
+    ["Keep doing what's working - your instincts are guiding you well.", "Komeza ukore ibigufasha - umutima wawe ukuyobora neza."],
+  ],
+  Okay: [
+    ["A steady day is worth noticing - small stability matters.", "Umunsi utuje ukwiye kwitabwaho - gutuza gato birafite agaciro."],
+    ["Check in with your body: water, food, and a moment to sit today?", "Reba ku mubiri wawe: wanyoye amazi, urarya, kandi wicaye gato uyu munsi?"],
+    ["It's fine to just get through today - you don't need to feel more than okay.", "Birakwiye kunyura uyu munsi utyo - ntugomba kwiyumva neza cyane."],
+  ],
+  Low: [
+    ["Low days pass. Be as gentle with yourself as you would with a friend.", "Iminsi mibi irashira. Wigirire neza nk'uko wagirira incuti yawe."],
+    ["Try one small comforting thing - tea, sunlight, a favorite song.", "Gerageza ikintu gito gikuruhura - icyayi, izuba, indirimbo ukunda."],
+    ["If low feelings stay for many days, tell someone you trust.", "Niba wiyumva utyo iminsi myinshi, bwira umuntu wizeye."],
+  ],
+  Anxious: [
+    ["Try slow breathing: in for 4, hold for 4, out for 6.", "Gerageza guhumeka gahoro: injiza ubara 4, ushikire 4, sohora ubara 6."],
+    ["Write down the one worry that's loudest right now - naming it can loosen its grip.", "Andika impungenge imwe ikomeye cyane ubu - kuyivuga birayoroshya."],
+    ["Anxious thoughts are not always facts. Ask: what do I actually know right now?", "Ibitekerezo by'impungenge si ukuri buri gihe. Wibaze: ni iki nzi neza ubu?"],
+  ],
+  Exhausted: [
+    ["Rest when the baby rests, even for ten minutes - it counts.", "Ruhuka igihe umwana aruhutse, n'iminota icumi irafite agaciro."],
+    ["Ask for one specific piece of help today instead of managing everything alone.", "Saba ubufasha ku kintu kimwe uyu munsi aho kwikorera byose wenyine."],
+    ["Lower the bar today: fed and safe is enough.", "Gabanya icyo witeze uyu munsi: kurya no kuba mu mutekano birahagije."],
+  ],
+};
 
 export const AFFIRM = [
   ["You are not failing - you are learning.", "Ntabwo unaniwe - uriga."],
@@ -129,11 +193,16 @@ export function sessionId(): string {
   return sid;
 }
 
-export async function sendChat(message: string, forceLang?: "en" | "rw" | null): Promise<ChatResponse> {
+export async function sendChat(
+  message: string, forceLang?: "en" | "rw" | null, history?: Msg[]
+): Promise<ChatResponse> {
+  // Last few turns only: enough for the generator to track the current
+  // exchange without shipping a mother's whole chat history on every request.
+  const recentHistory = (history || []).slice(-6).map((m) => ({ role: m.role, text: m.text }));
   const res = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, force_lang: forceLang ?? null }),
+    body: JSON.stringify({ message, force_lang: forceLang ?? null, history: recentHistory }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -146,7 +215,7 @@ export async function sendScreen(answers: Record<string, string | number>): Prom
   const res = await fetch("/api/screen", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ answers }),
+    body: JSON.stringify({ answers, explain: true }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));

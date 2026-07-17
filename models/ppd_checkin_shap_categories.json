@@ -1,0 +1,67 @@
+{
+  "Relationship with husband": [
+    "Bad",
+    "Friendly",
+    "Good",
+    "Neutral",
+    "Poor"
+  ],
+  "Relationship with the newborn": [
+    "Bad",
+    "Good",
+    "Neutral",
+    "Very good"
+  ],
+  "Feeling about motherhood": [
+    "Happy",
+    "Neutral",
+    "Sad"
+  ],
+  "Recieved Support": [
+    "High",
+    "Low",
+    "Medium"
+  ],
+  "Need for Support": [
+    "High",
+    "Low",
+    "Medium"
+  ],
+  "Abuse": [
+    "No",
+    "Yes"
+  ],
+  "Trust and share feelings": [
+    "No",
+    "Yes"
+  ],
+  "Worry about newborn": [
+    "No",
+    "Yes"
+  ],
+  "Relax/sleep when newborn is tended ": [
+    "No",
+    "Yes"
+  ],
+  "Relax/sleep when the newborn is asleep": [
+    "No",
+    "Yes"
+  ],
+  "Angry after latest child birth": [
+    "No",
+    "Yes"
+  ],
+  "Feeling for regular activities": [
+    "Afraid",
+    "Tired",
+    "Worried"
+  ],
+  "Depression before pregnancy (PHQ2)": [
+    "Negative",
+    "Positive"
+  ],
+  "Depression during pregnancy (PHQ2)": [
+    "Negative",
+    "Positive"
+  ]
+}
