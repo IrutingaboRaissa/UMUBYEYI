@@ -1,10 +1,37 @@
 import json
+import urllib.error
 from pathlib import Path
 
-from finetuned_generator import FineTunedGenerator
+from finetuned_generator import FineTunedGenerator, grounding_overlap
 from generation_data import (
     build_esconv_examples, dataset_summary, format_generator_input,
 )
+
+
+class _FakeHttpResponse:
+    """Minimal context-manager stand-in for urllib.request.urlopen's return value."""
+
+    def __init__(self, body: bytes = b"", lines: list[bytes] | None = None):
+        self._body = body
+        self._lines = lines or []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return False
+
+    def read(self):
+        return self._body
+
+    def __iter__(self):
+        return iter(self._lines)
+
+
+def _remote_generator(tmp_path: Path, monkeypatch, space_url: str = "https://example.hf.space"):
+    monkeypatch.setenv("VERCEL", "1")
+    monkeypatch.setenv("UMU_REMOTE_GENERATOR_URL", space_url)
+    return FineTunedGenerator(tmp_path / "unused")
 
 
 def test_esconv_examples_keep_conversations_grouped_and_targets_original():
@@ -40,6 +67,12 @@ def test_runtime_prompt_contains_retrieved_evidence_without_a_fixed_answer():
     assert prompt.endswith("Response:")
 
 
+def test_grounding_overlap_rejects_unrelated_generation():
+    evidence = "Persistent sadness after childbirth deserves support from a health worker."
+    assert grounding_overlap("Persistent sadness deserves support from a health worker.", evidence) > 0.5
+    assert grounding_overlap("Football scores and airport hotels are interesting.", evidence) == 0.0
+
+
 def test_missing_fine_tuned_adapter_fails_closed(tmp_path: Path):
     generator = FineTunedGenerator(tmp_path / "missing")
     assert generator.available is False
@@ -58,3 +91,60 @@ def test_manifest_disables_language_that_failed_strict_evaluation(tmp_path: Path
     generator = FineTunedGenerator(adapter)
     monkeypatch.setattr(generator, "_load", lambda: (_ for _ in ()).throw(AssertionError("must not load")))
     assert generator.generate("Mfite agahinda", "rw") == ""
+
+
+def test_vercel_deployment_calls_the_remote_space_instead_of_loading_locally(tmp_path, monkeypatch):
+    import urllib.request
+
+    generator = _remote_generator(tmp_path, monkeypatch)
+    monkeypatch.setattr(generator, "_load", lambda: (_ for _ in ()).throw(AssertionError("must not load locally")))
+
+    def fake_urlopen(request, timeout=None):
+        if request.data:
+            return _FakeHttpResponse(body=json.dumps({"event_id": "abc123"}).encode("utf-8"))
+        return _FakeHttpResponse(lines=[
+            b"event: complete\n",
+            b'data: ["What made you feel that way today?"]\n',
+        ])
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    assert generator.generate("I feel exhausted", "en") == "What made you feel that way today?"
+
+
+def test_remote_space_error_event_fails_closed(tmp_path, monkeypatch):
+    import urllib.request
+
+    generator = _remote_generator(tmp_path, monkeypatch)
+
+    def fake_urlopen(request, timeout=None):
+        if request.data:
+            return _FakeHttpResponse(body=json.dumps({"event_id": "abc123"}).encode("utf-8"))
+        return _FakeHttpResponse(lines=[b"event: error\n", b"data: null\n"])
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    assert generator.generate("I feel exhausted", "en") == ""
+
+
+def test_remote_space_network_failure_fails_closed_not_crash(tmp_path, monkeypatch):
+    import urllib.request
+
+    generator = _remote_generator(tmp_path, monkeypatch)
+
+    def fake_urlopen(request, timeout=None):
+        raise urllib.error.URLError("space asleep or unreachable")
+
+    monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
+    assert generator.generate("I feel exhausted", "en") == ""
+
+
+def test_remote_generator_not_called_when_url_unconfigured(tmp_path, monkeypatch):
+    monkeypatch.setenv("VERCEL", "1")
+    monkeypatch.delenv("UMU_REMOTE_GENERATOR_URL", raising=False)
+    generator = FineTunedGenerator(tmp_path / "unused")
+
+    import urllib.request
+    monkeypatch.setattr(
+        urllib.request, "urlopen",
+        lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not call network")),
+    )
+    assert generator.generate("I feel exhausted", "en") == ""

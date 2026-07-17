@@ -42,6 +42,10 @@ models/_generator_smoke/
 models/_generator_checkpoints/
 reports/_generator_smoke/
 
+# HF Space merged checkpoint (1.1GB, LoRA folded in offline) — regenerate via the merge
+# script described in hf_space/README.md; only the Space's own source is version-controlled
+hf_space/merged_model/
+
 # local UI screenshots
 screenshots/
 
