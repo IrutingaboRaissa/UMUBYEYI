@@ -445,12 +445,23 @@ categorically impossible. It would still require a separate deployment experimen
 eligibility, memory, cold-start latency, CPU inference time and cost. Enabling it just before submission
 would change the tested production architecture, so the present design keeps the fine-tuned generator as
 the reproducible local/Colab path and uses direct retrieval as the hosted fallback for chat — the
-screening classifier, its live SHAP explanation, the EPDS-10 wellness test, and the progress dashboard
-are unaffected by this constraint and run identically in both environments.
+EPDS-10 wellness test and the progress dashboard are unaffected by this constraint and run identically
+in both environments.
+
+### Why SHAP explainability is also local-only
+
+`shap`'s own hard dependencies (`numba`, `llvmlite`) pushed the deployed bundle to 542 MB, over Vercel's
+500 MB limit, even after every other function-size fix. Rather than risk the whole deployment to keep one
+feature, `shap` was removed from the root `requirements.txt` (it stays in `requirements-local.txt` for
+local dev and the Colab notebook). `src/explain.py` already gated SHAP off on Vercel by default before
+this (`UMU_ENABLE_SHAP=1` opt-in) and imports it lazily inside a try/except, so this fails closed cleanly:
+the deployed check-in still returns its non-diagnostic result, just with `explainability_available: false`
+and no chart — not a crash.
 
 This is presented as two intentionally different, both-documented environments, not a hidden gap:
-**local** (`npm run dev`) is where the real fine-tuned BLOOMZ generation runs, and **deployed** (Vercel)
-is where the full feature set except live generation runs, falling back to the reviewed retrieved passage.
+**local** (`npm run dev`) is where the real fine-tuned BLOOMZ generation and the live SHAP explanation
+both run, and **deployed** (Vercel) is where chat falls back to direct retrieval and the check-in result
+has no SHAP chart — everything else (EPDS test, progress dashboard, safety routing) runs identically.
 
 1. Run tests and the production build locally.
 2. Commit and push the exact tested revision.
@@ -461,10 +472,11 @@ is where the full feature set except live generation runs, falling back to the r
    uses direct retrieval for chat because local BLOOMZ/Ollama dependencies are intentionally excluded
    from the serverless function.
 6. Verify `/`, `/api/chat`, `/api/screen`, crisis routing, English/RW retrieval, EPDS test, progress
-   dashboard, and mobile layout.
+   dashboard, and mobile layout. On the deployed build, confirm `/api/screen` still returns a clean
+   result with `explainability_available: false` (no SHAP chart) rather than an error.
 7. Confirm that the URL at the top of this README is publicly accessible without Vercel authentication.
 8. Record the demo against that exact deployed revision, and separately against local `npm run dev` for
-   the fine-tuned generation path.
+   the fine-tuned generation path and the live SHAP explanation.
 
 ## Five-minute demonstration plan
 
@@ -474,13 +486,13 @@ is where the full feature set except live generation runs, falling back to the r
    explicit off-topic pivot correctly redirecting mid-conversation — 45 seconds
 4. Chat: a Kinyarwanda message answered from the reviewed retrieved passage (no generation, no
    third-party LLM), plus crisis and baby-care routing — 45 seconds
-5. Guided check-in with varied inputs, its non-diagnostic result, and its live SHAP explanation
-   computed from those exact answers — 40 seconds
+5. Guided check-in with varied inputs and its non-diagnostic result, run locally to also show its live
+   SHAP explanation computed from those exact answers — 40 seconds
 6. EPDS-10 wellness test (a real validated instrument, not invented) and the progress dashboard
    trend — 35 seconds
-7. Local vs deployed: the same message answered by the real fine-tuned BLOOMZ model locally, and by
-   direct retrieval on the deployed Vercel build — the documented cross-environment difference — 35
-   seconds
+7. Local vs deployed: the same message answered by the real fine-tuned BLOOMZ model locally and by
+   direct retrieval on the deployed Vercel build, plus the check-in with vs without its SHAP chart —
+   the documented cross-environment difference — 35 seconds
 8. Tests, benchmark, honest limitations (small-model generation quality, Kinyarwanda generation not yet
    possible), and recommendations — 40 seconds
 
@@ -551,6 +563,9 @@ scripts/benchmark_system.py       reproducible runtime benchmark
 - The optional Ollama model remains pretrained and instruction-configured, not fine-tuned.
 - The fine-tuned generator does not run in the deployed (Vercel) build — see "Deployment plan" — so the
   hosted chat answers from retrieval only; the local build is where real fine-tuned generation runs.
+- SHAP explainability also does not run in the deployed build (its `numba`/`llvmlite` dependencies
+  pushed the bundle past Vercel's 500MB limit) — see "Deployment plan"; the deployed check-in returns
+  its result with `explainability_available: false`, and the local build is where the live SHAP chart runs.
 - Deterministic safety rules may miss novel paraphrases and do not replace emergency assessment.
 - The EPDS-10 wellness test is presented in English only; no validated Kinyarwanda translation of the
   instrument exists yet, and an unverified translation would not be presented as equivalent.
