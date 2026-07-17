@@ -1,8 +1,7 @@
-"""Lazy local inference for Umubyeyi's fine-tuned multilingual generator."""
+"""Lazy local inference for Umubyeyi's own fine-tuned emotional-support generator."""
 from __future__ import annotations
 
 import json
-import importlib.util
 import os
 import re
 from pathlib import Path
@@ -13,51 +12,32 @@ except ImportError:  # pragma: no cover - exercised by the deployed top-level im
     from generation_data import format_generator_input
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_ADAPTER = ROOT / "models" / "umubyeyi-mt5-lora"
+DEFAULT_ADAPTER = ROOT / "models" / "umubyeyi-bloomz-lora"
 
 
-def grounding_overlap(answer: str, evidence: str) -> float:
-    """Fraction of meaningful generated words supported by the supplied evidence."""
-    words = re.findall(r"[^\W\d_]{3,}", answer.lower(), flags=re.UNICODE)
-    evidence_words = set(re.findall(r"[^\W\d_]{3,}", evidence.lower(), flags=re.UNICODE))
-    if not words:
-        return 0.0
-    return sum(word in evidence_words for word in words) / len(words)
-
-
-def _normalise(text: str) -> str:
-    return " ".join(re.findall(r"[^\W_]+", text.lower(), flags=re.UNICODE))
-
-
-def validate_grounded_generation(answer: str, evidence: str, lang: str) -> str:
-    """Return a safe generated answer or empty text when generation is unreliable.
-
-    The small model can continue beyond a good evidence reproduction or produce
-    malformed low-resource-language text.  Only complete evidence sentences that
-    the model actually generated are retained.  This is intentionally stricter
-    than a bag-of-words overlap score.
-    """
-    cleaned = re.sub(r"<extra_id_\d+>\s*:??\s*", "", answer).strip()
-    answer_normalised = _normalise(cleaned)
-    evidence_sentences = [
-        sentence.strip() for sentence in re.split(r"(?<=[.!?])\s+", evidence.strip())
-        if sentence.strip()
-    ]
-    matched = [
-        sentence for sentence in evidence_sentences
-        if _normalise(sentence) and _normalise(sentence) in answer_normalised
-    ]
-    evidence_words = sum(len(_normalise(sentence).split()) for sentence in evidence_sentences)
-    matched_words = sum(len(_normalise(sentence).split()) for sentence in matched)
-    coverage = matched_words / evidence_words if evidence_words else 0.0
-    if coverage < 0.65:
+def _history_text(history, max_turns: int = 6) -> str:
+    """Match the "Role: content" shape the generator was trained on (see
+    build_esconv_examples in generation_data.py)."""
+    if not history:
         return ""
-    acknowledgement = "Ndumva ko ibi bikugoye." if lang == "rw" else "I hear that this is difficult."
-    return f"{acknowledgement} {' '.join(matched)}"
+    lines = []
+    for item in history[-max_turns:]:
+        role = "Supporter" if item.get("role") == "bot" else "User"
+        content = (item.get("text") or "").strip()
+        if content:
+            lines.append(f"{role}: {content}")
+    return " ".join(lines)
 
 
 class FineTunedGenerator:
-    """Load the PEFT adapter only when a local generated answer is requested."""
+    """Load the PEFT adapter only when a local generated answer is requested.
+
+    Decoder-only causal LM (BLOOMZ-560m) fine-tuned on real ESConv supporter
+    turns. Generates freely from its own weights -- the way a general-purpose
+    fine-tuned LLM would -- rather than being constrained to reproduce a
+    retrieved passage. Retrieval evidence is used only by the deterministic
+    safety/scope layer upstream in rag.py, never fed into this model.
+    """
 
     def __init__(self, adapter_path: Path | str | None = None):
         configured = adapter_path or os.environ.get("UMU_FINETUNED_MODEL") or DEFAULT_ADAPTER
@@ -65,21 +45,29 @@ class FineTunedGenerator:
         self._attempted = False
         self._model = None
         self._tokenizer = None
+        self._torch = None
         self._manifest = None
+
+    def _read_manifest(self) -> dict:
+        if self._manifest is None:
+            try:
+                self._manifest = json.loads(
+                    (self.adapter_path / "training_manifest.json").read_text(encoding="utf-8")
+                )
+            except (OSError, json.JSONDecodeError):
+                self._manifest = {}
+        return self._manifest
 
     @property
     def available(self) -> bool:
         if os.environ.get("VERCEL") == "1" or os.environ.get("UMU_DISABLE_FINETUNED") == "1":
             return False
-        manifest_path = self.adapter_path / "training_manifest.json"
-        if not (self.adapter_path / "adapter_config.json").exists() or not manifest_path.exists():
+        if not (self.adapter_path / "adapter_config.json").exists():
             return False
-        try:
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
+        if not (self.adapter_path / "training_manifest.json").exists():
             return False
-        # Do not silently run the superseded adapter trained on templated prompts.
-        return manifest.get("training_dataset_version") == "esconv-amod-v1"
+        # Do not silently run a superseded adapter trained on templated prompts.
+        return self._read_manifest().get("training_dataset_version") == "esconv-v1"
 
     def _load(self) -> bool:
         if self._attempted:
@@ -89,21 +77,15 @@ class FineTunedGenerator:
             return False
         try:
             import torch
-            # A globally installed CPU-only bitsandbytes can make PEFT fail while
-            # loading an ordinary (non-quantized) LoRA adapter. A clean project
-            # environment does not install bitsandbytes. Skip this optional path
-            # quickly here and allow the caller's grounded fallback.
-            if not torch.cuda.is_available() and importlib.util.find_spec("bitsandbytes") is not None:
-                return False
             from peft import PeftModel
-            from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+            from transformers import AutoModelForCausalLM, AutoTokenizer
 
-            self._manifest = json.loads(
-                (self.adapter_path / "training_manifest.json").read_text(encoding="utf-8")
-            )
-            base = self._manifest["base_model"]
+            manifest = self._read_manifest()
+            base = manifest["base_model"]
             tokenizer = AutoTokenizer.from_pretrained(self.adapter_path)
-            model = AutoModelForSeq2SeqLM.from_pretrained(base)
+            if tokenizer.pad_token is None:
+                tokenizer.pad_token = tokenizer.eos_token
+            model = AutoModelForCausalLM.from_pretrained(base)
             model = PeftModel.from_pretrained(model, self.adapter_path)
             model.eval()
             self._torch = torch
@@ -112,38 +94,39 @@ class FineTunedGenerator:
             return True
         except Exception:
             # PEFT/Transformers can raise version-, device-, or backend-specific
-            # exceptions. Generation is optional, so always fail to retrieval.
+            # exceptions. Generation is optional, so always fail to the caller's
+            # own fallback rather than crashing the request.
             self._model = None
             self._tokenizer = None
             return False
 
-    def generate(self, query: str, evidence: str, lang: str) -> str:
-        # Capabilities are recorded from held-out strict validation. Avoid paying
-        # generation latency for a language whose raw outputs did not pass the gate.
-        try:
-            manifest = json.loads(
-                (self.adapter_path / "training_manifest.json").read_text(encoding="utf-8")
-            )
-            accepted_languages = manifest.get("accepted_generation_languages", ["en", "rw"])
-            if lang not in accepted_languages:
-                return ""
-        except (OSError, json.JSONDecodeError):
+    def generate(self, query: str, lang: str, history=None) -> str:
+        # Capabilities are recorded from held-out evaluation. This checkpoint was
+        # only fine-tuned and evaluated on English (see accepted_generation_languages
+        # in training_manifest.json) -- avoid paying generation latency otherwise.
+        manifest = self._read_manifest()
+        accepted_languages = manifest.get("accepted_generation_languages", ["en"])
+        if lang not in accepted_languages:
             return ""
         if not self._load():
             return ""
-        prompt = format_generator_input(query, evidence, lang)
-        encoded = self._tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
+        prompt = format_generator_input(query, "", lang, _history_text(history)) + "\n"
+        encoded = self._tokenizer(prompt, return_tensors="pt", truncation=True, max_length=384)
         try:
             with self._torch.inference_mode():
                 output = self._model.generate(
-                    **encoded, max_new_tokens=120, num_beams=2,
-                    no_repeat_ngram_size=3, early_stopping=True,
+                    **encoded, max_new_tokens=120, do_sample=True, temperature=0.8, top_p=0.9,
+                    no_repeat_ngram_size=3, pad_token_id=self._tokenizer.pad_token_id,
                 )
-            answer = self._tokenizer.decode(output[0], skip_special_tokens=True).strip()
+            # A causal LM echoes the prompt back before continuing -- decode only the
+            # new tokens (matches training-time generate_responses in the notebook).
+            new_tokens = output[0][encoded["input_ids"].shape[1]:]
+            answer = self._tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
         except Exception:
             return ""
-        # A fine-tuned model is still generative. Reject outputs that are not visibly
-        # anchored in the retrieved passage and let the caller use direct retrieval.
-        if len(answer.split()) < 6 or grounding_overlap(answer, evidence) < 0.25:
+        # The model was trained on single supporter turns; on rare degenerate
+        # continuations it hallucinates a further "User:"/"Supporter:" line.
+        answer = re.split(r"\n(?:User|Supporter):", answer)[0].strip()
+        if len(answer.split()) < 4:
             return ""
-        return validate_grounded_generation(answer, evidence, lang)
+        return answer

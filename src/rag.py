@@ -40,6 +40,11 @@ class UmubyeyiRAG:
     SIM_GATE = 0.12          # below this: redirect (not in wellbeing scope). Low enough that conversational/
                              # filler-laden emotional messages still answer, high enough that off-topic deflects.
     RW_SIM_GATE = 0.20       # focused source-document bank: abstain below a meaningful text match
+    # Modes where the previous turn was a genuine wellbeing answer, not a redirect/crisis/
+    # greeting -- used only to relax the ambiguous low-similarity gate for short follow-ups
+    # ("okay how should I handle this"). Explicit off-topic/baby-care keyword matches still
+    # redirect regardless of this -- this never overrides those checks.
+    CONTINUATION_MODES = {"finetuned", "ollama_grounded", "retrieved", "retrieved_rw"}
     WELLBEING_INTENTS = {"self_care_coping", "sleep", "overwhelmed_identity",
                          "sadness_low_mood", "anxiety_worry", "relationship_support"}
     INTENT_TOPIC_IDS = {
@@ -116,7 +121,7 @@ class UmubyeyiRAG:
         self.bank = json.loads(bank_path.read_text(encoding="utf-8"))
         self.langdet = joblib.load(self.root / "models" / "lang_detector.joblib")
         self.finetuned_generator = FineTunedGenerator(
-            self.root / "models" / "umubyeyi-mt5-lora"
+            self.root / "models" / "umubyeyi-bloomz-lora"
         )
         self.gemini_generator = GeminiGenerator()
         self.topic_classifier = TopicClassifier(self.root / "models" / "topic_classifier.joblib")
@@ -138,7 +143,9 @@ class UmubyeyiRAG:
             self._indices[lang] = indices
             self._vecs[lang] = vec
             self._mats[lang] = vec.fit_transform(search)
-        self._gemini_context = {
+        # Broader fallback context for Ollama's own evidence-grounded prompting
+        # when the topic classifier maps to no reviewed passages.
+        self._topic_context = {
             lang: " ".join(
                 (row.get(f"text_{lang}") or "").strip()
                 for row in self.bank if (row.get(f"text_{lang}") or "").strip()
@@ -197,6 +204,32 @@ class UmubyeyiRAG:
         # Indirect wording (for example, "I never sleep") requires a stronger
         # source-document match even when it does not contain an explicit feeling phrase.
         return sim >= 0.18
+
+    def _scope_query(self, query: str, history) -> str:
+        """Combine a short follow-up with the immediately preceding user turn, for
+        scope routing only. A real conversation continues in context -- "okay how
+        should I handle this" should not have to restate feeling words on its own
+        to stay in scope. Crisis/clinical detection intentionally stay on the raw
+        current message only (see is_danger/is_clinical below): a stale danger or
+        clinical signal from an earlier turn must never be reused to gate safety.
+        """
+        if not history or len(query.split()) > 8:
+            return query
+        for item in reversed(history):
+            if item.get("role") == "user":
+                prior = (item.get("text") or "").strip()
+                return f"{prior} {query}".strip() if prior else query
+        return query
+
+    def _is_continuing_wellbeing_thread(self, query: str, history) -> bool:
+        """True when the immediately preceding bot turn was a real wellbeing answer
+        and this message is short enough to plausibly be a bare follow-up to it."""
+        if not history or len(query.split()) > 8:
+            return False
+        for item in reversed(history):
+            if item.get("role") == "bot":
+                return item.get("mode") in self.CONTINUATION_MODES
+        return False
 
     def _redirect(self, lang: str) -> str:
         return self._offtopic_message(lang)
@@ -276,6 +309,36 @@ class UmubyeyiRAG:
                 })
         return "\n".join(passages), usable_predictions
 
+    def concern_signal(self, text: str, topic_predictions: list[dict], sim: float) -> dict:
+        """A documented, rule-based heuristic combining signals already computed elsewhere
+        in this request (topic-classifier confidence, FEELING keyword hits, retrieval
+        similarity) into a rough concern-intensity score. This is NOT a trained sentiment
+        model — it exists so the client can show the mother her own trend over time without
+        this project claiming NLP capability (e.g. KinyaBERT-grade sentiment analysis) it
+        does not have.
+        """
+        t = text.lower()
+        feeling_hits = sum(1 for keyword in self.FEELING if keyword in t)
+        feeling_norm = min(feeling_hits / 3, 1.0)
+        top_score = topic_predictions[0]["score"] if topic_predictions else 0.0
+        score = max(0.0, min(1.0, 0.5 * top_score + 0.3 * feeling_norm + 0.2 * sim))
+        if score >= 0.66:
+            level = "elevated"
+        elif score >= 0.4:
+            level = "moderate"
+        elif score >= 0.15:
+            level = "mild"
+        else:
+            level = "none"
+        basis = []
+        if top_score > 0:
+            basis.append("topic_classifier")
+        if feeling_hits > 0:
+            basis.append("feeling_keywords")
+        if sim > 0:
+            basis.append("retrieval_similarity")
+        return {"level": level, "score": round(score, 3), "basis": basis}
+
     def _generate_ollama(self, query: str, evidence: str, lang: str, history=None) -> str:
         """Ask local Ollama to phrase a fresh answer; return empty text on any failure."""
         if (os.environ.get("VERCEL") == "1" or
@@ -334,30 +397,25 @@ class UmubyeyiRAG:
         except (OSError, TimeoutError, ValueError, urllib.error.URLError):
             return ""
 
-    def _generate_grounded(self, query: str, evidence: str, lang: str, history=None,
-                           gemini_evidence: str | None = None) -> tuple[str, str]:
-        """Use grounded Gemini, project-fine-tuned fallback, optional Ollama, then retrieval."""
-        # Gemini receives only this message and classifier-selected reviewed evidence. Conversation
-        # history is intentionally kept local because it can contain sensitive details.
+    def _generate(self, query: str, evidence: str, lang: str, history=None) -> tuple[str, str]:
+        """Use our own fine-tuned generator first, then optional local Ollama, then retrieval.
+
+        No third-party LLM API produces wellbeing-answer content: the fine-tuned
+        model generates freely from its own weights (see finetuned_generator.py),
+        and Ollama runs entirely on the local machine. Retrieval (the reviewed
+        source passage itself) is the final, always-available fallback.
+        """
         try:
-            draft = self.gemini_generator.generate(query, gemini_evidence or evidence, lang)
-        except Exception:
-            draft = ""
-        if not draft and self.gemini_generator.available and self.gemini_generator.last_error:
-            # Sanitized operational evidence only: never log the key, message, or passage.
-            print(f"Gemini fallback: {self.gemini_generator.last_error}", file=sys.stderr, flush=True)
-        if draft:
-            return draft, "gemini_grounded"
-        try:
-            draft = self.finetuned_generator.generate(query, evidence, lang)
+            draft = self.finetuned_generator.generate(query, lang, history)
         except Exception:
             # Optional model/dependency failures must never become an HTTP 500.
             draft = ""
         if draft:
-            return draft, "finetuned_grounded"
-        # The configured Ollama model did not pass Kinyarwanda quality review.
-        # Fail directly to the retrieved RW passage unless a developer explicitly
-        # opts into experimental local RW generation.
+            return draft, "finetuned"
+        # The fine-tuned checkpoint was only evaluated on English (no validated
+        # Kinyarwanda conversational corpus exists yet). Fail directly to the
+        # retrieved RW passage unless a developer explicitly opts into
+        # experimental local RW generation via Ollama.
         if lang == "rw" and os.environ.get("UMU_ALLOW_RW_OLLAMA") != "1":
             return "", ""
         try:
@@ -397,34 +455,39 @@ class UmubyeyiRAG:
             return {"answer": self._clinical_message(lang), "language": lang, "danger": False,
                     "grounded": False, "mode": "referral", "intent": "clinical", "sources": []}
 
-        if self.is_offtopic(query):
+        scope_query = self._scope_query(query, history)
+        # A bare follow-up right after a genuine wellbeing answer gets the benefit of the
+        # doubt on the ambiguous low-similarity gate below -- it never overrides an explicit
+        # off-topic/baby-care keyword match, which redirects regardless of conversation state.
+        continuing = self._is_continuing_wellbeing_thread(query, history)
+
+        if self.is_offtopic(scope_query):
             return {"answer": self._offtopic_message(lang), "language": lang, "danger": False,
                     "grounded": False, "mode": "offtopic", "intent": "offtopic", "sources": []}
 
-        if self.is_baby_care(query):
+        if self.is_baby_care(scope_query):
             return {"answer": self._clinical_message(lang), "language": lang, "danger": False,
                     "grounded": False, "mode": "referral", "intent": "clinical", "sources": []}
 
-        snippets = self.retrieve(query, lang=lang)
+        snippets = self.retrieve(scope_query, lang=lang)
         top, sim = snippets[0] if snippets else (None, 0.0)
         intent = top.get("topic") if top else None
 
-        if lang == "rw" and sim < self.RW_SIM_GATE:
+        if lang == "rw" and sim < self.RW_SIM_GATE and not continuing:
             return {"answer": self._redirect(lang), "language": lang, "danger": False,
                     "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
 
-        if not self.is_wellbeing_scope(query, intent, sim):
+        if not self.is_wellbeing_scope(scope_query, intent, sim) and not continuing:
             return {"answer": self._redirect(lang), "language": lang, "danger": False,
                     "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
 
-        classified_evidence, topic_predictions = self._classified_evidence(query, lang)
+        classified_evidence, topic_predictions = self._classified_evidence(scope_query, lang)
 
         if lang == "rw":
             body = (top.get("text_rw") or "").strip()
             if body:
-                draft, generated_mode = self._generate_grounded(
-                    query, body, lang, history,
-                    gemini_evidence=classified_evidence or self._gemini_context[lang]
+                draft, generated_mode = self._generate(
+                    query, classified_evidence or self._topic_context[lang], lang, history
                 )
                 body, mode = (draft, generated_mode) if draft else (body, "retrieved_rw")
             else:
@@ -435,15 +498,15 @@ class UmubyeyiRAG:
             if not body:
                 return {"answer": self._redirect(lang), "language": lang, "danger": False,
                         "grounded": False, "mode": "offtopic", "intent": intent, "sources": []}
-            draft, generated_mode = self._generate_grounded(
-                query, body, lang, history,
-                gemini_evidence=classified_evidence or self._gemini_context[lang]
+            draft, generated_mode = self._generate(
+                query, classified_evidence or self._topic_context[lang], lang, history
             )
             body, mode = (draft, generated_mode) if draft else (body, "retrieved")
 
         text = f"{body}\n\n{self.DISCLAIMER.get(lang, self.DISCLAIMER['en'])}"
         return {"answer": text, "language": lang, "danger": False, "grounded": True, "mode": mode,
                 "intent": intent, "topic_predictions": topic_predictions,
+                "concern_signal": self.concern_signal(query, topic_predictions, sim),
                 "sources": [{"topic": b.get("topic", ""), "source": b.get("source", ""),
                              "url": b.get("url", ""), "sim": round(s, 2)}
                             for b, s in snippets]}

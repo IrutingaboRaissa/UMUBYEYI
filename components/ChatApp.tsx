@@ -2,19 +2,35 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, TIPS,
+  AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat, sendFeedback,
-  generateTitle, logEvent, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
+  generateTitle, logEvent, optionLabel, optionValue, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
+import EpdsAssessment from "@/components/EpdsAssessment";
+import ProgressDashboard from "@/components/ProgressDashboard";
+import HorizontalBarChart from "@/components/charts/HorizontalBarChart";
+import Mark from "@/components/Mark";
+import MotherBabyMark from "@/components/MotherBabyMark";
 
-type View = "chat" | "checkin" | "selfcare" | "about";
+const EXAMPLE_PROMPTS = [
+  "I feel exhausted all the time",
+  "I'm anxious about my baby",
+  "I feel guilty as a mother",
+  "I feel alone since giving birth",
+];
+
+type View = "chat" | "checkin" | "epds" | "progress" | "selfcare" | "about";
 
 const NAV: { id: View; label: string }[] = [
   { id: "chat", label: "Ikiganiro · Chat" },
   { id: "checkin", label: "Isuzuma · Check-in" },
+  { id: "epds", label: "Ikizamini cy'imibereho · Wellness test" },
+  { id: "progress", label: "Aho ngeze · Progress" },
   { id: "selfcare", label: "Kwiyitaho · Self-care" },
   { id: "about", label: "Ibyerekeye · About" },
 ];
+
+const CHECKIN_HISTORY_KEY = "umubyeyi_checkin_v1";
 
 export default function ChatApp() {
   const [consented, setConsented] = useState(false);
@@ -39,7 +55,11 @@ export default function ChatApp() {
   const [screenResult, setScreenResult] = useState<ScreenResponse | null>(null);
   const [screening, setScreening] = useState(false);
   const [screenError, setScreenError] = useState("");
+  const [saveCheckinHistory, setSaveCheckinHistory] = useState(false);
   const [moodHistory, setMoodHistory] = useState<{ mood: string; date: string }[]>([]);
+  const [moodTip, setMoodTip] = useState<{ mood: string; en: string; rw: string } | null>(null);
+  const lastMoodTipIndex = useRef<Record<string, number>>({});
+  const [welcomeQuote] = useState(() => AFFIRM[Math.floor(Math.random() * AFFIRM.length)]);
   const bottomRef = useRef<HTMLDivElement>(null);
   const sid = useRef("");
   const hydrated = useRef(false);
@@ -98,12 +118,20 @@ export default function ChatApp() {
     setRatedThreads((r) => ({ ...r, [t.id]: true }));
 
     try {
-      const res = await sendChat(userMsg);
+      const res = await sendChat(userMsg, null, current.msgs);
       const botMsg = { role: "bot" as const, text: res.answer, danger: res.danger, mode: res.mode };
       updateThread({ ...t, msgs: [...t.msgs, botMsg] });
       setLastMeta({ lang: res.language, mode: res.mode });
       setRatedThreads((r) => ({ ...r, [t.id]: false }));
       if (sid.current) await logEvent(sid.current, res);
+      if (res.concern_signal) {
+        try {
+          const prev = JSON.parse(localStorage.getItem("umubyeyi_concern_v1") || "[]");
+          const next = [{ date: new Date().toISOString(), score: res.concern_signal.score, level: res.concern_signal.level },
+            ...(Array.isArray(prev) ? prev : [])].slice(0, 30);
+          localStorage.setItem("umubyeyi_concern_v1", JSON.stringify(next));
+        } catch { /* ignore */ }
+      }
       if (isFirstMessage) {
         generateTitle(userMsg, res.answer, res.language).then((title) => {
           if (!title) return;
@@ -172,7 +200,8 @@ export default function ChatApp() {
   if (!consented) {
     return (
       <div className="hero">
-        <div className="logo">U</div>
+        <div className="hero-illustration"><MotherBabyMark /></div>
+        <div className="logo"><Mark size={44} /></div>
         <h1>Muraho, mama.</h1>
         <div className="tag">Ntabwo uri wenyine · you&apos;re not alone</div>
         <p className="lead">Ndi hano kukwitaho uko wiyumva. Vugana nanjye mu Kinyarwanda cyangwa Icyongereza.</p>
@@ -284,7 +313,7 @@ export default function ChatApp() {
         {view === "chat" && current && (
           <>
             <div className="topbar">
-              <div className="av">U</div>
+              <div className="av"><Mark /></div>
               <div>
                 <div className="t">Umubyeyi</div>
                 <div className="s">Umufasha w&apos;imibereho myiza yo mu mutima · a mental-wellbeing companion</div>
@@ -297,7 +326,19 @@ export default function ChatApp() {
 
             <div className="chat-area">
               {current.msgs.length === 0 && (
-                <div className="chat-welcome">Welcome to Umubyeyi</div>
+                <div className="chat-welcome">
+                  <div className="quote">
+                    &ldquo;{welcomeQuote[0]}&rdquo;
+                    <span>{welcomeQuote[1]}</span>
+                  </div>
+                  <div className="prompts">
+                    {EXAMPLE_PROMPTS.map((p) => (
+                      <button key={p} type="button" className="prompt-chip" onClick={() => setInput(p)}>
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
               {current.msgs.map((m, i) => (
                 <div key={i} className={`row ${m.role === "user" ? "me" : ""}`}>
@@ -331,10 +372,13 @@ export default function ChatApp() {
         {view === "selfcare" && (
           <>
             <div className="topbar">
-              <div className="av">U</div>
+              <div className="av"><Mark /></div>
               <div>
                 <div className="t">Kwiyitaho · Self-care</div>
                 <div className="s">Wowe wanitaye ku mwana - noneho niwiyiteho</div>
+              </div>
+              <div className="actions">
+                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
             <div className="section-h">Uko wiyumva · Mood check</div>
@@ -346,9 +390,25 @@ export default function ChatApp() {
                     const next = [{ mood, date: new Date().toISOString() }, ...moodHistory].slice(0, 30);
                     setMoodHistory(next);
                     localStorage.setItem("umubyeyi_moods_v1", JSON.stringify(next));
+
+                    const pool = MOOD_TIPS[mood] ?? [];
+                    if (pool.length > 0) {
+                      const last = lastMoodTipIndex.current[mood];
+                      let index = Math.floor(Math.random() * pool.length);
+                      if (pool.length > 1 && index === last) index = (index + 1) % pool.length;
+                      lastMoodTipIndex.current[mood] = index;
+                      const [en, rw] = pool[index];
+                      setMoodTip({ mood, en, rw });
+                    }
                   }}>{mood}</button>
                 ))}
               </div>
+              {moodTip && (
+                <div className="tip mood-tip">
+                  <div className="tt">For feeling {moodTip.mood.toLowerCase()}</div>
+                  <div className="td">{moodTip.en}<br /><span>{moodTip.rw}</span></div>
+                </div>
+              )}
               {moodHistory.length > 0 && (
                 <div className="disc">
                   <div>Recent:</div>
@@ -384,10 +444,14 @@ export default function ChatApp() {
 
         {view === "checkin" && (
           <section className="view-section">
-            <div className="topbar"><div className="av" /><div>
+            <div className="topbar"><div className="av"><Mark /></div><div>
               <div className="t">Isuzuma ryoroheje · Guided check-in</div>
               <div className="s">Optional screening support · not a diagnosis · answers are not stored</div>
-            </div></div>
+            </div>
+              <div className="actions">
+                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+              </div>
+            </div>
             <div className="card">
               <p>
                 Subiza buri kibazo hakurikijwe uko byifashe mu byumweru bishize, hanyuma ukande &quot;Reba ibisubizo.&quot;
@@ -413,14 +477,32 @@ export default function ChatApp() {
                       onChange={(e) => setCheckin({ ...checkin, [key]: e.target.value })}
                     >
                       <option value="" disabled hidden>Hitamo · Select</option>
-                      {options.map((option) => <option key={option} value={option}>{option}</option>)}
+                      {options.map((option) => (
+                        <option key={optionValue(option)} value={optionValue(option)}>{optionLabel(option)}</option>
+                      ))}
                     </select>
                   </label>
                 ))}
               </div>
-              <button className="btn btn-primary" disabled={screening || !checkinReady} onClick={async () => {
+              <label className="subtext" style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
+                <input type="checkbox" checked={saveCheckinHistory}
+                  onChange={(e) => setSaveCheckinHistory(e.target.checked)} />
+                Save this result on this device only, to see your trend — nothing leaves your phone.
+              </label>
+              <button className="btn btn-primary" style={{ marginTop: 10 }} disabled={screening || !checkinReady} onClick={async () => {
                 setScreening(true); setScreenError(""); setScreenResult(null);
-                try { setScreenResult(await sendScreen(checkin)); }
+                try {
+                  const result = await sendScreen(checkin);
+                  setScreenResult(result);
+                  if (saveCheckinHistory) {
+                    try {
+                      const prev = JSON.parse(localStorage.getItem(CHECKIN_HISTORY_KEY) || "[]");
+                      const next = [{ date: new Date().toISOString(), risk: result.risk, elevated: result.elevated },
+                        ...(Array.isArray(prev) ? prev : [])].slice(0, 30);
+                      localStorage.setItem(CHECKIN_HISTORY_KEY, JSON.stringify(next));
+                    } catch { /* ignore */ }
+                  }
+                }
                 catch (e) { setScreenError(e instanceof Error ? e.message : "Unable to complete check-in"); }
                 finally { setScreening(false); }
               }}>{screening ? "Checking…" : "Reba ibisubizo · Check result"}</button>
@@ -431,19 +513,64 @@ export default function ChatApp() {
               )}
               {screenError && <div className="card danger">{screenError}</div>}
               {screenResult && <div className={`card ${screenResult.elevated ? "danger" : ""}`}>
-                <b>{screenResult.elevated ? "Additional support recommended" : "No elevated risk classified"}</b>
-                <p>{screenResult.message_en}</p><p>{screenResult.message_rw}</p>
-                <div className="disc">{screenResult.disclaimer}</div>
+                <b style={{ fontSize: 16 }}>
+                  {screenResult.elevated
+                    ? "Ushobora gukenera ubufasha bwinyongera · You may benefit from some extra support"
+                    : "Nta bimenyetso bikomeye byagaragaye · Nothing concerning stood out today"}
+                </b>
+                <p style={{ marginTop: 10 }}>{screenResult.message_en}</p>
+                <p style={{ marginTop: 8 }}>{screenResult.message_rw}</p>
+                <div className="disc" style={{ marginTop: 12 }}>{screenResult.disclaimer}</div>
+                {screenResult.explainability_available && screenResult.explanation && (
+                  <>
+                    <div className="section-h" style={{ marginTop: 22 }}>What played the biggest role in this result</div>
+                    <HorizontalBarChart data={screenResult.explanation} />
+                    <div className="subtext" style={{ marginTop: 6 }}>
+                      This comes straight from your own answers, not a fixed rule — every mother&apos;s chart looks different.
+                    </div>
+                  </>
+                )}
               </div>}
             </div>
+          </section>
+        )}
+
+        {view === "epds" && (
+          <section className="view-section">
+            <div className="topbar"><div className="av"><Mark /></div><div>
+              <div className="t">Ikizamini cy&apos;imibereho · Wellness test</div>
+              <div className="s">Based on the Edinburgh Postnatal Depression Scale (EPDS-10) · not a diagnosis</div>
+            </div>
+              <div className="actions">
+                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+              </div>
+            </div>
+            <EpdsAssessment onCrisis={() => setModal("help")} />
+          </section>
+        )}
+
+        {view === "progress" && (
+          <section className="view-section">
+            <div className="topbar"><div className="av"><Mark /></div><div>
+              <div className="t">Aho ngeze · Your progress</div>
+              <div className="s">Trends from your wellness test, mood check-ins, and guided check-in</div>
+            </div>
+              <div className="actions">
+                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+              </div>
+            </div>
+            <ProgressDashboard />
           </section>
         )}
 
         {view === "about" && (
           <>
             <div className="topbar">
-              <div className="av">U</div>
+              <div className="av"><Mark /></div>
               <div><div className="t">Ibyerekeye Umubyeyi</div><div className="s">About</div></div>
+              <div className="actions">
+                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+              </div>
             </div>
             <div className="card">
               <b>Umubyeyi</b> ni umufasha uvuga Ikinyarwanda n&apos;Icyongereza, witeguye kugufasha uko wiyumva mu mezi 6 ya mbere nyuma yo kubyara.
@@ -467,7 +594,12 @@ export default function ChatApp() {
               placeholder="Andika uko wiyumva... · Type how you feel..."
               disabled={typing}
             />
-            <button type="submit" disabled={typing || !input.trim()} aria-label="Send">➤</button>
+            <button type="submit" disabled={typing || !input.trim()} aria-label="Send">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M5 12h13" /><path d="M13 6l6 6-6 6" />
+              </svg>
+            </button>
           </form>
           <div className="foot">
             Umufasha w&apos;imibereho myiza gusa · si uw&apos;ibindi bibazo · mu kaga hamagara {CRISIS_LINE}

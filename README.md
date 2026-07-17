@@ -20,7 +20,7 @@ The video placeholder must be replaced after the final commit is deployed and re
 - deterministic crisis, acute-health, baby-care, and unrelated-topic routing
 - same-language character n-gram TF-IDF retrieval across 14 source-attributed topics
 - project-trained bilingual six-intent classifier mapped to reviewed evidence topics
-- mT5 LoRA fine-tuning on genuine ESConv and AMOD responses
+- mT5 LoRA fine-tuning on genuine ESConv responses
 - coverage-controlled grounded Gemini generation with one corrective retry
 - model-generated greetings/small talk; no canned conversational response list
 - strict generated-output grounding validation and direct-passage fallback
@@ -60,7 +60,7 @@ crisis and referral decisions remain deterministic rather than being delegated t
 In the hosted application, Gemini performs the final natural-language realization because it produced
 clearer and more empathetic bilingual wording in development. It is constrained by the topics and
 evidence selected by the project pipeline, and its output must pass project-owned concern-coverage and
-grounding checks. The local mT5 path is enabled only after the new ESConv/AMOD Colab run produces an
+grounding checks. The local mT5 path is enabled only after the new ESConv Colab run produces an
 adapter with the matching provenance manifest; otherwise the system falls back to reviewed evidence.
 
 ## Prerequisites
@@ -122,7 +122,7 @@ Without a key, the app safely continues through its local/retrieval paths.
 
 ### 5. Fine-tuned local response model
 
-Run `notebooks/umubyeyi.ipynb` on a Colab T4 to produce the current `esconv-amod-v1` LoRA adapter.
+Run `notebooks/umubyeyi.ipynb` on a Colab T4 to produce the current `esconv-v1` LoRA adapter.
 The application deliberately refuses to load the superseded adapter trained on templated prompts.
 After extracting the new artifact under `models/umubyeyi-mt5-lora/`, Transformers downloads the
 `google/mt5-small` base checkpoint and applies the adapter. Set `UMU_DISABLE_FINETUNED=1` when
@@ -193,7 +193,7 @@ safety routing are different tasks. The command writes auditable cases, JSON met
 | Bilingual intent classifier | 180 untouched bilingual cases | English macro-F1 0.7180; Kinyarwanda 0.2762* |
 | English question-to-topic retrieval | 14 controlled paraphrases | Top-1 0.6429; Top-3 0.9286 |
 | Kinyarwanda question-to-topic retrieval | 14 controlled project-authored cases | Top-1 1.0000* |
-| ESConv/AMOD generator | conversation/question-grouped test | Metrics pending the documented Colab run |
+| ESConv generator | conversation-grouped test | Metrics pending the documented Colab run |
 | Safety/scope routing | 16 controlled cases across five categories | Accuracy 1.0000* |
 
 `*` Controlled results are software/behavior evidence, not real-user or clinical validity. The
@@ -365,22 +365,20 @@ than generated templates:
 - **ESConv:** original supporter turns from 1,300 emotional-support conversations, capped at six
   supporter turns per conversation. Official commit
   `f262d062ad74cb39b17ea476facc81568ddcba24`; academic research use only.
-- **AMOD:** original counselor responses for questions retained by the project's six weak intent
-  labels. Hugging Face revision `d7e86f0813c5690181b41f97403c3674aa55dcef`.
 - **Postpartum knowledge base:** 14 reviewed English/Kinyarwanda topics used only for retrieval. It is
   not expanded into templated training conversations.
 
-Complete ESConv conversations and repeated AMOD questions are assigned to one split, preventing turns
-or alternate counselor responses from crossing training and evaluation. The notebook evaluates the
-base and fine-tuned model with held-out ROUGE-L, Distinct-2, loss curves, and blank human-review fields.
-No post-change generator score is claimed until the unified Colab notebook is executed and its artifact
-is retained.
+Complete ESConv conversations are assigned to one split, preventing turns from crossing training and
+evaluation. The notebook evaluates the base and fine-tuned model with held-out ROUGE-L, Distinct-2,
+loss curves, and blank human-review fields. No post-change generator score is claimed until the unified
+Colab notebook is executed and its artifact is retained.
 
-Both conversational datasets are English and are not postpartum-specific. Consequently, the trained
-generator is presented as an English emotional-support adaptation, not a bilingual clinical model.
-AMOD's Kinyarwanda questions support intent-classification research only; they do not provide
-Kinyarwanda answer targets. The hosted application therefore keeps grounded Gemini/direct retrieval
-for Kinyarwanda and discloses that Gemini is an external model.
+The conversational dataset is English and is not postpartum-specific. Consequently, the trained
+generator is presented as an English emotional-support adaptation, not a bilingual clinical model. The
+AMOD-derived file under `data/intent/` is separate project data used only to train the bilingual intent
+classifier (see below); it supplies no generator targets and no Kinyarwanda answer targets. The hosted
+application therefore keeps grounded Gemini/direct retrieval for Kinyarwanda and discloses that Gemini
+is an external model.
 
 ### Data provenance
 
@@ -449,7 +447,7 @@ notebooks/umubyeyi.ipynb     unified Colab ML, retrieval, fine-tuning, and evalu
 ollama/Modelfile             local response-model instructions
 reports/                     metrics, figures, and performance evidence
 docs/REFERENCES.md           technical sources reserved for the final report bibliography
-train_grounded_generator.py  reproducible ESConv/AMOD LoRA fine-tuning
+train_grounded_generator.py  reproducible ESConv LoRA fine-tuning
 evaluate_system_layers.py    layered metrics, auditable cases, and consolidated figures
 src/generation_data.py       generator dataset construction and grouped splits
 src/finetuned_generator.py   lazy inference and strict grounding validator
@@ -470,8 +468,9 @@ benchmark_system.py          reproducible runtime benchmark
   Rwanda-relevant evidence.
 - Project-produced Kinyarwanda passages require native-speaker and maternal-health review.
 - No reviewed Kinyarwanda gold evaluation set or formal Rwandan user study has been completed.
-- ESConv and AMOD provide genuine English responses but are neither postpartum-specific nor Rwandan;
-  their use teaches general response behaviour rather than clinical or local validity.
+- ESConv provides genuine English generator targets but is neither postpartum-specific nor Rwandan;
+  its use teaches general response behaviour rather than clinical or local validity. AMOD supplies only
+  the bilingual intent-classifier training data, not generator targets.
 - The intent labels are keyword weak labels, and the cached Kinyarwanda questions are NLLB-200 machine
   translations. The untouched Kinyarwanda macro-F1 is 0.2762 and requires substantial improvement.
 - No human-authored Kinyarwanda response corpus is used for generator fine-tuning. The current hybrid

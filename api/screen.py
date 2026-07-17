@@ -22,7 +22,7 @@ class handler(BaseHTTPRequestHandler):
         try:
             length = int(self.headers.get("Content-Length", 0))
             body = json.loads(self.rfile.read(length).decode("utf-8")) if length else {}
-            self._json(200, predict_checkin(body.get("answers") or {}))
+            self._json(200, predict_checkin(body.get("answers") or {}, explain=body.get("explain", True)))
         except ValueError as exc:
             self._json(400, {"error": str(exc)})
         except Exception:

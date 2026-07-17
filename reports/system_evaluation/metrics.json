@@ -46,9 +46,19 @@
   },
   "generator": {
     "evaluation": "conversation/question-grouped held-out ESConv and AMOD responses",
-    "available": false,
-    "baseline": null,
-    "fine_tuned": null,
+    "available": true,
+    "baseline": {
+      "rouge_l_f1": 0.0,
+      "distinct_2": 0.2727272727272727,
+      "mean_response_words": 1.22,
+      "examples": 100
+    },
+    "fine_tuned": {
+      "rouge_l_f1": 0.1149548306238782,
+      "distinct_2": 0.3723076923076923,
+      "mean_response_words": 7.5,
+      "examples": 100
+    },
     "limitation": "automatic metrics do not measure empathy, clinical safety, or native fluency"
   },
   "topic_classifier": {

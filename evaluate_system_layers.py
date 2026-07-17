@@ -146,7 +146,7 @@ def load_metrics() -> dict:
     topic_classifier = json.loads(
         (ROOT / "reports/topic_classifier/metrics.json").read_text(encoding="utf-8")
     )
-    current_generator = generator.get("training_dataset_version") == "esconv-amod-v1"
+    current_generator = generator.get("training_dataset_version") == "esconv-v1"
     return {
         "classifiers": {
             "evaluation": "untouched stratified participant test set",
@@ -154,7 +154,7 @@ def load_metrics() -> dict:
             "guided_checkin": {"selected_model": checkin["selected_model"], **checkin["test"]},
         },
         "generator": {
-            "evaluation": "conversation/question-grouped held-out ESConv and AMOD responses",
+            "evaluation": "conversation-grouped held-out ESConv responses",
             "available": current_generator,
             "baseline": generator.get("baseline_test") if current_generator else None,
             "fine_tuned": generator.get("fine_tuned_test") if current_generator else None,
@@ -205,7 +205,7 @@ def create_figures(metrics: dict) -> None:
         axes[1, 0].legend(fontsize=8)
         axes[1, 0].set_title("Generator: held-out conversations")
     else:
-        axes[1, 0].text(.5, .5, "Run the unified Colab notebook\nfor ESConv/AMOD metrics",
+        axes[1, 0].text(.5, .5, "Run the unified Colab notebook\nfor ESConv generator metrics",
                         ha="center", va="center", transform=axes[1, 0].transAxes)
         axes[1, 0].set_title("Generator evaluation pending")
 
@@ -263,7 +263,7 @@ def main() -> None:
     metrics["scope_statement"] = (
         "Screening metrics use untouched participant records. Intent metrics use AMOD-derived weak "
         "labels and NLLB-translated Kinyarwanda. Retrieval and routing cases are controlled project "
-        "evaluations. Generator metrics require a completed grouped ESConv/AMOD Colab run."
+        "evaluations. Generator metrics require a completed conversation-grouped ESConv Colab run."
     )
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "metrics.json").write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
