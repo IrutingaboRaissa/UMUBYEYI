@@ -28,6 +28,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from finetuned_generator import FineTunedGenerator
 from gemini_generator import GeminiGenerator
+from groq_generator import GroqGenerator
 from topic_classifier import TopicClassifier
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -123,6 +124,7 @@ class UmubyeyiRAG:
         self.finetuned_generator = FineTunedGenerator(
             self.root / "models" / "umubyeyi-bloomz-lora"
         )
+        self.groq_generator = GroqGenerator()
         self.gemini_generator = GeminiGenerator()
         self.topic_classifier = TopicClassifier(self.root / "models" / "topic_classifier.joblib")
         self._bank_by_id = {row["id"]: row for row in self.bank}
@@ -154,6 +156,20 @@ class UmubyeyiRAG:
         }
         self._ollama_checked = False
         self._ollama_ready = False
+
+    # -------------------------------------------------------- external LLM provider
+    @property
+    def llm_generator(self):
+        """Whichever external generator is currently selected -- switch with
+        UMU_LLM_PROVIDER=groq|gemini (default groq) to compare quality without
+        a code change. Both remain real, fully wired implementations; this is
+        an active choice, not a dead code path."""
+        provider = os.environ.get("UMU_LLM_PROVIDER", "groq").strip().lower()
+        return self.gemini_generator if provider == "gemini" else self.groq_generator
+
+    @property
+    def llm_provider_name(self) -> str:
+        return "gemini" if self.llm_generator is self.gemini_generator else "groq"
 
     # ---------------------------------------------------------------- language
     def detect_language(self, text: str) -> str:
@@ -398,27 +414,30 @@ class UmubyeyiRAG:
             return ""
 
     def _generate(self, query: str, evidence: str, lang: str, history=None) -> tuple[str, str]:
-        """Use Gemini first (reliable in both languages), then our own
-        fine-tuned generator, then optional local Ollama, then retrieval.
+        """Use the selected external LLM first (reliable in both languages),
+        then our own fine-tuned generator, then optional local Ollama, then
+        retrieval. UMU_LLM_PROVIDER=groq|gemini selects which external
+        provider is tried, so quality can be compared without a code change.
 
-        Gemini answers from its own general knowledge rather than being
-        constrained to reproduce the project's 14-topic passages -- see
-        gemini_generator.py's module docstring for why. It still only
-        receives this message, never the raw conversation history (which can
-        contain sensitive details). The project's own fine-tuned model
-        remains a real, documented fallback layer -- it was demoted from
-        primary after repeated mid-conversation reliability problems in
-        practice.
+        The selected provider answers from its own general knowledge rather
+        than being constrained to reproduce the project's 14-topic passages
+        -- see groq_generator.py/gemini_generator.py's module docstrings for
+        why. It also receives the last few conversation turns so replies stay
+        coherent across follow-ups instead of treating every message as the
+        first one. The project's own fine-tuned model remains a real,
+        documented fallback layer -- it was demoted from primary after
+        repeated mid-conversation reliability problems in practice.
         """
+        llm = self.llm_generator
         try:
-            draft = self.gemini_generator.generate(query, lang)
+            draft = llm.generate(query, lang, history)
         except Exception:
             draft = ""
-        if not draft and self.gemini_generator.available and self.gemini_generator.last_error:
+        if not draft and llm.available and llm.last_error:
             # Sanitized operational evidence only: never log the key, message, or passage.
-            print(f"Gemini fallback: {self.gemini_generator.last_error}", file=sys.stderr, flush=True)
+            print(f"{self.llm_provider_name} fallback: {llm.last_error}", file=sys.stderr, flush=True)
         if draft:
-            return draft, "gemini_general"
+            return draft, f"{self.llm_provider_name}_general"
         try:
             draft = self.finetuned_generator.generate(query, lang, history)
         except Exception:
@@ -450,17 +469,18 @@ class UmubyeyiRAG:
                     "grounded": False, "mode": "safety", "intent": "crisis", "sources": []}
 
         if self.is_greeting(query):
+            llm = self.llm_generator
             try:
-                social = self.gemini_generator.generate_social(query, lang)
+                social = llm.generate_social(query, lang)
             except Exception:
                 social = ""
-            if not social and self.gemini_generator.available and self.gemini_generator.last_error:
+            if not social and llm.available and llm.last_error:
                 print(
-                    f"Gemini conversation fallback: {self.gemini_generator.last_error}",
+                    f"{self.llm_provider_name} conversation fallback: {llm.last_error}",
                     file=sys.stderr,
                     flush=True,
                 )
-            mode = "gemini_conversation" if social else "greeting_fallback"
+            mode = f"{self.llm_provider_name}_conversation" if social else "greeting_fallback"
             return {"answer": social or self.GREETING_FAILURE.get(lang, self.GREETING_FAILURE["en"]),
                     "language": lang, "danger": False, "grounded": False,
                     "mode": mode, "intent": "greeting", "sources": []}

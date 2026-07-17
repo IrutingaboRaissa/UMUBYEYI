@@ -247,7 +247,7 @@ def main() -> None:
         "accepted_generation_languages": ["en"],
         "kinyarwanda_limitation": (
             "No human-authored Kinyarwanda response corpus was available; Kinyarwanda "
-            "generation must remain behind retrieval/Gemini fallback and native review."
+            "generation must remain behind retrieval/Groq fallback and native review."
         ),
         "trainable_parameters": trainable,
         "total_parameters": total,

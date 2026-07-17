@@ -55,12 +55,12 @@ def test_greetings_and_small_talk_recognized(greeting):
 
 def test_greeting_is_generated_by_conversational_model(monkeypatch):
     monkeypatch.setattr(
-        rag._default.gemini_generator,
+        rag._default.groq_generator,
         "generate_social",
         lambda query, lang: "Hello. I am listening; how are you feeling today?",
     )
     result = rag.answer("hi", force_lang="en")
-    assert result["mode"] == "gemini_conversation"
+    assert result["mode"] == "groq_conversation"
     assert result["answer"].startswith("Hello")
 
 
@@ -176,22 +176,22 @@ def test_deterministic_paths_work_with_network_disabled(monkeypatch):
 
     monkeypatch.setattr(socket, "socket", _no_network)
     assert rag.answer("I want to end my life", force_lang="en")["mode"] == "safety"
-    monkeypatch.setattr(rag._default.gemini_generator, "generate_social", lambda *args: "")
+    monkeypatch.setattr(rag._default.groq_generator, "generate_social", lambda *args: "")
     assert rag.answer("hi", force_lang="en")["mode"] == "greeting_fallback"
 
 
-def test_gemini_is_used_first_for_english(monkeypatch):
-    def general(query, lang):
+def test_groq_is_used_first_for_english(monkeypatch):
+    def general(query, lang, history=None):
         return "I hear how heavy today feels. Your feelings matter. Would you like to share more?"
 
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", general)
+    monkeypatch.setattr(rag._default.groq_generator, "generate", general)
     result = rag.answer("I feel a little sad today", force_lang="en")
-    assert result["mode"] == "gemini_general"
+    assert result["mode"] == "groq_general"
     assert result["grounded"] is True
 
 
-def test_finetuned_generator_is_used_when_gemini_fails(monkeypatch):
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
+def test_finetuned_generator_is_used_when_groq_fails(monkeypatch):
+    monkeypatch.setattr(rag._default.groq_generator, "generate", lambda *a, **k: "")
     monkeypatch_target = rag._default.finetuned_generator
 
     class Stub:
@@ -207,9 +207,9 @@ def test_finetuned_generator_is_used_when_gemini_fails(monkeypatch):
         rag._default.finetuned_generator = monkeypatch_target
 
 
-def test_rw_skips_unreviewed_ollama_when_gemini_and_finetuned_have_no_rw_support(monkeypatch):
+def test_rw_skips_unreviewed_ollama_when_groq_and_finetuned_have_no_rw_support(monkeypatch):
     monkeypatch.delenv("UMU_ALLOW_RW_OLLAMA", raising=False)
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
+    monkeypatch.setattr(rag._default.groq_generator, "generate", lambda *a, **k: "")
     monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
     monkeypatch.setattr(
         rag._default,
@@ -222,7 +222,7 @@ def test_rw_skips_unreviewed_ollama_when_gemini_and_finetuned_have_no_rw_support
 
 
 def test_generator_exception_falls_back_instead_of_raising_500(monkeypatch):
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
+    monkeypatch.setattr(rag._default.groq_generator, "generate", lambda *a, **k: "")
     monkeypatch.setattr(
         rag._default.finetuned_generator,
         "generate",
@@ -243,7 +243,7 @@ def test_ollama_is_opt_in_and_cannot_delay_default_fallback(monkeypatch):
 
 
 def test_retrieval_fallback_is_the_reviewed_passage_not_a_canned_wrapper(monkeypatch):
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
+    monkeypatch.setattr(rag._default.groq_generator, "generate", lambda *a, **k: "")
     monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
     top, _ = rag.retrieve("I feel a little sad today", k=1, lang="en")[0]
 
@@ -255,7 +255,7 @@ def test_retrieval_fallback_is_the_reviewed_passage_not_a_canned_wrapper(monkeyp
 
 def test_ollama_receives_evidence_selected_by_trained_topic_classifier(monkeypatch):
     captured = {}
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *a, **k: "")
+    monkeypatch.setattr(rag._default.groq_generator, "generate", lambda *a, **k: "")
     monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
     monkeypatch.setenv("UMU_ENABLE_OLLAMA", "1")
 
@@ -290,7 +290,7 @@ def test_bare_followup_after_wellbeing_answer_stays_in_scope():
 def test_bare_followup_without_prior_wellbeing_context_still_redirects():
     history = [
         {"role": "user", "text": "hi"},
-        {"role": "bot", "text": "Hello! How are you feeling today?", "mode": "gemini_conversation"},
+        {"role": "bot", "text": "Hello! How are you feeling today?", "mode": "groq_conversation"},
     ]
     result = rag.answer("okay how should I handle this", force_lang="en", history=history)
     assert result["mode"] == "offtopic"
