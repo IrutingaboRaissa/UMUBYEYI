@@ -118,7 +118,7 @@ def evaluate_routing(engine) -> tuple[dict, list[dict]]:
         if expected == "grounded":
             correct = bool(response["grounded"])
         elif expected == "conversation":
-            correct = actual in {"gemini_conversation", "greeting_fallback"}
+            correct = actual in {"groq_conversation", "greeting_fallback"}
         else:
             correct = actual == expected
         results.append({
