@@ -5,6 +5,11 @@ from typing import Any, Mapping
 import joblib
 import pandas as pd
 
+try:  # package import in training scripts; top-level import in Vercel/local API
+    from .explain import CheckinExplainer
+except ImportError:  # pragma: no cover - exercised by the deployed top-level import
+    from explain import CheckinExplainer
+
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = ROOT / "models" / "ppd_checkin_risk.joblib"
 
@@ -31,6 +36,7 @@ class ScreeningService:
         self.model_path = Path(model_path)
         self._model = model
         self.features = list(features or FEATURES)
+        self.explainer = CheckinExplainer(model_getter=lambda: self.model, features=self.features)
 
     @property
     def model(self):
@@ -55,40 +61,54 @@ class ScreeningService:
             raise ValueError("Age must be between 18 and 60")
         return row
 
-    def predict(self, answers: Mapping[str, Any]) -> dict[str, Any]:
+    def predict(self, answers: Mapping[str, Any], explain: bool = True) -> dict[str, Any]:
         """Return screening-risk support without retaining submitted answers."""
         row = self.validate(answers)
         frame = pd.DataFrame([row], columns=self.features)
         label = str(self.model.predict(frame)[0])
-        return self._response(label)
+        explanation = self.explainer.explain(frame) if explain else None
+        return self._response(label, explanation)
 
     @staticmethod
-    def _response(label: str) -> dict[str, Any]:
+    def _response(label: str, explanation: list[dict[str, Any]] | None = None) -> dict[str, Any]:
         elevated = label == "elevated"
         return {
             "risk": label,
             "elevated": elevated,
             "message_en": (
-                "Your answers suggest elevated screening risk. Please arrange a conversation with a "
-                "trained health worker; this result is not a diagnosis."
+                "Thank you for answering honestly — that takes courage. Based on what you shared, it looks "
+                "like you could be carrying more than feels comfortable right now, and that's completely "
+                "understandable given everything a new mother handles. This isn't a diagnosis, just a signal "
+                "worth listening to. Tools like this one can point in the right direction, but only a real "
+                "conversation with a health worker can tell you what's actually going on and get you the "
+                "right support — please try to reach out soon."
                 if elevated else
-                "Your answers were not classified as elevated screening risk. This is not a diagnosis; "
-                "please still speak with a health worker if you are worried or your feelings persist."
+                "Thank you for checking in. Based on what you shared today, nothing here stood out as a "
+                "strong concern — that's good to hear. Feelings can still shift day to day, so keep "
+                "checking in with yourself when it helps. This isn't a medical exam, so if you're ever "
+                "worried or these feelings stick around, please still talk to a health worker to be sure."
             ),
             "message_rw": (
-                "Ibisubizo byawe bigaragaza ibyago biri hejuru mu isuzuma. Nyamuneka vugana n’umukozi "
-                "w’ubuzima wabihuguriwe; iki gisubizo si isuzuma ry’indwara."
+                "Urakoze kubwira ukuri — ibyo birasaba ubutwari. Ibisubizo byawe byerekana ko wenda "
+                "witwaje ibiruta ibyo wagombye, kandi ibyo ni ibisanzwe kubera byinshi umubyeyi mushya "
+                "anyuramo. Iki si isuzuma ry'indwara, ni ikimenyetso gikwiye kwitabwaho gusa. Ibikoresho "
+                "nk'iki birashobora kukuyobora, ariko ni ukuganira n'umukozi w'ubuzima wabihuguriwe honyine "
+                "byakwereka neza ikibazo n'ubufasha bukwiye — nyamuneka gerageza kubigenza vuba."
                 if elevated else
-                "Ibisubizo byawe ntibyashyizwe mu byago biri hejuru. Iki si isuzuma ry’indwara; niba "
-                "ugifite impungenge cyangwa ibyiyumvo bikomeza, vugana n’umukozi w’ubuzima."
+                "Urakoze gukora iki gisuzuma. Ibisubizo byawe uyu munsi ntibyerekanye ikibazo gikomeye — "
+                "ibyo ni byiza. Ariko uko wiyumva birashobora guhinduka uko iminsi igenda, bityo komeza "
+                "wisuzumishe iyo bikwiye. Iki si isuzuma ry'ubuvuzi, bityo niba ufite impungenge cyangwa "
+                "ibyiyumvo bikomeza, nyamuneka vugana n'umukozi w'ubuzima kugira ngo umenye neza."
             ),
             "disclaimer": "Research screening support only; not a diagnosis or medical advice.",
+            "explainability_available": explanation is not None,
+            "explanation": explanation,
         }
 
 
 screening_service = ScreeningService()
 
 
-def predict_checkin(answers: dict) -> dict:
+def predict_checkin(answers: dict, explain: bool = True) -> dict:
     """Backward-compatible functional entry point used by API handlers."""
-    return screening_service.predict(answers)
+    return screening_service.predict(answers, explain=explain)

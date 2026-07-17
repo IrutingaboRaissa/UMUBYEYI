@@ -44,7 +44,7 @@ class LocalApiHandler(BaseHTTPRequestHandler):
             if self.path == "/api/chat":
                 self._chat(body)
             elif self.path == "/api/screen":
-                self._json(200, screening_service.predict(body.get("answers") or {}))
+                self._json(200, screening_service.predict(body.get("answers") or {}, explain=body.get("explain", True)))
             elif self.path == "/api/event":
                 self._event(body)
             elif self.path == "/api/feedback":

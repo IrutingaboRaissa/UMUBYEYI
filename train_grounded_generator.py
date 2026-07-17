@@ -1,9 +1,8 @@
 """Fine-tune Umubyeyi's response generator on genuine support conversations.
 
-ESConv provides multi-turn supporter responses and AMOD provides counsellor
-question/response pairs. The postpartum knowledge bank is kept separate for
-retrieval at inference time. The PPD screening table is never used as language
-model supervision.
+ESConv provides multi-turn supporter responses. The postpartum knowledge bank
+is kept separate for retrieval at inference time. The PPD screening table is
+never used as language model supervision.
 """
 from __future__ import annotations
 
@@ -128,17 +127,15 @@ def main() -> None:
 
     os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
     random.seed(42)
-    import pandas as pd
     import torch
-    from datasets import Dataset, load_dataset
+    from datasets import Dataset
     from peft import LoraConfig, TaskType, get_peft_model
     from transformers import (
         AutoModelForSeq2SeqLM, AutoTokenizer, DataCollatorForSeq2Seq,
         EarlyStoppingCallback, Seq2SeqTrainer, Seq2SeqTrainingArguments,
     )
     from src.generation_data import (
-        AMOD_DATASET, AMOD_INTENTS, AMOD_REVISION, ESCONV_COMMIT, ESCONV_SHA256,
-        build_amod_response_examples, build_esconv_examples, dataset_summary,
+        ESCONV_COMMIT, ESCONV_SHA256, build_esconv_examples, dataset_summary,
         download_esconv, load_esconv,
     )
 
@@ -156,15 +153,7 @@ def main() -> None:
     esconv_examples = build_esconv_examples(
         esconv_rows, max_supporter_turns=args.max_supporter_turns
     )
-
-    amod_source = load_dataset(AMOD_DATASET, revision=AMOD_REVISION, split="train")
-    amod_source_rows = list(amod_source)
-    intent_rows = pd.read_csv(AMOD_INTENTS).to_dict("records")
-    if args.smoke:
-        allowed = {row["Context"] for row in intent_rows[:80]}
-        amod_source_rows = [row for row in amod_source_rows if row["Context"] in allowed]
-    amod_examples = build_amod_response_examples(amod_source_rows, intent_rows)
-    examples = esconv_examples + amod_examples
+    examples = esconv_examples
     summary = dataset_summary(examples)
 
     split_rows = {
@@ -235,7 +224,7 @@ def main() -> None:
     report_dir.mkdir(parents=True, exist_ok=True)
     manifest = {
         "fine_tuned": True,
-        "training_dataset_version": "esconv-amod-v1",
+        "training_dataset_version": "esconv-v1",
         "method": "LoRA supervised fine-tuning (PEFT)",
         "base_model": args.base_model,
         "task": "English emotional-support response generation",
@@ -246,15 +235,12 @@ def main() -> None:
                 "commit": ESCONV_COMMIT, "sha256": ESCONV_SHA256,
                 "license": "academic research use only",
             },
-            "AMOD": {
-                "dataset": AMOD_DATASET, "revision": AMOD_REVISION,
-                "scope": "only questions retained by the six weak intent labels",
-            },
         },
         "data_statement": (
-            "Targets are original ESConv supporter turns and AMOD counsellor responses; "
-            "no templated or model-generated answers are used. The postpartum bank is "
-            "retrieval evidence, not generator supervision."
+            "Targets are original ESConv supporter turns; no templated or model-generated "
+            "answers are used. The postpartum bank is retrieval evidence, not generator "
+            "supervision. The AMOD-derived file under data/intent/ trains the separate "
+            "bilingual intent classifier only and supplies no generator targets."
         ),
         "accepted_generation_languages": ["en"],
         "kinyarwanda_limitation": (

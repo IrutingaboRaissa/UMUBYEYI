@@ -1,16 +1,17 @@
 """Load genuine conversational supervision for Umubyeyi's response generator.
 
-ESConv supplies multi-turn emotional-support responses. AMOD supplies counselling
-question/response pairs and a separately cached, weak-labelled bilingual intent
-subset. The reviewed postpartum collection remains retrieval evidence and is not
-expanded into templated training conversations.
+ESConv supplies multi-turn emotional-support responses. The AMOD-derived file
+under data/intent/ is separate project data used only to train the bilingual
+intent classifier (see train_topic_classifier.py); it is not generator
+supervision. The reviewed postpartum collection remains retrieval evidence and
+is not expanded into templated training conversations.
 """
 from __future__ import annotations
 
 import hashlib
 import json
 import urllib.request
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 from typing import Iterable
 
@@ -22,9 +23,6 @@ ESCONV_URL = (
     "https://raw.githubusercontent.com/thu-coai/Emotional-Support-Conversation/"
     f"{ESCONV_COMMIT}/ESConv.json"
 )
-AMOD_DATASET = "Amod/mental_health_counseling_conversations"
-AMOD_REVISION = "d7e86f0813c5690181b41f97403c3674aa55dcef"
-AMOD_INTENTS = ROOT / "data" / "intent" / "amod_kinyarwanda.csv"
 
 
 def _normalise(text: str) -> str:
@@ -131,48 +129,6 @@ def build_esconv_examples(
                 })
             role = "Supporter" if speaker == "supporter" else "User"
             history.append(f"{role}: {content}")
-    return examples
-
-
-def build_amod_response_examples(
-    source_rows: Iterable[dict], intent_rows: Iterable[dict],
-    max_responses_per_question: int = 2, seed: int = 42,
-) -> list[dict]:
-    """Build English counselling pairs for the weak-labelled in-scope AMOD questions."""
-    intent_by_question = {
-        _normalise(row.get("Context", "")): str(row.get("intent", "")).strip()
-        for row in intent_rows if _normalise(row.get("Context", ""))
-    }
-    response_counts: defaultdict[str, int] = defaultdict(int)
-    examples: list[dict] = []
-    for row_index, row in enumerate(source_rows):
-        question = _normalise(row.get("Context", ""))
-        response = _normalise(row.get("Response", ""))
-        if not question or not response or question not in intent_by_question:
-            continue
-        if response_counts[question] >= max_responses_per_question:
-            continue
-        response_counts[question] += 1
-        group_hash = hashlib.sha256(question.encode("utf-8")).hexdigest()[:16]
-        examples.append({
-            "id": f"amod-{group_hash}-{response_counts[question]}",
-            "group_id": f"amod-{group_hash}",
-            "dataset": "AMOD",
-            "split": grouped_split(f"amod-{group_hash}", seed),
-            "language": "en",
-            "query": question,
-            "history": "",
-            "evidence": "",
-            "input": format_generator_input(question, "", "en"),
-            "target": response,
-            "strategy": "Counsellor response",
-            "problem_type": intent_by_question[question],
-            "source": "Amod/mental_health_counseling_conversations",
-            "source_url": (
-                "https://huggingface.co/datasets/"
-                "Amod/mental_health_counseling_conversations"
-            ),
-        })
     return examples
 
 

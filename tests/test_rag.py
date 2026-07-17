@@ -131,6 +131,35 @@ def test_response_contract_has_all_keys():
         assert key in r
 
 
+# ---------------------------------------------------------------- concern-intensity heuristic
+def test_concern_signal_is_bounded_and_shaped():
+    signal = rag._default.concern_signal("I feel so overwhelmed and anxious", [{"score": 0.8}], 0.5)
+    assert set(signal.keys()) == {"level", "score", "basis"}
+    assert 0.0 <= signal["score"] <= 1.0
+    assert signal["level"] in {"none", "mild", "moderate", "elevated"}
+    assert isinstance(signal["basis"], list)
+
+
+def test_concern_signal_is_none_for_empty_signal_inputs():
+    signal = rag._default.concern_signal("", [], 0.0)
+    assert signal["level"] == "none"
+    assert signal["score"] == 0.0
+    assert signal["basis"] == []
+
+
+def test_concern_signal_present_on_grounded_wellbeing_reply():
+    r = rag.answer("I feel overwhelmed and exhausted since the baby was born", force_lang="en")
+    assert "concern_signal" in r
+    assert r["concern_signal"]["level"] in {"none", "mild", "moderate", "elevated"}
+
+
+def test_concern_signal_absent_on_crisis_and_offtopic_replies():
+    crisis = rag.answer("I want to end my life", force_lang="en")
+    assert "concern_signal" not in crisis
+    offtopic = rag.answer("Who won the football match?", force_lang="en")
+    assert "concern_signal" not in offtopic
+
+
 # ------------------------------------------------------------------- fully local operation
 def test_source_uses_expected_local_dependencies():
     import inspect
@@ -151,22 +180,25 @@ def test_deterministic_paths_work_with_network_disabled(monkeypatch):
     assert rag.answer("hi", force_lang="en")["mode"] == "greeting_fallback"
 
 
-def test_gemini_is_used_after_local_generator_rejects(monkeypatch):
-    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args: "")
-    monkeypatch.setattr(
-        rag._default.gemini_generator,
-        "generate",
-        lambda query, evidence, lang: "Ndumva bikugoye. Vugana n'umuntu wizeye kugira ngo agufashe.",
-    )
-    result = rag.answer("Numva mfite agahinda nyuma yo kubyara", force_lang="rw")
-    assert result["mode"] == "gemini_grounded"
-    assert result["grounded"] is True
+def test_finetuned_generator_is_used_first_for_english():
+    monkeypatch_target = rag._default.finetuned_generator
+
+    class Stub:
+        def generate(self, query, lang, history=None):
+            return "What made you feel so tired and overwhelmed today?"
+
+    rag._default.finetuned_generator = Stub()
+    try:
+        result = rag.answer("I feel so exhausted and overwhelmed since the baby was born", force_lang="en")
+        assert result["mode"] == "finetuned"
+        assert result["grounded"] is True
+    finally:
+        rag._default.finetuned_generator = monkeypatch_target
 
 
-def test_rw_skips_unreviewed_ollama_when_gemini_fails(monkeypatch):
+def test_rw_skips_unreviewed_ollama_when_finetuned_has_no_rw_support(monkeypatch):
     monkeypatch.delenv("UMU_ALLOW_RW_OLLAMA", raising=False)
-    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args: "")
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *args: "")
+    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
     monkeypatch.setattr(
         rag._default,
         "_generate_ollama",
@@ -181,9 +213,8 @@ def test_generator_exception_falls_back_instead_of_raising_500(monkeypatch):
     monkeypatch.setattr(
         rag._default.finetuned_generator,
         "generate",
-        lambda *args: (_ for _ in ()).throw(RuntimeError("incompatible local backend")),
+        lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("incompatible local backend")),
     )
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *args: "")
     result = rag.answer("I feel a little sad today", force_lang="en")
     assert result["mode"] == "retrieved"
     assert result["grounded"] is True
@@ -199,8 +230,7 @@ def test_ollama_is_opt_in_and_cannot_delay_default_fallback(monkeypatch):
 
 
 def test_retrieval_fallback_is_the_reviewed_passage_not_a_canned_wrapper(monkeypatch):
-    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args: "")
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", lambda *args: "")
+    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
     top, _ = rag.retrieve("I feel a little sad today", k=1, lang="en")[0]
 
     result = rag.answer("I feel a little sad today", force_lang="en")
@@ -209,17 +239,18 @@ def test_retrieval_fallback_is_the_reviewed_passage_not_a_canned_wrapper(monkeyp
     assert "really glad you told me" not in result["answer"].lower()
 
 
-def test_gemini_receives_evidence_selected_by_trained_topic_classifier(monkeypatch):
+def test_ollama_receives_evidence_selected_by_trained_topic_classifier(monkeypatch):
     captured = {}
-    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args: "")
+    monkeypatch.setattr(rag._default.finetuned_generator, "generate", lambda *args, **kwargs: "")
+    monkeypatch.setenv("UMU_ENABLE_OLLAMA", "1")
 
-    def grounded(query, evidence, lang):
+    def grounded(query, evidence, lang, history=None):
         captured["evidence"] = evidence
         return "I hear how heavy today feels. Your feelings matter. Would you like to share more?"
 
-    monkeypatch.setattr(rag._default.gemini_generator, "generate", grounded)
+    monkeypatch.setattr(rag._default, "_generate_ollama", grounded)
     result = rag.answer("I feel a little sad today", force_lang="en")
-    assert result["mode"] == "gemini_grounded"
+    assert result["mode"] == "ollama_grounded"
     predictions = rag._default.classify_topics("I feel a little sad today", k=3)
     expected_ids = [
         topic_id for item in predictions
@@ -228,6 +259,43 @@ def test_gemini_receives_evidence_selected_by_trained_topic_classifier(monkeypat
     assert len(predictions) == 3
     assert all(f"Topic {topic_id} " in captured["evidence"] for topic_id in expected_ids)
     assert len([line for line in captured["evidence"].splitlines() if line.startswith("Topic ")]) == len(expected_ids)
+
+
+# ------------------------------------------------------------- multi-turn conversation
+def test_bare_followup_after_wellbeing_answer_stays_in_scope():
+    history = [
+        {"role": "user", "text": "I feel so exhausted and overwhelmed since the baby was born"},
+        {"role": "bot", "text": "That sounds really hard.", "mode": "finetuned"},
+    ]
+    result = rag.answer("okay how should I handle this", force_lang="en", history=history)
+    assert result["mode"] != "offtopic"
+    assert result["grounded"] is True
+
+
+def test_bare_followup_without_prior_wellbeing_context_still_redirects():
+    history = [
+        {"role": "user", "text": "hi"},
+        {"role": "bot", "text": "Hello! How are you feeling today?", "mode": "gemini_conversation"},
+    ]
+    result = rag.answer("okay how should I handle this", force_lang="en", history=history)
+    assert result["mode"] == "offtopic"
+
+
+def test_explicit_offtopic_pivot_redirects_even_mid_wellbeing_thread():
+    history = [
+        {"role": "user", "text": "I feel so exhausted and overwhelmed since the baby was born"},
+        {"role": "bot", "text": "That sounds really hard.", "mode": "finetuned"},
+    ]
+    result = rag.answer("what is the weather like today", force_lang="en", history=history)
+    assert result["mode"] == "offtopic"
+
+
+def test_wellbeing_answer_generation_never_calls_gemini():
+    """The core wellbeing-answer cascade must not depend on any third-party LLM API --
+    only our own fine-tuned model, local Ollama, or the reviewed retrieved passage."""
+    import inspect
+    src = inspect.getsource(rag.UmubyeyiRAG._generate)
+    assert "gemini" not in src.lower()
 
 
 def test_multi_concern_message_selects_relevant_topics():

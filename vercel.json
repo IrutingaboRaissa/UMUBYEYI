@@ -7,7 +7,7 @@
     "api/**/*.py": {
       "maxDuration": 45,
       "memory": 1024,
-      "includeFiles": "{models/lang_detector.joblib,models/ppd_checkin_risk.joblib,models/topic_classifier.joblib,data/knowledge/postpartum_wellbeing.json,src/**}",
+      "includeFiles": "{models/lang_detector.joblib,models/ppd_checkin_risk.joblib,models/ppd_checkin_shap_background.csv,models/ppd_checkin_shap_categories.json,models/topic_classifier.joblib,data/knowledge/postpartum_wellbeing.json,src/**}",
       "excludeFiles": "{tests/**,docs/**,notebooks/**,reports/**,screenshots/**,assets/**,models/umubyeyi-mt5-lora/**,train_*.py,Umubyeyi_Presentation.pptx}"
     }
   },

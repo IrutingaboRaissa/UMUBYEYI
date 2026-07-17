@@ -1,78 +1,67 @@
 {
-  "superseded": true,
-  "replacement_dataset_version": "esconv-amod-v1",
   "fine_tuned": true,
+  "training_dataset_version": "esconv-v1",
   "method": "LoRA supervised fine-tuning (PEFT)",
   "base_model": "google/mt5-small",
-  "task": "bilingual evidence-conditioned postpartum support generation",
+  "task": "English emotional-support response generation",
   "seed": 42,
   "dataset": {
-    "examples": 168,
-    "topics": 14,
+    "examples": 7795,
+    "groups": 1300,
+    "datasets": {
+      "ESConv": 7795
+    },
     "splits": {
-      "train": 120,
-      "validation": 24,
-      "test": 24
+      "train": 5546,
+      "test": 1122,
+      "validation": 1127
     },
     "languages": {
-      "en": 84,
-      "rw": 84
+      "en": 7795
     },
-    "topics_by_split": {
-      "train": [
-        "anxiety_worry",
-        "bonding",
-        "daily_functioning",
-        "emotional_changes",
-        "irritability_anger",
-        "loss_grief",
-        "professional_help",
-        "self_blame_guilt",
-        "sleep_fatigue",
-        "urgent_psychosis"
-      ],
-      "validation": [
-        "overwhelmed",
-        "partner_relationship"
-      ],
-      "test": [
-        "persistent_sadness",
-        "social_support"
-      ]
+    "strategies": {
+      "Question": 2278,
+      "Affirmation and Reassurance": 1196,
+      "Others": 687,
+      "Restatement or Paraphrasing": 788,
+      "Information": 358,
+      "Providing Suggestions": 939,
+      "Self-disclosure": 788,
+      "Reflection of feelings": 761
+    },
+    "groups_by_split": {
+      "train": 925,
+      "validation": 188,
+      "test": 187
     }
   },
-  "data_statement": "Project-authored prompt augmentation over 14 source-attributed knowledge passages; the 800-row tabular PPD dataset is not used for generator training.",
-  "kinyarwanda_review": "required before real-world use",
+  "sources": {
+    "ESConv": {
+      "official_repository": "https://github.com/thu-coai/Emotional-Support-Conversation",
+      "commit": "f262d062ad74cb39b17ea476facc81568ddcba24",
+      "sha256": "aa0556c5b330562ba009c1cd5137486bfa2a7255f33225a6524cd58f7efdd9af",
+      "license": "academic research use only"
+    }
+  },
+  "target_statement": "Targets are original ESConv supporter turns; no templated or model-generated answers are used. The AMOD-derived file under data/intent/ trains the separate bilingual intent classifier only and supplies no generator targets.",
+  "knowledge_statement": "The 14-topic postpartum collection is used for retrieval evidence only.",
   "accepted_generation_languages": [
     "en"
   ],
+  "kinyarwanda_limitation": "The intent model uses NLLB machine-translated questions. No human-authored Kinyarwanda response corpus was available, so RW response generation remains behind grounded Gemini or direct retrieval and requires native review.",
   "trainable_parameters": 344064,
   "total_parameters": 300520832,
-  "trainable_percentage": 0.1145,
-  "epochs_requested": 12.0,
-  "train_runtime_seconds": 2140.03,
-  "training_loss": 27.845299,
+  "training_loss": 6.372355826787636,
   "baseline_test": {
-    "rouge_l_f1": 0.005,
-    "exact_match": 0.0,
-    "mean_grounding_overlap": 0.0729,
-    "examples": 24
+    "rouge_l_f1": 0.0,
+    "distinct_2": 0.2727272727272727,
+    "mean_response_words": 1.22,
+    "examples": 100
   },
   "fine_tuned_test": {
-    "rouge_l_f1": 0.4862,
-    "exact_match": 0.0,
-    "mean_grounding_overlap": 0.6687,
-    "strict_grounding_acceptance": 0.375,
-    "strict_acceptance_by_language": {
-      "en": 0.75,
-      "rw": 0.0
-    },
-    "strict_accepted_english": 9,
-    "strict_accepted_kinyarwanda": 0,
-    "examples": 24
-  },
-  "test_topics_held_out_from_training": [
-    "persistent_sadness",
-    "social_support"
-  ]
+    "rouge_l_f1": 0.1149548306238782,
+    "distinct_2": 0.3723076923076923,
+    "mean_response_words": 7.5,
+    "examples": 100
+  }
 }
