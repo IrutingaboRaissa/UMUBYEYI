@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-07-17T10:10:26.302752+00:00",
+  "timestamp_utc": "2026-07-17T10:36:07.986700+00:00",
   "environment": {
     "os": "Windows-11-10.0.26200-SP0",
     "python": "3.13.7",
@@ -10,43 +10,43 @@
   "benchmarks": {
     "safety_crisis": {
       "repeats": 100,
-      "mean_ms": 0.015,
-      "median_ms": 0.016,
-      "p95_ms": 0.022,
-      "min_ms": 0.01,
-      "max_ms": 0.048
+      "mean_ms": 0.008,
+      "median_ms": 0.008,
+      "p95_ms": 0.009,
+      "min_ms": 0.007,
+      "max_ms": 0.034
     },
     "greeting": {
       "repeats": 100,
       "mean_ms": 0.012,
       "median_ms": 0.011,
-      "p95_ms": 0.012,
+      "p95_ms": 0.014,
       "min_ms": 0.011,
       "max_ms": 0.033
     },
     "english_retrieval": {
       "repeats": 100,
-      "mean_ms": 4972.602,
-      "median_ms": 4568.58,
-      "p95_ms": 7356.376,
-      "min_ms": 2994.815,
-      "max_ms": 15739.075
+      "mean_ms": 6095.287,
+      "median_ms": 5243.532,
+      "p95_ms": 11040.986,
+      "min_ms": 3276.444,
+      "max_ms": 18292.501
     },
     "kinyarwanda_retrieval": {
       "repeats": 100,
-      "mean_ms": 74.726,
-      "median_ms": 68.589,
-      "p95_ms": 101.293,
-      "min_ms": 56.347,
-      "max_ms": 141.505
+      "mean_ms": 160.145,
+      "median_ms": 159.06,
+      "p95_ms": 176.87,
+      "min_ms": 148.464,
+      "max_ms": 194.857
     },
     "guided_checkin": {
       "repeats": 100,
-      "mean_ms": 680.022,
-      "median_ms": 648.04,
-      "p95_ms": 1036.296,
-      "min_ms": 496.083,
-      "max_ms": 1159.149
+      "mean_ms": 1199.128,
+      "median_ms": 1167.192,
+      "p95_ms": 1364.024,
+      "min_ms": 1132.677,
+      "max_ms": 1726.086
     }
   }
 }
