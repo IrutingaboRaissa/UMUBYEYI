@@ -1,7 +1,7 @@
 import json
 import urllib.error
 
-from gemini_generator import GeminiGenerator
+from groq_generator import GroqGenerator
 
 
 class FakeResponse:
@@ -18,11 +18,11 @@ class FakeResponse:
         return self._body
 
 
-def api_payload(answer):
+def api_payload(answer_json: dict):
     return {
-        "candidates": [{
-            "content": {"parts": [{"text": json.dumps(answer)}]},
-        }]
+        "choices": [{
+            "message": {"role": "assistant", "content": json.dumps(answer_json)},
+        }],
     }
 
 
@@ -30,21 +30,21 @@ def test_missing_key_skips_network():
     def forbidden(*args, **kwargs):
         raise AssertionError("network should not be called")
 
-    generator = GeminiGenerator(api_key="", opener=forbidden)
+    generator = GroqGenerator(api_key="", opener=forbidden)
     assert generator.generate("I feel sad", "en") == ""
     assert "missing key" in generator.last_error
 
 
 def test_current_default_model_is_used():
-    generator = GeminiGenerator(api_key="test-key", opener=lambda *args: None)
-    assert generator.model == "gemini-3.1-flash-lite"
+    generator = GroqGenerator(api_key="test-key", opener=lambda *args: None)
+    assert generator.model == "llama-3.3-70b-versatile"
 
 
 def test_general_knowledge_response_is_accepted_not_constrained_to_evidence():
     def open_ok(request, timeout):
-        assert request.get_header("X-goog-api-key") == "test-key"
+        assert request.get_header("Authorization") == "Bearer test-key"
         sent = json.loads(request.data.decode("utf-8"))
-        prompt = sent["contents"][0]["parts"][0]["text"]
+        prompt = sent["messages"][1]["content"]
         assert "Evidence" not in prompt  # not constrained to our own passages
         return FakeResponse(api_payload({
             "answer": (
@@ -56,7 +56,7 @@ def test_general_knowledge_response_is_accepted_not_constrained_to_evidence():
             ),
         }))
 
-    generator = GeminiGenerator(api_key="test-key", opener=open_ok)
+    generator = GroqGenerator(api_key="test-key", opener=open_ok)
     answer = generator.generate("I feel alone", "en")
     assert "alone" in answer.lower()
 
@@ -74,15 +74,42 @@ def test_repeated_question_can_get_a_differently_worded_answer():
     def open_ok(request, timeout):
         return FakeResponse(api_payload({"answer": next(responses)}))
 
-    generator = GeminiGenerator(api_key="test-key", opener=open_ok)
+    generator = GroqGenerator(api_key="test-key", opener=open_ok)
     first = generator.generate("I feel exhausted", "en")
     second = generator.generate("I feel exhausted", "en")
     assert first and second
     assert first != second
 
 
+def test_history_turns_are_included_so_followups_stay_coherent():
+    def open_ok(request, timeout):
+        sent = json.loads(request.data.decode("utf-8"))
+        roles_and_content = [(m["role"], m["content"]) for m in sent["messages"]]
+        assert ("user", "Is crying a lot normal after giving birth?") in roles_and_content
+        assert ("assistant", "It can be, especially in the first few weeks.") in roles_and_content
+        # the new message must come last, after the history turns
+        assert sent["messages"][-1]["role"] == "user"
+        assert "It won't stop" in sent["messages"][-1]["content"]
+        return FakeResponse(api_payload({
+            "answer": (
+                "It makes sense you're worried when it doesn't seem to let up -- frequent crying that "
+                "feels relentless is still worth mentioning to a health worker, even if it started out "
+                "normal. Trust your own read on whether this feels different from before. Has anything "
+                "changed recently, like feeding or sleep?"
+            ),
+        }))
+
+    generator = GroqGenerator(api_key="test-key", opener=open_ok)
+    history = [
+        {"role": "user", "text": "Is crying a lot normal after giving birth?"},
+        {"role": "bot", "text": "It can be, especially in the first few weeks."},
+    ]
+    answer = generator.generate("It won't stop, I'm worried", "en", history)
+    assert answer
+
+
 def test_short_response_is_rejected():
-    generator = GeminiGenerator(
+    generator = GroqGenerator(
         api_key="test-key",
         opener=lambda *args, **kwargs: FakeResponse(api_payload({"answer": "That sounds hard."})),
     )
@@ -92,19 +119,19 @@ def test_short_response_is_rejected():
 def test_social_greeting_is_model_generated_and_structured():
     def open_ok(request, timeout):
         sent = json.loads(request.data.decode("utf-8"))
-        prompt = sent["contents"][0]["parts"][0]["text"]
+        prompt = sent["messages"][1]["content"]
         assert "Kinyarwanda" in prompt
         return FakeResponse(api_payload({
             "answer": "Mwiriwe neza, mama. Nishimiye kukumva; uyu munsi wiyumva ute?",
         }))
 
-    generator = GeminiGenerator(api_key="test-key", opener=open_ok)
+    generator = GroqGenerator(api_key="test-key", opener=open_ok)
     answer = generator.generate_social("mwiriwe", "rw")
     assert answer.startswith("Mwiriwe")
 
 
 def test_social_greeting_rejects_numbers_and_short_output():
-    generator = GeminiGenerator(
+    generator = GroqGenerator(
         api_key="test-key",
         opener=lambda *args, **kwargs: FakeResponse(api_payload({"answer": "Call 999 now"})),
     )
@@ -115,13 +142,13 @@ def test_social_greeting_fails_closed_on_network_error():
     def unavailable(*args, **kwargs):
         raise urllib.error.URLError("offline")
 
-    generator = GeminiGenerator(api_key="test-key", opener=unavailable)
+    generator = GroqGenerator(api_key="test-key", opener=unavailable)
     assert generator.generate_social("hi", "en") == ""
     assert generator.last_error.startswith("network error")
 
 
 def test_response_with_invented_number_is_rejected():
-    generator = GeminiGenerator(
+    generator = GroqGenerator(
         api_key="test-key",
         opener=lambda *args, **kwargs: FakeResponse(api_payload({"answer": (
             "I hear that this is difficult, and I want you to know things can get better. Talking to "
@@ -136,7 +163,7 @@ def test_generate_fails_closed_on_network_error():
     def unavailable(*args, **kwargs):
         raise urllib.error.URLError("offline")
 
-    offline = GeminiGenerator(api_key="test-key", opener=unavailable)
+    offline = GroqGenerator(api_key="test-key", opener=unavailable)
     assert offline.generate("Help", "en") == ""
     assert offline.last_error.startswith("network error")
 
@@ -144,17 +171,17 @@ def test_generate_fails_closed_on_network_error():
 def test_title_is_model_generated_and_bounded():
     def open_ok(request, timeout):
         sent = json.loads(request.data.decode("utf-8"))
-        prompt = sent["contents"][0]["parts"][0]["text"]
-        assert "maternal-wellbeing" not in prompt  # instruction lives in system_instruction, not here
+        prompt = sent["messages"][1]["content"]
+        assert "maternal-wellbeing" not in prompt  # instruction lives in the system message, not here
         return FakeResponse(api_payload({"title": "Feeling exhausted after childbirth"}))
 
-    generator = GeminiGenerator(api_key="test-key", opener=open_ok)
+    generator = GroqGenerator(api_key="test-key", opener=open_ok)
     title = generator.generate_title("I feel exhausted", "That sounds hard.", "en")
     assert title == "Feeling exhausted after childbirth"
 
 
 def test_title_rejects_missing_or_overlong_output():
-    generator = GeminiGenerator(
+    generator = GroqGenerator(
         api_key="test-key",
         opener=lambda *args, **kwargs: FakeResponse(api_payload({"title": ""})),
     )

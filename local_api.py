@@ -97,7 +97,7 @@ class LocalApiHandler(BaseHTTPRequestHandler):
         if not user_message:
             self._json(400, {"error": "user_message required"})
             return
-        title = rag._default.gemini_generator.generate_title(user_message, bot_reply, lang)
+        title = rag._default.groq_generator.generate_title(user_message, bot_reply, lang)
         self._json(200, {"title": title})
 
     def _json(self, status, payload):

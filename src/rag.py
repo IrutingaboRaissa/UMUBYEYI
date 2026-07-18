@@ -27,7 +27,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from finetuned_generator import FineTunedGenerator
-from gemini_generator import GeminiGenerator
+from groq_generator import GroqGenerator
 from topic_classifier import TopicClassifier
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -123,7 +123,7 @@ class UmubyeyiRAG:
         self.finetuned_generator = FineTunedGenerator(
             self.root / "models" / "umubyeyi-bloomz-lora"
         )
-        self.gemini_generator = GeminiGenerator()
+        self.groq_generator = GroqGenerator()
         self.topic_classifier = TopicClassifier(self.root / "models" / "topic_classifier.joblib")
         self._bank_by_id = {row["id"]: row for row in self.bank}
 
@@ -398,27 +398,28 @@ class UmubyeyiRAG:
             return ""
 
     def _generate(self, query: str, evidence: str, lang: str, history=None) -> tuple[str, str]:
-        """Use Gemini first (reliable in both languages), then our own
+        """Use Groq first (reliable in both languages), then our own
         fine-tuned generator, then optional local Ollama, then retrieval.
 
-        Gemini answers from its own general knowledge rather than being
+        Groq answers from its own general knowledge rather than being
         constrained to reproduce the project's 14-topic passages -- see
-        gemini_generator.py's module docstring for why. It still only
-        receives this message, never the raw conversation history (which can
-        contain sensitive details). The project's own fine-tuned model
-        remains a real, documented fallback layer -- it was demoted from
-        primary after repeated mid-conversation reliability problems in
-        practice.
+        groq_generator.py's module docstring for why. It also receives the
+        last few conversation turns so replies stay coherent across
+        follow-ups instead of treating every message as the first one. The
+        project's own fine-tuned model remains a real, documented fallback
+        layer -- it was demoted from primary after repeated mid-conversation
+        reliability problems in practice.
         """
+        llm = self.groq_generator
         try:
-            draft = self.gemini_generator.generate(query, lang)
+            draft = llm.generate(query, lang, history)
         except Exception:
             draft = ""
-        if not draft and self.gemini_generator.available and self.gemini_generator.last_error:
+        if not draft and llm.available and llm.last_error:
             # Sanitized operational evidence only: never log the key, message, or passage.
-            print(f"Gemini fallback: {self.gemini_generator.last_error}", file=sys.stderr, flush=True)
+            print(f"groq fallback: {llm.last_error}", file=sys.stderr, flush=True)
         if draft:
-            return draft, "gemini_general"
+            return draft, "groq_general"
         try:
             draft = self.finetuned_generator.generate(query, lang, history)
         except Exception:
@@ -450,17 +451,18 @@ class UmubyeyiRAG:
                     "grounded": False, "mode": "safety", "intent": "crisis", "sources": []}
 
         if self.is_greeting(query):
+            llm = self.groq_generator
             try:
-                social = self.gemini_generator.generate_social(query, lang)
+                social = llm.generate_social(query, lang)
             except Exception:
                 social = ""
-            if not social and self.gemini_generator.available and self.gemini_generator.last_error:
+            if not social and llm.available and llm.last_error:
                 print(
-                    f"Gemini conversation fallback: {self.gemini_generator.last_error}",
+                    f"groq conversation fallback: {llm.last_error}",
                     file=sys.stderr,
                     flush=True,
                 )
-            mode = "gemini_conversation" if social else "greeting_fallback"
+            mode = "groq_conversation" if social else "greeting_fallback"
             return {"answer": social or self.GREETING_FAILURE.get(lang, self.GREETING_FAILURE["en"]),
                     "language": lang, "danger": False, "grounded": False,
                     "mode": mode, "intent": "greeting", "sources": []}
