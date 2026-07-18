@@ -254,10 +254,3 @@ export async function generateTitle(userMessage: string, botReply: string, lang?
   }
 }
 
-export async function sendFeedback(sid: string, rating: 1 | -1, lang?: string, mode?: string) {
-  await fetch("/api/feedback", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ session_id: sid, rating, language: lang, mode }),
-  }).catch(() => {});
-}

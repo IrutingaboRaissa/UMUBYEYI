@@ -532,7 +532,6 @@ html, body {
   to { opacity: 1; transform: scale(1); }
 }
 
-.feedback { font-size: 13px; color: #A08E97; margin: 8px 0; }
 
 .epds-progress {
   height: 6px;
