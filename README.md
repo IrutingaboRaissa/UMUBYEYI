@@ -140,7 +140,7 @@ ordinary conversational path and direct the user to immediate human support.
 ### Self-care & mood tracking
 
 - browser-local mood and conversation history
-- self-care guidance, affirmations, feedback, and mobile navigation
+- self-care guidance, affirmations, and mobile navigation
 
 ## Technology Stack
 

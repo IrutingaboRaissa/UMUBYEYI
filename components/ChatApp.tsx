@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, TIPS,
-  Thread, loadThreads, newThread, saveThreads, sendChat, sendFeedback,
+  Thread, loadThreads, newThread, saveThreads, sendChat,
   generateTitle, logEvent, optionLabel, optionValue, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
 import EpdsAssessment from "@/components/EpdsAssessment";
@@ -46,7 +46,6 @@ export default function ChatApp() {
   const [menuThreadId, setMenuThreadId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
-  const [ratedThreads, setRatedThreads] = useState<Record<string, boolean>>({});
   const [checkin, setCheckin] = useState<Record<string, string | number>>(() => {
     const initial: Record<string, string | number> = { Age: "" };
     for (const [key] of CHECKIN_FIELDS) initial[key] = "";
@@ -92,7 +91,6 @@ export default function ChatApp() {
 
   const current = threads.find((t) => t.id === currentId)
     ?? (draftThread?.id === currentId ? draftThread : threads[0]);
-  const isRated = current ? ratedThreads[current.id] ?? false : true;
   const checkinReady = checkin.Age !== "" && CHECKIN_FIELDS.every(([key]) => checkin[key] !== "");
 
   const setCurrent = useCallback((id: string) => {
@@ -116,14 +114,12 @@ export default function ChatApp() {
     if (draftThread?.id === t.id) setDraftThread(null);
     setInput("");
     setTyping(true);
-    setRatedThreads((r) => ({ ...r, [t.id]: true }));
 
     try {
       const res = await sendChat(userMsg, null, current.msgs);
       const botMsg = { role: "bot" as const, text: res.answer, danger: res.danger, mode: res.mode };
       updateThread({ ...t, msgs: [...t.msgs, botMsg] });
       setLastMeta({ lang: res.language, mode: res.mode });
-      setRatedThreads((r) => ({ ...r, [t.id]: false }));
       if (sid.current) await logEvent(sid.current, res);
       if (res.concern_signal) {
         try {
@@ -352,23 +348,9 @@ export default function ChatApp() {
                   </div>
                 </div>
               ))}
-              {typing && <div className="typing">Umubyeyi arimo yandika… · Umubyeyi is typing…</div>}
+              {typing && <div className="typing">Umubyeyi arimo arandika… · Umubyeyi is typing…</div>}
               <div ref={bottomRef} />
             </div>
-
-            {!isRated && current.msgs.length > 1 && current.msgs.at(-1)?.role === "bot" && (
-              <div className="feedback">
-                Iki gisubizo cyagufashije? · Was this helpful?{" "}
-                <button className="btn btn-sm" onClick={() => {
-                  sendFeedback(sid.current, 1, lastMeta.lang, lastMeta.mode);
-                  setRatedThreads((r) => ({ ...r, [current.id]: true }));
-                }}>Byoroheje · Helpful</button>{" "}
-                <button className="btn btn-sm" onClick={() => {
-                  sendFeedback(sid.current, -1, lastMeta.lang, lastMeta.mode);
-                  setRatedThreads((r) => ({ ...r, [current.id]: true }));
-                }}>Ntibyanfashije · Not really</button>
-              </div>
-            )}
 
           </>
         )}
