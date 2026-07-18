@@ -54,7 +54,7 @@ trained intent classifier: category        trained Logistic Regression
        |                                        |
 Top-3 knowledge-base matches               non-diagnostic result + live SHAP explanation
        |
-external LLM general-knowledge generation (Groq/Gemini, safety-validated, not evidence-constrained)
+Groq general-knowledge generation (safety-validated, not evidence-constrained)
        |
 project-fine-tuned BLOOMZ generation (free-form, own weights) -> local Ollama (dev-only, opt-in)
        |
@@ -70,31 +70,28 @@ categories learned from the AMOD-derived weak labels; those categories map to th
 postpartum topics, which the deterministic safety/scope layer uses for routing, citation, and the
 fallback answer if generation fails. Retrieval finds the most relevant reviewed passages.
 
-The generation cascade tries the active external LLM provider first — Groq by default, or Gemini if
-`UMU_LLM_PROVIDER=gemini` is set, so quality can be compared without a code change. It receives the last
-several real conversation turns (not just the current message) and answers from its own general
-knowledge of postpartum emotional wellbeing — deliberately not constrained to reproduce the project's
-14-topic passages, so a repeated question gets a differently-worded, more elaborated answer rather than
-the same canned content each time. Sending recent history is a deliberate tradeoff: a mother's current
-message is already sensitive content sent to that provider's API, so withholding the last few turns of
-context bought little real privacy while making follow-ups read as disconnected — this is documented
-directly in `groq_generator.py`/`gemini_generator.py`. The provider's output still passes a lightweight
-safety check (length bounds, and multi-digit numbers like phone numbers or dosages are rejected as
-unverifiable) before use. This external-LLM stage was restored to the primary role after the project's
-own fine-tuned model proved unreliable mid-conversation in practice; the fine-tuned model (BLOOMZ-560m,
-LoRA on real ESConv data, answering freely from its own weights) remains a real, working fallback layer,
-not a decorative one, exercised whenever the active provider's answer fails validation or is unavailable.
-Safety-critical crisis and referral decisions remain fully deterministic and independent of any
-generator, in every case — they run before generation is ever reached, regardless of what any generator
-would have said.
+The generation cascade tries Groq first. It receives the last several real conversation turns (not just
+the current message) and answers from its own general knowledge of postpartum emotional wellbeing —
+deliberately not constrained to reproduce the project's 14-topic passages, so a repeated question gets a
+differently-worded, more elaborated answer rather than the same canned content each time. Sending recent
+history is a deliberate tradeoff: a mother's current message is already sensitive content sent to Groq's
+API, so withholding the last few turns of context bought little real privacy while making follow-ups
+read as disconnected — this is documented directly in `groq_generator.py`. Groq's output still passes a
+lightweight safety check (length bounds, and multi-digit numbers like phone numbers or dosages are
+rejected as unverifiable) before use. Groq was restored to the primary role after the project's own
+fine-tuned model proved unreliable mid-conversation in practice; the fine-tuned model (BLOOMZ-560m, LoRA
+on real ESConv data, answering freely from its own weights) remains a real, working fallback layer, not a
+decorative one, exercised whenever Groq's answer fails validation or is unavailable. Safety-critical
+crisis and referral decisions remain fully deterministic and independent of any generator, in every
+case — they run before generation is ever reached, regardless of what any generator would have said.
 
 The fine-tuned generator was only trained and evaluated on English (see
-`models/umubyeyi-bloomz-lora/training_manifest.json`'s `accepted_generation_languages`), but both Groq
-and Gemini handle English and Kinyarwanda, so Kinyarwanda wellbeing answers are generated too, not
-limited to retrieval — only falling back to the reviewed retrieved passage directly if the active
-provider's answer fails validation and the fine-tuned/Ollama layers have no Kinyarwanda support.
-Conversation history (the last few turns) is also sent to the deterministic scope router, so a bare
-follow-up like "okay how should I handle this" stays in context instead of being judged in isolation.
+`models/umubyeyi-bloomz-lora/training_manifest.json`'s `accepted_generation_languages`), but Groq
+handles both English and Kinyarwanda, so Kinyarwanda wellbeing answers are generated too, not limited
+to retrieval — only falling back to the reviewed retrieved passage directly if Groq's answer fails
+validation and the fine-tuned/Ollama layers have no Kinyarwanda support. Conversation history (the last
+few turns) is also sent to the deterministic scope router, so a bare follow-up like "okay how should I
+handle this" stays in context instead of being judged in isolation.
 
 ### Safety notice
 
@@ -110,22 +107,20 @@ ordinary conversational path and direct the user to immediate human support.
 - deterministic crisis, acute-health, baby-care, and unrelated-topic routing
 - same-language character n-gram TF-IDF retrieval across 14 source-attributed topics
 - project-trained bilingual six-intent classifier mapped to reviewed evidence topics
-- wellbeing answers are generated by an external LLM first (Groq by default, reliable in
-  both English and Kinyarwanda; Gemini is available as a switchable alternate provider via
-  `UMU_LLM_PROVIDER=groq|gemini`, no code change needed), answering from general
-  postpartum-wellbeing knowledge rather than being constrained to reproduce the project's
-  own 14-topic passages — repeated questions get differently-worded, elaborated answers,
-  not the same canned content. Umubyeyi's own fine-tuned model (BLOOMZ-560m, LoRA on real
-  ESConv data) is a real, documented fallback layer, then optional local Ollama, then the
-  reviewed retrieved passage directly — never a broken or empty reply
-- multi-turn conversation memory: the last several real turns are sent to the active
-  generator itself (not just the scope router), so follow-up messages ("it hasn't stopped
-  for three days, should I be worried?") are answered in context instead of being treated
-  as the first message in a new conversation
-- the active provider is also used for two low-stakes, non-clinical surfaces — greeting
-  small talk and chat-list titles
+- wellbeing answers are generated by Groq first (reliable in both English and Kinyarwanda),
+  answering from general postpartum-wellbeing knowledge rather than being constrained to
+  reproduce the project's own 14-topic passages — repeated questions get differently-worded,
+  elaborated answers, not the same canned content. Umubyeyi's own fine-tuned model
+  (BLOOMZ-560m, LoRA on real ESConv data) is a real, documented fallback layer, then optional
+  local Ollama, then the reviewed retrieved passage directly — never a broken or empty reply
+- multi-turn conversation memory: the last several real turns are sent to Groq itself (not
+  just the scope router), so follow-up messages ("it hasn't stopped for three days, should
+  I be worried?") are answered in context instead of being treated as the first message in
+  a new conversation
+- Groq is also used for two low-stakes, non-clinical surfaces — greeting small talk and
+  chat-list titles
 - generated-output safety validation (length bounds, rejects unverifiable invented
-  numbers) with direct-passage fallback if the active provider is unavailable or rejected
+  numbers) with direct-passage fallback if Groq is unavailable or rejected
 - response-path provenance retained in API metadata and evaluation logs, without a user-facing model badge
 - optional Ollama phrasing as a secondary local path
 
@@ -153,7 +148,7 @@ ordinary conversational path and direct the user to immediate human support.
 |---|---|
 | Frontend | Next.js 15, React 19, TypeScript, Recharts (progress-dashboard charts) |
 | Backend / API | Python serverless functions (Vercel `api/*.py`); `local_api.py` mirrors them for local dev |
-| Chat generation (primary) | Groq (`llama-3.3-70b-versatile`) or Gemini (`gemini-3.1-flash-lite`), selected via `UMU_LLM_PROVIDER` |
+| Chat generation (primary) | Groq (`llama-3.3-70b-versatile`) |
 | Chat generation (fallback) | Umubyeyi's own fine-tuned BLOOMZ-560m (LoRA on real ESConv data), local Ollama (dev-only, opt-in) |
 | Retrieval | same-language character n-gram TF-IDF across 14 source-attributed reviewed topics |
 | Bilingual intent classifier | project-trained TF-IDF (word + character) + best of seven candidate classifiers |
@@ -174,9 +169,8 @@ ordinary conversational path and direct the user to immediate human support.
 - enough memory to load the 560M-parameter BLOOMZ-560m base model for local generation (CPU is fine)
 - Ollama, optional secondary generation path only
 
-**Note on API-backed chat:** wellbeing answers are generated by Groq or Gemini. Without a working API
-key for the active provider, the app safely continues through its local fine-tuned/retrieval paths
-instead of failing.
+**Note on API-backed chat:** wellbeing answers are generated by Groq. Without a working API key, the app
+safely continues through its local fine-tuned/retrieval paths instead of failing.
 
 ### Step 1 — Clone the repository
 
@@ -221,9 +215,8 @@ Copy-Item .env.example .env.local
 
 Analytics are optional. The application uses a local SQLite file when no `DATABASE_URL` is provided.
 Create a fresh Groq API key and put it only in the git-ignored `.env.local` file as
-`GROQ_API_KEY=...`. A Gemini key (`GEMINI_API_KEY=...`) can be added the same way if you want to compare
-providers — set `UMU_LLM_PROVIDER=gemini` to switch the active provider without a code change (default
-is `groq`). Never commit or paste a real key into source code, a notebook, or the report.
+`GROQ_API_KEY=...`. Never commit or paste a real key into source code, a notebook, or the report.
+Without a key, the app safely continues through its local/retrieval paths.
 
 ### Step 5 — Fine-tuned local response model (optional)
 
@@ -250,21 +243,18 @@ $env:UMU_ENABLE_OLLAMA = "1"
 
 `ollama create` applies project instructions and does not fine-tune Ollama weights. This is distinct
 from the BLOOMZ LoRA adapter, whose trainable weights were updated by this project. Ollama and the
-retrieved passage are both fallback layers, reached only if the active provider's answer is unavailable
-or rejected and the fine-tuned generator also has no answer (for example, a non-English message, since
-the fine-tuned checkpoint was only trained and evaluated on English).
+retrieved passage are both fallback layers, reached only if Groq's answer is unavailable or rejected and
+the fine-tuned generator also has no answer (for example, a non-English message, since the fine-tuned
+checkpoint was only trained and evaluated on English).
 
-Groq (`generate`) is the default primary generator for actual wellbeing-answer content, in both English
-and Kinyarwanda — general knowledge of postpartum emotional wellbeing, not constrained to reproduce this
+Groq (`generate`) is the primary generator for actual wellbeing-answer content, in both English and
+Kinyarwanda — general knowledge of postpartum emotional wellbeing, not constrained to reproduce this
 project's own 14-topic passages, so a repeated question reads differently each time rather than the
-same canned content. Gemini (`gemini_generator.py`) implements the identical contract and can be selected
-instead with `UMU_LLM_PROVIDER=gemini`, useful for comparing answer quality between providers without a
-code change (`rag.py`'s `llm_generator` property picks whichever is active). Both receive the last several
-real conversation turns so follow-ups stay coherent, not just the current message. Whichever provider is
-active is also used for two lower-stakes, non-clinical surfaces: greeting small talk (`generate_social`)
-and chat-list titles (`generate_title`). Neither is described as project-fine-tuned — they are external
-inference components, disclosed as such. The verified default models are `llama-3.3-70b-versatile`
-(`GROQ_MODEL`) and `gemini-3.1-flash-lite` (`GEMINI_MODEL`). If the active provider is unavailable,
+same canned content. Groq receives the last several real conversation turns so follow-ups stay coherent,
+not just the current message. Groq is also used for two lower-stakes, non-clinical surfaces: greeting
+small talk (`generate_social`) and chat-list titles (`generate_title`). It is not described as
+project-fine-tuned — it is an external inference component, disclosed as such. The verified default
+model is `llama-3.3-70b-versatile`; it can be changed with `GROQ_MODEL`. If Groq is unavailable,
 wellbeing answers fall back to the fine-tuned model, then Ollama, then the retrieved passage; greetings
 fall back to a plain availability notice. Fixed application text is restricted to safety, clinical
 referral, scope redirection, disclaimer, and failure handling. These controls are intentionally
@@ -307,8 +297,7 @@ scripts/evaluate_system_layers.py    layered metrics, auditable cases, and conso
 scripts/build_shap_background.py     builds the SHAP background sample from the training split
 src/generation_data.py            generator dataset construction and grouped splits
 src/finetuned_generator.py        lazy BLOOMZ inference — free-form generation, own weights
-src/groq_generator.py             Groq: default wellbeing-answer generator, plus greeting/title text
-src/gemini_generator.py           Gemini: alternate wellbeing-answer generator (UMU_LLM_PROVIDER=gemini)
+src/groq_generator.py             Groq: primary wellbeing-answer generator, plus greeting/title text
 src/explain.py                    lazy SHAP explainer for the check-in risk classifier
 src/rag.py                        conversational pipeline, safety policy, multi-turn scope routing
 src/screening.py                  OOP check-in service
@@ -326,15 +315,15 @@ scripts/benchmark_system.py       reproducible runtime benchmark
 python -m pytest -q
 ```
 
-Current verified result: **93 tests passed**. Strategies include unit, parameterized, boundary-value,
-invalid-input, offline/fallback, bilingual retrieval, safety, response-contract, dependency-injection,
-HTTP integration, indirect/obfuscated crisis messages, multi-turn conversation continuity (a bare
-follow-up stays in scope; an explicit off-topic pivot still redirects mid-conversation), general-knowledge
-response safety validation (length bounds, unverifiable-number rejection, wording-variety across repeated
-questions), fallback-cascade ordering (active provider -> fine-tuned -> Ollama -> retrieval), Groq/Gemini
-greeting/title failure fallback, conversation-history threading into the active generator, generation-data
-leakage control, SHAP explanation shape/fallback, layered-evaluation integrity, and generated-output
-validation.
+Current verified result: **80 tests passed**. Strategies include unit, parameterized,
+boundary-value, invalid-input, offline/fallback, bilingual retrieval, safety, response-contract,
+dependency-injection, HTTP integration, indirect/obfuscated crisis messages, multi-turn conversation
+continuity (a bare follow-up stays in scope; an explicit off-topic pivot still redirects
+mid-conversation), general-knowledge response safety validation (length bounds, unverifiable-number
+rejection, wording-variety across repeated questions), fallback-cascade ordering (Groq -> fine-tuned ->
+Ollama -> retrieval), Groq greeting/title failure fallback, conversation-history threading into Groq,
+generation-data leakage control, SHAP explanation shape/fallback, layered-evaluation integrity, and
+generated-output validation.
 
 ### Layered model evaluation
 
@@ -415,7 +404,7 @@ not a fallback-only measurement — see `reports/performance/local_benchmark.jso
 | Runtime path | Median latency |
 |---|---:|
 | Crisis safety routing | 0.008 ms |
-| Greeting (active provider disabled/unavailable, fallback text) | 0.011 ms |
+| Greeting (Groq disabled/unavailable, fallback text) | 0.011 ms |
 | English message (real fine-tuned BLOOMZ generation) | 5243.5 ms |
 | Kinyarwanda message (direct retrieval, no generation) | 159.1 ms |
 | Guided check-in prediction + live SHAP explanation | 1167.2 ms |
@@ -423,7 +412,7 @@ not a fallback-only measurement — see `reports/performance/local_benchmark.jso
 English responses are slow here specifically because this environment runs the real fine-tuned
 BLOOMZ-560m model on CPU rather than falling back to retrieval — the multi-second cost of genuine local
 generation, not a regression. Kinyarwanda stays fast because it is answered by direct retrieval (no
-generator is trained for Kinyarwanda yet). These numbers exclude Groq/Gemini network and Ollama
+generator is trained for Kinyarwanda yet). These numbers exclude Groq network and Ollama
 generation latency, since neither runs in this configuration. Repeated runs on the same machine vary by
 roughly 20-100% on the generation-dependent paths (CPU load, thermal state, background processes) — this
 is expected variance for a CPU-bound generation workload, not a bug; treat these as one representative
@@ -535,10 +524,9 @@ generator is presented as an English emotional-support adaptation, not a bilingu
 AMOD-derived file under `data/intent/` is separate project data used only to train the bilingual intent
 classifier; it supplies no generator targets and no Kinyarwanda answer targets. No human-authored
 Kinyarwanda conversational corpus exists yet, so this project's own fine-tuned model has no Kinyarwanda
-coverage — Kinyarwanda wellbeing answers instead come from the active external LLM provider (Groq or
-Gemini, both bilingual), falling back to the reviewed retrieved passage directly (not generation) only
-if that provider's answer is unavailable or rejected. The active provider is disclosed as an external
-model, both here and in the app's own evaluation logs.
+coverage — Kinyarwanda wellbeing answers instead come from Groq (bilingual), falling back to the
+reviewed retrieved passage directly (not generation) only if Groq's answer is unavailable or rejected.
+Groq is disclosed as an external model, both here and in the app's own evaluation logs.
 
 Detailed source, license, version, transformation, and checksum information for the datasets above is
 stored in `data/external/README.md` and `data/intent/README.md`. ESConv is downloaded from its official
@@ -560,29 +548,26 @@ repository at runtime and verified with SHA-256. The repository does not redistr
   translations. The untouched Kinyarwanda macro-F1 is 0.2762 and requires substantial improvement.
 - No human-authored Kinyarwanda response corpus is used for the project's own generator fine-tuning, so
   that fallback layer only covers English (see `accepted_generation_languages` in the training manifest).
-  Kinyarwanda wellbeing answers are still generated, by the active external provider (Groq or Gemini),
-  and fall back to the reviewed retrieved passage directly (not the fine-tuned model) if that provider's
-  answer fails validation.
+  Kinyarwanda wellbeing answers are still generated, by Groq, and fall back to the reviewed retrieved
+  passage directly (not the fine-tuned model) if Groq's answer fails validation.
 - At 560M parameters and ~7,800 fine-tuning examples, the fine-tuned fallback's own English output
   quality is real but modest (ROUGE-L 0.1285) — occasionally topically present but tonally imperfect,
-  especially on later conversation turns. This is exactly why an external LLM is the primary generator
-  rather than this checkpoint: in practice, the small model was unreliable mid-conversation.
-- Groq (default) and Gemini (`UMU_LLM_PROVIDER=gemini`) are externally hosted models; whichever is active
-  is used as the primary generator for wellbeing answers in both languages, plus greeting small talk and
-  chat titles. Their wellbeing answers are deliberately general knowledge, not constrained to the
-  project's own 14-topic passages (the chatbot is one supporting feature among several, not the
-  capstone's centerpiece, and narrow evidence-constrained answers read as repetitive across repeated
-  questions). Both receive the last several real conversation turns so follow-ups stay coherent, since
-  the mother's current message is already sensitive content sent to that provider's API and withholding
-  prior turns bought little real privacy while breaking conversational coherence. A lightweight safety
-  check still rejects unverifiable invented numbers (phone numbers, dosages) and overly short responses.
-  Sending a message to either provider requires clear user disclosure, data minimization, secure key
-  handling, and documented API availability/cost.
+  especially on later conversation turns. This is exactly why Groq is the primary generator rather
+  than this checkpoint: in practice, the small model was unreliable mid-conversation.
+- Groq is an externally hosted model, used as the primary generator for wellbeing answers in both
+  languages, plus greeting small talk and chat titles. Its wellbeing answers are deliberately general
+  knowledge, not constrained to the project's own 14-topic passages (the chatbot is one supporting
+  feature among several, not the capstone's centerpiece, and narrow evidence-constrained answers read as
+  repetitive across repeated questions). Groq receives the last several real conversation turns so
+  follow-ups stay coherent, since the mother's current message is already sensitive content sent to its
+  API and withholding prior turns bought little real privacy while breaking conversational coherence. A
+  lightweight safety check still rejects unverifiable invented numbers (phone numbers, dosages) and
+  overly short responses. Sending a message to it requires clear user disclosure, data minimization,
+  secure key handling, and documented API availability/cost.
 - The optional Ollama model remains pretrained and instruction-configured, not fine-tuned.
 - The fine-tuned generator does not run in the deployed (Vercel) build — see "Deployment Plan &
-  Execution" — so if the active provider's answer fails validation there, the hosted chat falls to the
-  retrieved passage directly rather than the fine-tuned model; the local build is where the real
-  fine-tuned fallback runs.
+  Execution" — so if Groq's answer fails validation there, the hosted chat falls to the retrieved passage
+  directly rather than the fine-tuned model; the local build is where the real fine-tuned fallback runs.
 - SHAP explainability also does not run in the deployed build (its `numba`/`llvmlite` dependencies
   pushed the bundle past Vercel's 500MB limit) — see "Deployment Plan & Execution"; the deployed check-in
   returns its result with `explainability_available: false`, and the local build is where the live SHAP
@@ -593,11 +578,10 @@ repository at runtime and verified with SHA-256. The repository does not redistr
 
 ## Deployment Plan & Execution
 
-### Generation: Groq/Gemini on both local and deployed, the fine-tuned fallback is local-only
+### Generation: Groq on both local and deployed, the fine-tuned fallback is local-only
 
-The active external LLM provider (Groq by default, or Gemini via `UMU_LLM_PROVIDER=gemini`) is the
-primary generator everywhere, so the deployed build's chat behaves like local for both English and
-Kinyarwanda. The one real difference is the fallback layer if the active provider's answer fails
+Groq is the primary generator everywhere, so the deployed build's chat behaves like local for both
+English and Kinyarwanda. The one real difference is the fallback layer if Groq's answer fails
 validation or is unavailable: locally that can be the real fine-tuned BLOOMZ model or Ollama;
 on Vercel it falls straight to the reviewed retrieved passage, because the `bigscience/bloomz-560m` base
 checkpoint plus PyTorch/Transformers/PEFT don't fit the 500 MB standard Python function bundle limit
@@ -618,10 +602,10 @@ the deployed check-in still returns its non-diagnostic result, just with `explai
 and no chart — not a crash.
 
 This is presented as documented, not a hidden gap: **local** (`npm run dev`) additionally has the real
-fine-tuned BLOOMZ fallback and the live SHAP explanation; **deployed** (Vercel) has real Groq/Gemini-
-generated chat in both languages, but falls straight to the retrieved passage instead of the fine-tuned
-model if the active provider fails, and has no SHAP chart on the check-in result — everything else
-(EPDS test, progress dashboard, safety routing) runs identically in both.
+fine-tuned BLOOMZ fallback and the live SHAP explanation; **deployed** (Vercel) has real Groq-generated
+chat in both languages, but falls straight to the retrieved passage instead of the fine-tuned model if
+Groq fails, and has no SHAP chart on the check-in result — everything else (EPDS test, progress
+dashboard, safety routing) runs identically in both.
 
 ### Deployment steps (verified)
 
@@ -631,8 +615,7 @@ model if the active provider fails, and has no SHAP chart on the check-in result
 4. Configure optional `DATABASE_URL` in project environment variables.
 5. Deploy using `vercel.json`; set a fresh `GROQ_API_KEY` in project environment variables (this is
    what actually generates wellbeing answers in both languages — without it, the deployed app still works,
-   falling back to the reviewed retrieved passage for every message). Optionally also set `GEMINI_API_KEY`
-   and `UMU_LLM_PROVIDER=gemini` to run Gemini instead of Groq as the active provider.
+   falling back to the reviewed retrieved passage for every message).
 6. Verify `/`, `/api/chat`, `/api/screen`, crisis routing, English/RW generation, EPDS test, progress
    dashboard, and mobile layout. On the deployed build, confirm `/api/screen` still returns a clean
    result with `explainability_available: false` (no SHAP chart) rather than an error.
