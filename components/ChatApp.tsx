@@ -7,6 +7,7 @@ import {
   generateTitle, logEvent, optionLabel, optionValue, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
 import EpdsAssessment from "@/components/EpdsAssessment";
+import { EPDS_STORAGE_KEY } from "@/lib/epds";
 import ProgressDashboard from "@/components/ProgressDashboard";
 import HorizontalBarChart from "@/components/charts/HorizontalBarChart";
 import Mark from "@/components/Mark";
@@ -76,7 +77,21 @@ export default function ChatApp() {
       setDraftThread(t);
       setCurrentId(t.id);
     }
-    if (loaded.some((t) => t.msgs.length > 1)) setConsented(true);
+    // A "returning user" is anyone with a real trace of prior use anywhere in the app --
+    // not just a chat with a reply. Someone who only ever took the EPDS test, logged a
+    // mood, or ran the guided check-in has genuinely used Umubyeyi before and should not
+    // be sent back through the welcome/consent screen.
+    const hasChatHistory = loaded.some((t) => t.msgs.length > 1);
+    const hasOtherHistory = ["umubyeyi_moods_v1", "umubyeyi_concern_v1", "umubyeyi_checkin_v1", EPDS_STORAGE_KEY]
+      .some((key) => {
+        try {
+          const raw = JSON.parse(localStorage.getItem(key) || "[]");
+          return Array.isArray(raw) && raw.length > 0;
+        } catch {
+          return false;
+        }
+      });
+    if (hasChatHistory || hasOtherHistory) setConsented(true);
     hydrated.current = true;
     try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
   }, []);
