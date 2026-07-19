@@ -456,9 +456,8 @@ export default function ChatApp() {
             </div>
             <div className="section-h">Inama zo kwita ku mutima · Self-care tips</div>
             <div className="tipgrid">
-              {TIPS.map(([e, rw, en, drw, den]) => (
+              {TIPS.map(([rw, en, drw, den]) => (
                 <div key={rw} className="tip">
-                  <div className="emo">{e}</div>
                   <div className="tt">{rw} · <span>{en}</span></div>
                   <div className="td">{drw}<br /><span>{den}</span></div>
                 </div>
@@ -467,7 +466,7 @@ export default function ChatApp() {
             <div className="section-h" style={{ marginTop: 20 }}>Amagambo yo kongera imbaraga · Gentle reminders</div>
             <div className="tipgrid">
               {AFFIRM.map(([en, rw]) => (
-                <div key={en} className="aff">💗 {en}<div className="affrw">{rw}</div></div>
+                <div key={en} className="aff">{en}<div className="affrw">{rw}</div></div>
               ))}
             </div>
           </>
