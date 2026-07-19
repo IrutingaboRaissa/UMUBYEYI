@@ -4,11 +4,16 @@ export type Msg = {
   sub?: string;
   danger?: boolean;
   mode?: string;
+  lang?: string;
 };
 
 export type Thread = {
   id: string;
   title: string;
+  // "fallback" = raw truncated first message, shown instantly and meant to be replaced;
+  // "generated" = a real Groq-summarized topic title; "manual" = the mother renamed it
+  // herself, so it must never be overwritten by a background retitle attempt.
+  titleSource?: "fallback" | "generated" | "manual";
   ts: number;
   msgs: Msg[];
 };

@@ -63,6 +63,7 @@ export default function ChatApp() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const sid = useRef("");
   const hydrated = useRef(false);
+  const retriedTitles = useRef(false);
 
   useEffect(() => {
     sid.current = sessionId();
@@ -89,6 +90,28 @@ export default function ChatApp() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [threads, typing, currentId]);
 
+  // Self-heal thread titles that never got upgraded past the raw-truncated placeholder
+  // (e.g. the Groq call failed the first time round). Runs once per session; never
+  // touches a title the mother generated successfully or renamed herself.
+  useEffect(() => {
+    if (!hydrated.current || retriedTitles.current || !threads.length) return;
+    retriedTitles.current = true;
+    threads.forEach((t) => {
+      const firstUser = t.msgs.find((m) => m.role === "user");
+      const firstBot = t.msgs.find((m) => m.role === "bot");
+      if (!firstUser || !firstBot) return;
+      if (t.titleSource === "generated" || t.titleSource === "manual") return;
+      const looksUnupgraded = t.titleSource === "fallback" || t.title === firstUser.text.slice(0, 40);
+      if (!looksUnupgraded) return;
+      generateTitle(firstUser.text, firstBot.text, firstBot.lang ?? "en").then((title) => {
+        if (!title) return;
+        setThreads((prev) => prev.map((th) => (
+          th.id === t.id ? { ...th, title, titleSource: "generated" } : th
+        )));
+      });
+    });
+  }, [threads]);
+
   const current = threads.find((t) => t.id === currentId)
     ?? (draftThread?.id === currentId ? draftThread : threads[0]);
   const checkinReady = checkin.Age !== "" && CHECKIN_FIELDS.every(([key]) => checkin[key] !== "");
@@ -109,7 +132,10 @@ export default function ChatApp() {
     const userMsg = text.trim();
     const isFirstMessage = !current.title;
     const t = { ...current, msgs: [...current.msgs, { role: "user" as const, text: userMsg }] };
-    if (!t.title) t.title = userMsg.slice(0, 40);
+    if (!t.title) {
+      t.title = userMsg.slice(0, 40);
+      t.titleSource = "fallback";
+    }
     updateThread(t);
     if (draftThread?.id === t.id) setDraftThread(null);
     setInput("");
@@ -117,7 +143,9 @@ export default function ChatApp() {
 
     try {
       const res = await sendChat(userMsg, null, current.msgs);
-      const botMsg = { role: "bot" as const, text: res.answer, danger: res.danger, mode: res.mode };
+      const botMsg = {
+        role: "bot" as const, text: res.answer, danger: res.danger, mode: res.mode, lang: res.language,
+      };
       updateThread({ ...t, msgs: [...t.msgs, botMsg] });
       setLastMeta({ lang: res.language, mode: res.mode });
       if (sid.current) await logEvent(sid.current, res);
@@ -132,7 +160,9 @@ export default function ChatApp() {
       if (isFirstMessage) {
         generateTitle(userMsg, res.answer, res.language).then((title) => {
           if (!title) return;
-          setThreads((prev) => prev.map((th) => (th.id === t.id ? { ...th, title } : th)));
+          setThreads((prev) => prev.map((th) => (
+            th.id === t.id ? { ...th, title, titleSource: "generated" } : th
+          )));
         });
       }
     } catch {
@@ -167,7 +197,9 @@ export default function ChatApp() {
   const renameThread = (id: string, name: string) => {
     const trimmed = name.trim().slice(0, 40);
     if (!trimmed) return;
-    setThreads((prev) => sortThreads(prev.map((t) => (t.id === id ? touchThread({ ...t, title: trimmed }) : t))));
+    setThreads((prev) => sortThreads(prev.map((t) => (
+      t.id === id ? touchThread({ ...t, title: trimmed, titleSource: "manual" }) : t
+    ))));
     setMenuThreadId(null);
   };
 
