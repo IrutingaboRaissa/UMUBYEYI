@@ -681,7 +681,6 @@ html, body {
   background: #FBF5EC; border: 1px solid #EADFCF;
   border-radius: 15px; padding: 13px 15px;
 }
-.tip .emo { font-size: 22px; }
 .tip .tt { font-weight: 700; color: #5E4A5E; font-size: 13.5px; margin: 6px 0 3px; }
 .tip .tt span { color: #A08E97; font-weight: 600; }
 .tip .td { font-size: 12px; color: #6b5560; line-height: 1.45; }
