@@ -271,7 +271,7 @@ export default function ChatApp() {
           <div className="wcard">
             <div className="wrow">
               <b>Umufasha w&apos;imibereho myiza yo mu mutima gusa.</b><br />
-              <span>A wellness companion for your mental wellbeing only — not for medical, baby-care, or other challenges.</span>
+              <span>A wellness companion for your mental wellbeing only, not for medical, baby-care, or other challenges.</span>
             </div>
             <div className="wrow">
               <b>Ku bibazo by&apos;umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara {CRISIS_LINE}.</b><br />
@@ -531,7 +531,7 @@ export default function ChatApp() {
                 <span className="subtext">
                   Answer every question below based on how things have actually been recently, then press &quot;Check result.&quot;
                   This research check-in estimates whether your answers resemble the dataset&apos;s elevated screening-risk
-                  group — it cannot diagnose postpartum depression, and nothing you enter is stored.
+                  group. It cannot diagnose postpartum depression, and nothing you enter is stored.
                 </span>
               </p>
               <label className="thread-menu-label">Age</label>
@@ -559,7 +559,7 @@ export default function ChatApp() {
               <label className="subtext" style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
                 <input type="checkbox" checked={saveCheckinHistory}
                   onChange={(e) => setSaveCheckinHistory(e.target.checked)} />
-                Save this result on this device only, to see your trend — nothing leaves your phone.
+                Save this result on this device only, to see your trend. Nothing leaves your phone.
               </label>
               <button className="btn btn-primary" style={{ marginTop: 10 }} disabled={screening || !checkinReady} onClick={async () => {
                 setScreening(true); setScreenError(""); setScreenResult(null);
@@ -598,7 +598,7 @@ export default function ChatApp() {
                     <div className="section-h" style={{ marginTop: 22 }}>What played the biggest role in this result</div>
                     <HorizontalBarChart data={screenResult.explanation} />
                     <div className="subtext" style={{ marginTop: 6 }}>
-                      This comes straight from your own answers, not a fixed rule — every mother&apos;s chart looks different.
+                      This comes straight from your own answers, not a fixed rule. Every mother&apos;s chart looks different.
                     </div>
                   </>
                 )}

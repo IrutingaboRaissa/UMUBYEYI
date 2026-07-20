@@ -9,7 +9,7 @@ import {
 const BAND_COPY: Record<EpdsBand, { title: string; body: string }> = {
   low: {
     title: "You're doing okay right now",
-    body: "Nothing here points to strong postpartum symptoms today — that's good to hear. Feelings can shift from week to week, so it's worth checking back in with yourself from time to time.",
+    body: "Nothing here points to strong postpartum symptoms today. That's good to hear. Feelings can shift from week to week, so it's worth checking back in with yourself from time to time.",
   },
   medium: {
     title: "A few things worth keeping an eye on",
@@ -17,7 +17,7 @@ const BAND_COPY: Record<EpdsBand, { title: string; body: string }> = {
   },
   high: {
     title: "It looks like you could use some extra support",
-    body: "This isn't a diagnosis, but your answers look similar to mothers who often benefit from talking to a health worker soon. Please don't wait to reach out — you don't have to carry this alone.",
+    body: "This isn't a diagnosis, but your answers look similar to mothers who often benefit from talking to a health worker soon. Please don't wait to reach out. You don't have to carry this alone.",
   },
 };
 
@@ -90,7 +90,7 @@ export default function EpdsAssessment({ onCrisis }: { onCrisis: () => void }) {
       <div className="tt" style={{ marginTop: 10 }}>{item.text}</div>
       {item.reverseScored && (
         <div className="subtext" style={{ marginTop: 4 }}>
-          This one's about a positive feeling — "Nearly every day" is the healthy answer here, not "Not at all."
+          This one's about a positive feeling: "Nearly every day" is the healthy answer here, not "Not at all."
         </div>
       )}
       <div className="epds-options">
@@ -107,7 +107,7 @@ export default function EpdsAssessment({ onCrisis }: { onCrisis: () => void }) {
       )}
       <div className="subtext" style={{ marginTop: 14 }}>
         This assessment is currently available in English only. It is separate from the guided
-        check-in and does not store your individual answers — only the date and total score are
+        check-in and does not store your individual answers. Only the date and total score are
         saved, on this device only.
       </div>
     </div>

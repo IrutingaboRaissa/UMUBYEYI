@@ -104,7 +104,7 @@ export default function ProgressDashboard() {
       <div className="section-h" style={{ marginTop: 20 }}>Mood check-ins</div>
       <div className="card">
         {rankedMoods.length === 0 ? (
-          <div className="subtext">No mood check-ins yet — log one from Self-care.</div>
+          <div className="subtext">No mood check-ins yet. Log one from Self-care.</div>
         ) : (
           <>
             <div className="subtext" style={{ marginBottom: 8 }}>
@@ -142,7 +142,7 @@ export default function ProgressDashboard() {
           <div className="section-h" style={{ marginTop: 20 }}>How your chats have been feeling</div>
           <div className="card">
             <TrendLine data={concernPoints} domain={[0, 100]} color="#356B7D" />
-            <div className="subtext">A rough sense of how heavy your recent messages sounded — just a pattern, not a diagnosis.</div>
+            <div className="subtext">A rough sense of how heavy your recent messages sounded. Just a pattern, not a diagnosis.</div>
           </div>
         </>
       )}
@@ -156,7 +156,7 @@ export default function ProgressDashboard() {
       )}
 
       <div className="subtext" style={{ marginTop: 16 }}>
-        Everything here stays on this device — nothing is sent anywhere.
+        Everything here stays on this device. Nothing is sent anywhere.
       </div>
     </>
   );

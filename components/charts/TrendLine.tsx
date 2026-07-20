@@ -14,7 +14,7 @@ export default function TrendLine({
   color?: string;
 }) {
   if (data.length === 0) {
-    return <div className="subtext">No entries yet — check in to start your trend.</div>;
+    return <div className="subtext">No entries yet. Check in to start your trend.</div>;
   }
   return (
     <ResponsiveContainer width="100%" height={200}>
