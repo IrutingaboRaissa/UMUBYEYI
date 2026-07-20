@@ -265,24 +265,12 @@ export default function ChatApp() {
         <div className="hero-content">
           <div className="logo"><Mark size={44} /></div>
           <h1>Muraho, mama.</h1>
-          <div className="tag">Ntabwo uri wenyine · you&apos;re not alone</div>
-          <p className="lead">Ndi hano kukwitaho uko wiyumva. Vugana nanjye mu Kinyarwanda cyangwa Icyongereza.</p>
-          <p className="leadEn">I&apos;m here to care for how you feel. Talk with me in Kinyarwanda or English.</p>
-          <div className="wcard">
-            <div className="wrow">
-              <b>Umufasha w&apos;imibereho myiza yo mu mutima gusa.</b><br />
-              <span>A wellness companion for your mental wellbeing only, not for medical, baby-care, or other challenges.</span>
-            </div>
-            <div className="wrow">
-              <b>Ku bibazo by&apos;umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara {CRISIS_LINE}.</b><br />
-              <span>For physical or baby concerns, see a health worker; in a crisis call {CRISIS_LINE} · chats stay on this device.</span>
-            </div>
-          </div>
-          <div style={{ marginTop: 20 }}>
-            <button className="btn btn-primary" onClick={() => setConsented(true)}>
-              Tangira ikiganiro · Start →
-            </button>
-          </div>
+          <p className="lead">Nturi wenyine. Umubyeyi ari hano ngo agufashe kwita ku mibereho myiza yo mu mutima.</p>
+          <p className="leadEn">You&apos;re not alone. Umubyeyi is here to support your emotional wellbeing.</p>
+          <div className="tag">Vugana mu Kinyarwanda cyangwa Icyongereza · Chat in Kinyarwanda or English</div>
+          <button className="btn btn-primary hero-cta" onClick={() => setConsented(true)}>
+            Tangira ikiganiro · Start →
+          </button>
         </div>
       </div>
     );
@@ -652,16 +640,22 @@ export default function ChatApp() {
               Ntiyita ku bibazo by&apos;umubiri cyangwa byo kwita ku mwana.
               <br /><br />
               <i>Umubyeyi is a bilingual companion for the emotional wellbeing of first-time mothers in the first 6 months after birth.</i>
-              <div className="subtext" style={{ marginTop: 12 }}>
-                Si serivisi y&apos;ubuvuzi · niba uri mu kaga, hamagara {CRISIS_LINE}.
+              <div style={{ marginTop: 16 }}>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>
+                  Reba ipaji yo gutangira · See the welcome page again
+                </button>
               </div>
-              <button
-                className="btn btn-sm"
-                style={{ marginTop: 16 }}
-                onClick={() => setConsented(false)}
-              >
-                Reba ipaji yo gutangira · See the welcome page again
-              </button>
+            </div>
+            <div className="section-h" style={{ marginTop: 20 }}>Icyo dukora · What Umubyeyi is (and isn&apos;t)</div>
+            <div className="wcard">
+              <div className="wrow">
+                <b>Umufasha w&apos;imibereho myiza yo mu mutima gusa.</b><br />
+                <span>A wellness companion for your mental wellbeing only, not for medical, baby-care, or other challenges.</span>
+              </div>
+              <div className="wrow">
+                <b>Ku bibazo by&apos;umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara {CRISIS_LINE}.</b><br />
+                <span>For physical or baby concerns, see a health worker; in a crisis call {CRISIS_LINE}. Chats stay on this device.</span>
+              </div>
             </div>
           </>
         )}
