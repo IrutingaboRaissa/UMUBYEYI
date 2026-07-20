@@ -1,0 +1,28 @@
+# Render Blueprint for the Umubyeyi Python API. This is documentation-as-code
+# for the dashboard settings below, not an auto-deploy trigger -- applying it
+# still requires an explicit action in the Render dashboard ("New Blueprint
+# Instance"). The Next.js frontend stays on Vercel; this only covers the
+# Python side.
+services:
+  - type: web
+    name: umubyeyi-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python local_api.py
+    healthCheckPath: /health
+    envVars:
+      # Secret -- set the real value in the Render dashboard, never here.
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://firstmumassist-six.vercel.app
+      # No PaaS-specific VERCEL=1 gate applies here, and the fine-tuned
+      # adapter files are present in the repo, so these must be explicit --
+      # see local_api.py / src/finetuned_generator.py / src/explain.py.
+      - key: UMU_DISABLE_FINETUNED
+        value: "1"
+      - key: UMU_DISABLE_OLLAMA
+        value: "1"
+      - key: UMU_DISABLE_SHAP
+        value: "1"

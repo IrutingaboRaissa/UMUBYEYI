@@ -31,10 +31,38 @@ sys.path.insert(0, str(ROOT / "src"))
 import rag  # noqa: E402
 from screening import screening_service  # noqa: E402
 
+# Comma-separated allowlist. Same-origin production (Vercel calling its own
+# api/*.py) never exercises this -- it only matters once a frontend on a
+# different origin (e.g. Vercel calling this service on Render) calls in, so
+# the default only needs to cover local dev, where Next.js runs on its own
+# origin from this server's point of view even though both are localhost.
+_DEFAULT_ALLOWED_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
+ALLOWED_ORIGINS = {
+    origin.strip()
+    for origin in os.environ.get("ALLOWED_ORIGINS", _DEFAULT_ALLOWED_ORIGINS).split(",")
+    if origin.strip()
+}
+
 
 class LocalApiHandler(BaseHTTPRequestHandler):
+    def _cors_origin(self) -> str | None:
+        """Echo the request's Origin back only if it's allowlisted -- never a
+        wildcard, so this can't be called cross-origin from an arbitrary site
+        once it's reachable outside Vercel's same-origin functions."""
+        origin = self.headers.get("Origin", "")
+        return origin if origin in ALLOWED_ORIGINS else None
+
     def do_OPTIONS(self):
         self._json(204, {})
+
+    def do_GET(self):
+        # Render (and any uptime monitor) hits this to decide if the service
+        # is alive. Must never call Groq or touch a model -- the whole point
+        # is a fast, cheap liveness signal, not a functional smoke test.
+        if self.path in ("/health", "/"):
+            self._json(200, {"ok": True})
+        else:
+            self._json(404, {"error": "Endpoint not found"})
 
     def do_POST(self):
         try:
@@ -79,8 +107,11 @@ class LocalApiHandler(BaseHTTPRequestHandler):
         data = b"" if status == 204 else json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        origin = self._cors_origin()
+        if origin:
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Vary", "Origin")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
@@ -121,4 +152,12 @@ class LocalApiServer:
 
 
 if __name__ == "__main__":
-    LocalApiServer().run()
+    # Only the entrypoint reads these -- LocalApiServer's own defaults stay
+    # 127.0.0.1:8000 so tests (LocalApiServer(port=0)) are unaffected. Render
+    # (and most PaaS hosts) require binding 0.0.0.0 and its own assigned
+    # $PORT; local dev via `npm run dev` gets the same 0.0.0.0 default too,
+    # which still answers on 127.0.0.1 -- it's just also reachable on the LAN,
+    # same as Next.js's own dev server already is.
+    _host = os.environ.get("HOST", "0.0.0.0")
+    _port = int(os.environ.get("PORT", "8000"))
+    LocalApiServer(host=_host, port=_port).run()

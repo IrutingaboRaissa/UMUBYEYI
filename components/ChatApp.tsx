@@ -2,12 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, TIPS,
+  AFFIRM, ApiWakingUpError, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat,
   generateTitle, optionLabel, optionValue, sendScreen, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
 import EpdsAssessment from "@/components/EpdsAssessment";
-import { EPDS_STORAGE_KEY } from "@/lib/epds";
 import ProgressDashboard from "@/components/ProgressDashboard";
 import HorizontalBarChart from "@/components/charts/HorizontalBarChart";
 import Mark from "@/components/Mark";
@@ -78,21 +77,11 @@ export default function ChatApp() {
       setDraftThread(t);
       setCurrentId(t.id);
     }
-    // A "returning user" is anyone with a real trace of prior use anywhere in the app --
-    // not just a chat with a reply. Someone who only ever took the EPDS test, logged a
-    // mood, or ran the guided check-in has genuinely used Umubyeyi before and should not
-    // be sent back through the welcome/consent screen.
-    const hasChatHistory = loaded.some((t) => t.msgs.length > 1);
-    const hasOtherHistory = ["umubyeyi_moods_v1", "umubyeyi_concern_v1", "umubyeyi_checkin_v1", EPDS_STORAGE_KEY]
-      .some((key) => {
-        try {
-          const raw = JSON.parse(localStorage.getItem(key) || "[]");
-          return Array.isArray(raw) && raw.length > 0;
-        } catch {
-          return false;
-        }
-      });
-    if (hasChatHistory || hasOtherHistory) setConsented(true);
+    // The welcome screen is a deliberate landing page, not a one-time onboarding step --
+    // it's shown on every visit and only ever dismissed by an explicit click on "Start",
+    // regardless of how much history the mother already has. Her data underneath (chats,
+    // EPDS results, moods, check-ins) is untouched either way; this only controls which
+    // view greets her first.
     hydrated.current = true;
     try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
     try {
@@ -183,12 +172,14 @@ export default function ChatApp() {
           )));
         });
       }
-    } catch {
-      const fallbackText = lastMeta.lang === "en"
-        ? "Sorry, something went wrong. Please try again."
-        : lastMeta.lang === "rw"
-          ? "Mbabarira, hari ikibazo. Ongera ugerageze."
-          : "Sorry, something went wrong. Mbabarira, hari ikibazo. Ongera ugerageze.";
+    } catch (err) {
+      const fallbackText = err instanceof ApiWakingUpError
+        ? "The assistant is just waking up - please try again in a moment. Umufasha araza kuboneka - ongera ugerageze mu kanya."
+        : lastMeta.lang === "en"
+          ? "Sorry, something went wrong. Please try again."
+          : lastMeta.lang === "rw"
+            ? "Mbabarira, hari ikibazo. Ongera ugerageze."
+            : "Sorry, something went wrong. Mbabarira, hari ikibazo. Ongera ugerageze.";
       updateThread({
         ...t,
         msgs: [...t.msgs, { role: "bot", text: fallbackText }],
