@@ -1,7 +1,7 @@
 // Decorative hero illustration: a mother with her baby at her shoulder. Hair, a
 // draped-shoulder silhouette, and baby-proportioned head+tuft are drawn in so the
 // shapes read as "mother and baby" at a glance, not an abstract silhouette.
-// Desktop-only accent (hidden on mobile via CSS in globals.css, not by JS).
+// Shown at every viewport size, scaled smaller on mobile via CSS in globals.css.
 export default function MotherBabyMark() {
   return (
     <svg viewBox="0 0 220 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden focusable="false">
