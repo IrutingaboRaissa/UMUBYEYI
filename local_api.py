@@ -28,7 +28,6 @@ _load_local_env(ROOT / ".env")
 _load_local_env(ROOT / ".env.local", override=True)
 sys.path.insert(0, str(ROOT / "src"))
 
-import db  # noqa: E402
 import rag  # noqa: E402
 from screening import screening_service  # noqa: E402
 
@@ -45,10 +44,6 @@ class LocalApiHandler(BaseHTTPRequestHandler):
                 self._chat(body)
             elif self.path == "/api/screen":
                 self._json(200, screening_service.predict(body.get("answers") or {}, explain=body.get("explain", True)))
-            elif self.path == "/api/event":
-                self._event(body)
-            elif self.path == "/api/feedback":
-                self._feedback(body)
             elif self.path == "/api/title":
                 self._title(body)
             else:
@@ -69,26 +64,6 @@ class LocalApiHandler(BaseHTTPRequestHandler):
         result = rag.answer(message, force_lang=force, history=body.get("history"))
         result["latency_ms"] = int((time.time() - started) * 1000)
         self._json(200, result)
-
-    def _event(self, body):
-        sid = (body.get("session_id") or "").strip()
-        if sid and db:
-            sources = body.get("sources") or []
-            similarity = sources[0].get("sim", 0.0) if sources else 0.0
-            db.log_event(sid, body.get("language"), body.get("mode"),
-                         body.get("grounded"), similarity,
-                         int(body.get("latency_ms", 0)))
-        self._json(200, {"ok": True})
-
-    def _feedback(self, body):
-        sid = (body.get("session_id") or "").strip()
-        rating = int(body.get("rating", 0))
-        if not sid or rating not in (1, -1):
-            self._json(400, {"error": "session_id and rating (+1|-1) required"})
-            return
-        if db:
-            db.log_feedback(sid, rating, body.get("language"), body.get("mode"))
-        self._json(200, {"ok": True})
 
     def _title(self, body):
         user_message = (body.get("user_message") or "").strip()

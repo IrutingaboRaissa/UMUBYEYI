@@ -6,8 +6,6 @@ scikit-learn==1.9.0
 joblib>=1.3
 numpy>=2.0
 pandas>=2.2
-SQLAlchemy>=2.0
-psycopg2-binary>=2.9
 # shap (and its hard numba/llvmlite dependencies) are intentionally NOT installed here:
 # together they pushed the deployed bundle past Vercel's 500MB limit (542MB measured).
 # src/explain.py already gates SHAP off on Vercel by default (UMU_ENABLE_SHAP=1 opt-in)

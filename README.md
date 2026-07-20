@@ -154,7 +154,6 @@ ordinary conversational path and direct the user to immediate human support.
 | Bilingual intent classifier | project-trained TF-IDF (word + character) + best of seven candidate classifiers |
 | Screening-risk ML | scikit-learn 1.9 pipelines (Logistic Regression / Random Forest, best of seven candidates), joblib |
 | Explainability | SHAP (`shap.Explainer`, model-agnostic) — local/Colab only, gated off on Vercel by default |
-| Database | Postgres via `DATABASE_URL` (optional analytics), local SQLite fallback |
 | Fine-tuning environment | Google Colab (T4 GPU), `notebooks/umubyeyi.ipynb`, PyTorch/Transformers/PEFT |
 | Deployment | Vercel (frontend + Python API) |
 
@@ -213,7 +212,6 @@ npm ci
 Copy-Item .env.example .env.local
 ```
 
-Analytics are optional. The application uses a local SQLite file when no `DATABASE_URL` is provided.
 Create a fresh Groq API key and put it only in the git-ignored `.env.local` file as
 `GROQ_API_KEY=...`. Never commit or paste a real key into source code, a notebook, or the report.
 Without a key, the app safely continues through its local/retrieval paths.
@@ -612,15 +610,14 @@ dashboard, safety routing) runs identically in both.
 1. Run tests and the production build locally.
 2. Commit and push the exact tested revision.
 3. Import the GitHub repository into Vercel.
-4. Configure optional `DATABASE_URL` in project environment variables.
-5. Deploy using `vercel.json`; set a fresh `GROQ_API_KEY` in project environment variables (this is
+4. Deploy using `vercel.json`; set a fresh `GROQ_API_KEY` in project environment variables (this is
    what actually generates wellbeing answers in both languages — without it, the deployed app still works,
    falling back to the reviewed retrieved passage for every message).
-6. Verify `/`, `/api/chat`, `/api/screen`, crisis routing, English/RW generation, EPDS test, progress
+5. Verify `/`, `/api/chat`, `/api/screen`, crisis routing, English/RW generation, EPDS test, progress
    dashboard, and mobile layout. On the deployed build, confirm `/api/screen` still returns a clean
    result with `explainability_available: false` (no SHAP chart) rather than an error.
-7. Confirm that the URL at the top of this README is publicly accessible without Vercel authentication.
-8. Record the demo against that exact deployed revision.
+6. Confirm that the URL at the top of this README is publicly accessible without Vercel authentication.
+7. Record the demo against that exact deployed revision.
 
 Deployed and verified at: https://firstmumassist-six.vercel.app/
 
