@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AFFIRM, ApiWakingUpError, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat,
-  displayText, generateTitle, optionLabel, optionValue, sendScreen, sortThreads, touchThread, ScreenResponse,
+  generateTitle, optionLabel, optionValue, sendScreen, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
 import EpdsAssessment from "@/components/EpdsAssessment";
 import ProgressDashboard from "@/components/ProgressDashboard";
@@ -223,7 +223,7 @@ export default function ChatApp() {
   };
 
   const renameThread = (id: string, name: string) => {
-    const trimmed = displayText(name).slice(0, 40);
+    const trimmed = name.trim().slice(0, 40);
     if (!trimmed) return;
     setThreads((prev) => sortThreads(prev.map((t) => (
       t.id === id ? touchThread({ ...t, title: trimmed, titleSource: "manual" }) : t
@@ -318,7 +318,7 @@ export default function ChatApp() {
         <div className="sblbl">Ibiganiro · Recent</div>
         <div className="thread-list">
           {threads.map((t) => {
-            const label = displayText(t.title) || "Ikiganiro gishya · New chat";
+            const label = t.title || "Ikiganiro gishya · New chat";
             const active = t.id === currentId;
             return (
               <div key={t.id} className={`thread-row ${active ? "active" : ""}`}>
@@ -407,8 +407,8 @@ export default function ChatApp() {
               {current.msgs.map((m, i) => (
                 <div key={i} className={`row ${m.role === "user" ? "me" : ""}`}>
                   <div className={`bubble ${m.role === "user" ? "me" : "bot"} ${m.danger ? "danger" : ""}`}>
-                    {displayText(m.text)}
-                    {m.sub && <div className="subtext">{displayText(m.sub)}</div>}
+                    {m.text}
+                    {m.sub && <div className="subtext">{m.sub}</div>}
                   </div>
                 </div>
               ))}
@@ -583,16 +583,16 @@ export default function ChatApp() {
                   Subiza ibibazo byose hejuru kugira ngo ubone ibisubizo. · Answer all the questions above to see your result.
                 </div>
               )}
-              {screenError && <div className="card danger">{displayText(screenError)}</div>}
+              {screenError && <div className="card danger">{screenError}</div>}
               {screenResult && <div className={`card ${screenResult.elevated ? "danger" : ""}`}>
                 <b style={{ fontSize: 16 }}>
                   {screenResult.elevated
                     ? "Ushobora gukenera ubufasha bwinyongera · You may benefit from some extra support"
                     : "Nta bimenyetso bikomeye byagaragaye · Nothing concerning stood out today"}
                 </b>
-                <p style={{ marginTop: 10 }}>{displayText(screenResult.message_en)}</p>
-                <p style={{ marginTop: 8 }}>{displayText(screenResult.message_rw)}</p>
-                <div className="disc" style={{ marginTop: 12 }}>{displayText(screenResult.disclaimer)}</div>
+                <p style={{ marginTop: 10 }}>{screenResult.message_en}</p>
+                <p style={{ marginTop: 8 }}>{screenResult.message_rw}</p>
+                <div className="disc" style={{ marginTop: 12 }}>{screenResult.disclaimer}</div>
                 {screenResult.explainability_available && screenResult.explanation && (
                   <>
                     <div className="section-h" style={{ marginTop: 22 }}>What played the biggest role in this result</div>
@@ -716,7 +716,7 @@ export default function ChatApp() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>Siba iki kiganiro? · Delete this chat?</h3>
             <div className="card">
-              Uragiye gusiba <b>&quot;{displayText(deleteTarget.title)}&quot;</b>. Iki gikorwa ntigisubirwaho.
+              Uragiye gusiba <b>&quot;{deleteTarget.title}&quot;</b>. Iki gikorwa ntigisubirwaho.
               <br /><br />
               <i>This cannot be undone.</i>
             </div>
