@@ -188,13 +188,55 @@ export function touchThread(t: Thread): Thread {
   return { ...t, ts: Date.now() };
 }
 
+// Points requests at a separately hosted backend (e.g. Render) when set at
+// build time; otherwise every call stays relative, so a bare `/api/...`
+// path is served same-origin exactly as before (by Vercel's own api/*.py in
+// production, or by local_api.py via the Next.js dev rewrite locally). Must
+// only ever hold a public base URL -- never a secret, since NEXT_PUBLIC_*
+// values are inlined into the browser bundle.
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "").replace(/\/+$/, "");
+
+export function apiUrl(path: string): string {
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return API_BASE_URL ? `${API_BASE_URL}${cleanPath}` : cleanPath;
+}
+
+// Thrown when the backend looks asleep rather than genuinely broken, so the
+// UI can show "still starting up" instead of a generic error. Render's free
+// tier can take 50s+ to spin back up after idling -- a plain fetch would
+// otherwise just hang with no feedback for that whole window.
+export class ApiWakingUpError extends Error {
+  constructor() {
+    super("The backend is starting up. Please try again in a moment.");
+    this.name = "ApiWakingUpError";
+  }
+}
+
+const WAKE_TIMEOUT_MS = 60_000;
+
+async function apiFetch(path: string, init: RequestInit): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), WAKE_TIMEOUT_MS);
+  try {
+    const res = await fetch(apiUrl(path), { ...init, signal: controller.signal });
+    if (res.status === 502 || res.status === 503) throw new ApiWakingUpError();
+    return res;
+  } catch (err) {
+    if (err instanceof ApiWakingUpError) throw err;
+    if (err instanceof DOMException && err.name === "AbortError") throw new ApiWakingUpError();
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function sendChat(
   message: string, forceLang?: "en" | "rw" | null, history?: Msg[]
 ): Promise<ChatResponse> {
   // Last few turns only: enough for the generator to track the current
   // exchange without shipping a mother's whole chat history on every request.
   const recentHistory = (history || []).slice(-6).map((m) => ({ role: m.role, text: m.text }));
-  const res = await fetch("/api/chat", {
+  const res = await apiFetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, force_lang: forceLang ?? null, history: recentHistory }),
@@ -207,7 +249,7 @@ export async function sendChat(
 }
 
 export async function sendScreen(answers: Record<string, string | number>): Promise<ScreenResponse> {
-  const res = await fetch("/api/screen", {
+  const res = await apiFetch("/api/screen", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ answers, explain: true }),
@@ -221,7 +263,7 @@ export async function sendScreen(answers: Record<string, string | number>): Prom
 
 export async function generateTitle(userMessage: string, botReply: string, lang?: string): Promise<string> {
   try {
-    const res = await fetch("/api/title", {
+    const res = await apiFetch("/api/title", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_message: userMessage, bot_reply: botReply, lang: lang ?? "en" }),
