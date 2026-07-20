@@ -93,6 +93,11 @@ export const CRISIS_LINE = "114";
 export const STORE_KEY = "umubyeyi_threads_v3";
 export const STORE_CURRENT_KEY = "umubyeyi_current_v3";
 
+/** Keep internal snake_case values out of user-visible copy. */
+export function displayText(value: unknown): string {
+  return String(value ?? "").replace(/_+/g, " ").replace(/\s+/g, " ").trim();
+}
+
 export const TIPS = [
   ["Shaka ubufasha", "Reach out", "Ganira n'umuntu wizeye cyangwa umukozi w'ubuzima.", "Talk to someone you trust or a health worker."],
   ["Wubake abagufasha", "Build support", "Egera uwo mwashakanye, umuryango n'incuti.", "Lean on your partner, family, and friends."],

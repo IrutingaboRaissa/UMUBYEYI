@@ -12,6 +12,10 @@ export type Contribution = {
 const INCREASE_COLOR = "#C9705A"; // same hue as the existing danger accents
 const DECREASE_COLOR = "#356B7D"; // same hue as the existing bot-bubble text
 
+function displayLabel(value: unknown): string {
+  return String(value ?? "").replace(/_+/g, " ").replace(/\s+/g, " ").trim();
+}
+
 function strengthWord(ratio: number): string {
   if (ratio >= 0.66) return "Strongly";
   if (ratio >= 0.33) return "Somewhat";
@@ -35,7 +39,8 @@ export default function HorizontalBarChart({ data }: { data: Contribution[] }) {
         </span>
       </div>
       <ResponsiveContainer width="100%" height={Math.max(120, data.length * 34)}>
-        <BarChart data={data} layout="vertical" margin={{ top: 4, right: 24, left: 4, bottom: 4 }}>
+        <BarChart data={data.map((row) => ({ ...row, feature_label: displayLabel(row.feature_label) }))}
+          layout="vertical" margin={{ top: 4, right: 24, left: 4, bottom: 4 }}>
           <XAxis type="number" domain={[-magnitude * 1.15, magnitude * 1.15]} hide />
           <YAxis type="category" dataKey="feature_label" width={150}
             tick={{ fontSize: 12, fill: "#4A3F47" }} axisLine={false} tickLine={false} />
@@ -46,7 +51,7 @@ export default function HorizontalBarChart({ data }: { data: Contribution[] }) {
               const row = (entry?.payload ?? {}) as Contribution;
               const ratio = Math.abs(Number(value)) / magnitude;
               const verb = row.direction === "increases" ? "pointed toward extra support" : "pointed toward things being steady";
-              return [`${strengthWord(ratio)} ${verb}`, row.feature_label];
+              return [`${strengthWord(ratio)} ${verb}`, displayLabel(row.feature_label)];
             }}
           />
           <Bar dataKey="contribution" radius={4} barSize={16}>
