@@ -574,6 +574,8 @@ html, body {
 
 .epds-result .disc { margin-top: 10px; }
 
+.app-loading { min-height: 100vh; min-height: 100svh; }
+
 .hero {
   position: relative;
   width: 100%;

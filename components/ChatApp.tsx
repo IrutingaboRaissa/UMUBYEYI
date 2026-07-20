@@ -34,6 +34,7 @@ const CHECKIN_HISTORY_KEY = "umubyeyi_checkin_v1";
 
 export default function ChatApp() {
   const [consented, setConsented] = useState(false);
+  const [uiReady, setUiReady] = useState(false);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [currentId, setCurrentId] = useState("");
   const [draftThread, setDraftThread] = useState<Thread | null>(null);
@@ -77,22 +78,40 @@ export default function ChatApp() {
       setDraftThread(t);
       setCurrentId(t.id);
     }
-    // The welcome screen is a deliberate landing page, not a one-time onboarding step --
-    // it's shown on every visit and only ever dismissed by an explicit click on "Start",
-    // regardless of how much history the mother already has. Her data underneath (chats,
-    // EPDS results, moods, check-ins) is untouched either way; this only controls which
-    // view greets her first.
+    // The welcome screen is a deliberate landing page on a brand-new browser session --
+    // it's shown the first time a tab opens and only ever dismissed by an explicit click
+    // on "Start" (or the Home button). Within that same tab, a reload restores whichever
+    // screen the mother was on instead of sending her back to the welcome page again --
+    // sessionStorage (not localStorage) is what keeps that scoped to the current tab/session
+    // rather than becoming a permanent skip-the-welcome-screen state. Her data underneath
+    // (chats, EPDS results, moods, check-ins) is untouched either way.
+    try {
+      if (sessionStorage.getItem("umubyeyi_consented_v1") === "1") setConsented(true);
+      const storedView = sessionStorage.getItem("umubyeyi_view_v1") as View | null;
+      if (storedView && NAV.some((n) => n.id === storedView)) setView(storedView);
+    } catch { /* ignore */ }
     hydrated.current = true;
     try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
     try {
       setDismissedMoodDates(JSON.parse(localStorage.getItem("umubyeyi_moods_dismissed_v1") || "[]"));
     } catch { /* ignore */ }
+    setUiReady(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated.current) return;
     saveThreads(threads, currentId);
   }, [threads, currentId]);
+
+  useEffect(() => {
+    if (!hydrated.current) return;
+    try { sessionStorage.setItem("umubyeyi_consented_v1", consented ? "1" : "0"); } catch { /* ignore */ }
+  }, [consented]);
+
+  useEffect(() => {
+    if (!hydrated.current) return;
+    try { sessionStorage.setItem("umubyeyi_view_v1", view); } catch { /* ignore */ }
+  }, [view]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -235,6 +254,10 @@ export default function ChatApp() {
     setRenameDraft(t.title);
   };
 
+  if (!uiReady) {
+    return <div className="app-loading" aria-hidden />;
+  }
+
   if (!consented) {
     return (
       <div className="hero">
@@ -359,7 +382,7 @@ export default function ChatApp() {
                 <div className="s">Umufasha w&apos;imibereho myiza yo mu mutima · a mental-wellbeing companion</div>
               </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => startNewChat()}>Ahabanza · Home</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("breathe")}>Guhumeka · Breathe</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
@@ -405,7 +428,7 @@ export default function ChatApp() {
                 <div className="s">Wowe wanitaye ku mwana - noneho niwiyiteho</div>
               </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
@@ -497,7 +520,7 @@ export default function ChatApp() {
               <div className="s">Optional screening support · not a diagnosis · answers are not stored</div>
             </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
@@ -591,7 +614,7 @@ export default function ChatApp() {
               <div className="s">Based on the Edinburgh Postnatal Depression Scale (EPDS-10) · not a diagnosis</div>
             </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
@@ -606,7 +629,7 @@ export default function ChatApp() {
               <div className="s">Trends from your wellness test, mood check-ins, and guided check-in</div>
             </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
@@ -620,7 +643,7 @@ export default function ChatApp() {
               <div className="av"><Mark /></div>
               <div><div className="t">Ibyerekeye Umubyeyi</div><div className="s">About</div></div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => goToView("chat")}>Ahabanza · Home</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
