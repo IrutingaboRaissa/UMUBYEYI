@@ -57,6 +57,9 @@ export default function ChatApp() {
   const [screenError, setScreenError] = useState("");
   const [saveCheckinHistory, setSaveCheckinHistory] = useState(false);
   const [moodHistory, setMoodHistory] = useState<{ mood: string; date: string }[]>([]);
+  // Entries dismissed from the Self-care "Recent" strip only -- the real history in
+  // umubyeyi_moods_v1 (and therefore the Progress dashboard) is never touched by this.
+  const [dismissedMoodDates, setDismissedMoodDates] = useState<string[]>([]);
   const [moodTip, setMoodTip] = useState<{ mood: string; en: string; rw: string } | null>(null);
   const lastMoodTipIndex = useRef<Record<string, number>>({});
   // Fixed, not rotated: "Asking for help is a sign of strength, not weakness."
@@ -94,6 +97,9 @@ export default function ChatApp() {
     if (hasChatHistory || hasOtherHistory) setConsented(true);
     hydrated.current = true;
     try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
+    try {
+      setDismissedMoodDates(JSON.parse(localStorage.getItem("umubyeyi_moods_dismissed_v1") || "[]"));
+    } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
@@ -443,31 +449,40 @@ export default function ChatApp() {
                   <div className="td">{moodTip.en}<br /><span>{moodTip.rw}</span></div>
                 </div>
               )}
-              {moodHistory.length > 0 && (
-                <div className="disc">
-                  <div>Recent:</div>
-                  <div className="mood-history">
-                    {moodHistory.slice(0, 7).map((entry, i) => (
-                      <span key={`${entry.date}-${i}`} className="mood-pill mood-pill-removable" style={{ animationDelay: `${i * 45}ms` }}>
-                        {entry.mood}
-                        <button
-                          type="button"
-                          className="mood-pill-remove"
-                          aria-label={`Remove ${entry.mood} entry`}
-                          onClick={() => {
-                            const next = moodHistory.filter((_, j) => j !== i);
-                            setMoodHistory(next);
-                            localStorage.setItem("umubyeyi_moods_v1", JSON.stringify(next));
-                          }}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
+              {(() => {
+                const visibleMoodHistory = moodHistory
+                  .filter((entry) => !dismissedMoodDates.includes(entry.date))
+                  .slice(0, 7);
+                if (!visibleMoodHistory.length) return null;
+                return (
+                  <div className="disc">
+                    <div>Recent:</div>
+                    <div className="mood-history">
+                      {visibleMoodHistory.map((entry, i) => (
+                        <span key={`${entry.date}-${i}`} className="mood-pill mood-pill-removable" style={{ animationDelay: `${i * 45}ms` }}>
+                          {entry.mood}
+                          <button
+                            type="button"
+                            className="mood-pill-remove"
+                            aria-label={`Remove ${entry.mood} entry from view`}
+                            onClick={() => {
+                              // Removes this entry from the Self-care "Recent" strip only.
+                              // The real mood history (and the Progress dashboard trend it
+                              // feeds) is untouched -- nothing gets deleted.
+                              const next = [...dismissedMoodDates, entry.date];
+                              setDismissedMoodDates(next);
+                              localStorage.setItem("umubyeyi_moods_dismissed_v1", JSON.stringify(next));
+                            }}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                    <div style={{ marginTop: 8 }}>Stored only on this device. Discuss persistent distress with a health worker.</div>
                   </div>
-                  <div style={{ marginTop: 8 }}>Stored only on this device. Discuss persistent distress with a health worker.</div>
-                </div>
-              )}
+                );
+              })()}
             </div>
             <div className="section-h">Inama zo kwita ku mutima · Self-care tips</div>
             <div className="tipgrid">
