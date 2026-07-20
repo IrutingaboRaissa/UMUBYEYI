@@ -585,10 +585,16 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Centered, not top-aligned: on a portrait tablet (much more height than a
+     phone) top-alignment just relocates the "too much whitespace" complaint to
+     one big band below the button instead of fixing it. With the content block
+     now this much shorter, centering distributes any leftover room evenly and
+     still leaves the CTA comfortably inside the fold on every phone size tested
+     down to a 667px-tall viewport (iPhone SE). */
   justify-content: center;
   text-align: center;
-  padding: clamp(1.25rem, 4vw, 2.5rem) 1rem;
-  gap: clamp(20px, 4vw, 40px);
+  padding: clamp(1.5rem, 5vh, 2.5rem) 1.25rem;
+  gap: clamp(14px, 3.5vw, 28px);
 }
 /* Soft decorative blobs so the centered layout doesn't read as empty space
    on tall/wide viewports. Purely visual, behind all real content. */
@@ -625,47 +631,42 @@ html, body {
     text-align: left;
   }
 }
+/* Mobile/tablet: no card, no fixed box -- the artwork itself is sized directly and
+   sits straight on the page's own soft background (the blurred blobs above), with
+   only a drop-shadow for depth. This is what makes it read as the page's hero art
+   instead of "an icon inside a frame," which was competing with the avatar for the
+   same visual language. The boxed panel returns at desktop, where it's genuinely a
+   two-column layout rather than a stacked one. */
 .hero-visual {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(130px, 36vw, 190px);
-  height: clamp(130px, 36vw, 190px);
-  border-radius: 28px;
-  background: linear-gradient(160deg, #F2E5EC 0%, #E5D3E0 100%);
-  box-shadow: inset 0 0 0 1px rgba(94,74,94,.08);
+  width: clamp(168px, 46vw, 230px);
   flex-shrink: 0;
 }
-/* 80% fill (up from 62%) so the illustration reads as the point of the panel,
-   not a small icon adrift in a big frame -- "intentional, not decorative filler." */
-.hero-visual svg { width: 80%; height: auto; filter: drop-shadow(0 10px 18px rgba(94,74,94,.15)); }
+.hero-visual svg { width: 100%; height: auto; filter: drop-shadow(0 12px 22px rgba(94,74,94,.16)); }
 @media (min-width: 900px) {
   .hero-visual {
-    /* Closer to the illustration's own ~0.92 aspect ratio than the old 360x440 box,
-       so growing the artwork doesn't leave a tall gap of empty card above/below it. */
+    /* Close to the illustration's own ~0.92 aspect ratio, so the boxed panel
+       doesn't leave a tall gap of empty card above/below the artwork. */
     width: clamp(260px, 27vw, 340px);
     height: clamp(270px, 30vw, 360px);
     border-radius: 32px;
+    background: linear-gradient(160deg, #F2E5EC 0%, #E5D3E0 100%);
+    box-shadow: inset 0 0 0 1px rgba(94,74,94,.08);
   }
-  .hero-visual svg { filter: drop-shadow(0 14px 24px rgba(94,74,94,.18)); }
+  .hero-visual svg { width: 80%; filter: drop-shadow(0 14px 24px rgba(94,74,94,.18)); }
 }
 .hero-content { max-width: 460px; }
-.hero .logo {
-  width: 120px; height: 120px; margin: 0 auto 12px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 34% 28%, #9A7C9D 0%, #5E4A5E 72%);
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 64px; font-weight: 800;
-  box-shadow: 0 12px 30px rgba(94,74,94,.32);
-}
+.hero h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 26px; color: #3B2E39; margin: 0 0 8px; }
+.hero .lead { color: #5b4f56; font-size: 15.5px; max-width: 380px; margin: 0 auto 5px; line-height: 1.55; }
+.hero .leadEn { color: #A99BA3; font-size: 13px; max-width: 360px; margin: 0 auto 12px; line-height: 1.45; }
+.hero .tag { color: #A08E97; font-size: 12px; letter-spacing: .01em; margin-bottom: 14px; }
 @media (min-width: 900px) {
-  .hero .logo { margin: 0 0 12px; }
-}
-.hero h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 32px; color: #3B2E39; margin: 0 0 10px; }
-.hero .lead { color: #5b4f56; font-size: 16.5px; max-width: 420px; margin: 0 auto 6px; line-height: 1.6; }
-.hero .leadEn { color: #A99BA3; font-size: 13.5px; max-width: 400px; margin: 0 auto 18px; line-height: 1.5; }
-.hero .tag { color: #A08E97; font-size: 12.5px; letter-spacing: .01em; margin-bottom: 22px; }
-@media (min-width: 900px) {
+  .hero h1 { font-size: 32px; margin-bottom: 10px; }
+  .hero .lead { font-size: 16.5px; max-width: 420px; margin-bottom: 6px; line-height: 1.6; }
+  .hero .leadEn { font-size: 13.5px; max-width: 400px; margin-bottom: 18px; line-height: 1.5; }
+  .hero .tag { font-size: 12.5px; margin-bottom: 22px; }
   .hero .lead, .hero .leadEn { margin-left: 0; margin-right: 0; }
 }
 .hero-cta {
@@ -808,8 +809,6 @@ html, body {
   .topbar .t { font-size: 18px; }
   .input-bar { padding: 10px 10px 14px; }
   .input-wrap { padding-left: 14px; }
-  .hero .logo { width: 96px; height: 96px; font-size: 50px; }
-  .hero h1 { font-size: 24px; }
 }
 
 @media (max-width: 420px) {

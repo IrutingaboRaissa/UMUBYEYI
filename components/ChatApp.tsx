@@ -263,7 +263,6 @@ export default function ChatApp() {
       <div className="hero">
         <div className="hero-visual"><MotherBabyMark /></div>
         <div className="hero-content">
-          <div className="logo"><Mark size={44} /></div>
           <h1>Muraho, mama.</h1>
           <p className="lead">Nturi wenyine. Umubyeyi ari hano ngo agufashe kwita ku mibereho myiza yo mu mutima.</p>
           <p className="leadEn">You&apos;re not alone. Umubyeyi is here to support your emotional wellbeing.</p>
