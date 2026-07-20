@@ -1,7 +1,6 @@
-# Hugging Face Space: fine-tuned generator inference API only.
-# Deliberately separate from the main repo's requirements*.txt -- this runs
-# in its own Gradio+ZeroGPU Space, not Vercel's serverless function.
-spaces
+fastapi>=0.115,<1
+uvicorn[standard]>=0.34,<1
 torch>=2.2
 transformers>=4.46,<6
 peft>=0.13
+accelerate>=1.1

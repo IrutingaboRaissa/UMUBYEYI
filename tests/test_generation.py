@@ -94,26 +94,24 @@ def test_vercel_deployment_calls_the_remote_space_instead_of_loading_locally(tmp
     monkeypatch.setattr(generator, "_load", lambda: (_ for _ in ()).throw(AssertionError("must not load locally")))
 
     def fake_urlopen(request, timeout=None):
-        if request.data:
-            return _FakeHttpResponse(body=json.dumps({"event_id": "abc123"}).encode("utf-8"))
-        return _FakeHttpResponse(lines=[
-            b"event: complete\n",
-            b'data: ["What made you feel that way today?"]\n',
-        ])
+        assert request.full_url.endswith("/generate")
+        payload = json.loads(request.data.decode("utf-8"))
+        assert payload["message"] == "I feel exhausted"
+        return _FakeHttpResponse(body=json.dumps({
+            "answer": "What made you feel that way today?"
+        }).encode("utf-8"))
 
     monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
     assert generator.generate("I feel exhausted", "en") == "What made you feel that way today?"
 
 
-def test_remote_space_error_event_fails_closed(tmp_path, monkeypatch):
+def test_remote_space_empty_answer_fails_closed(tmp_path, monkeypatch):
     import urllib.request
 
     generator = _remote_generator(tmp_path, monkeypatch)
 
     def fake_urlopen(request, timeout=None):
-        if request.data:
-            return _FakeHttpResponse(body=json.dumps({"event_id": "abc123"}).encode("utf-8"))
-        return _FakeHttpResponse(lines=[b"event: error\n", b"data: null\n"])
+        return _FakeHttpResponse(body=json.dumps({"answer": ""}).encode("utf-8"))
 
     monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
     assert generator.generate("I feel exhausted", "en") == ""

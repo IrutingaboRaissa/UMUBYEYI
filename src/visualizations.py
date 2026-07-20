@@ -118,7 +118,6 @@ class ExperimentVisualizer:
         fig.colorbar(image, ax=ax, fraction=.046, pad=.04)
         self.save(fig, path)
 
-
 default_visualizer = ExperimentVisualizer()
 
 

@@ -112,47 +112,22 @@ class FineTunedGenerator:
             return False
 
     def _generate_remote(self, query: str, lang: str, history=None) -> str:
-        """Call the Hugging Face Space hosting this same model over HTTP.
-
-        Gradio's API is a two-step async contract: POST submits the job and
-        returns an event_id, then GET streams Server-Sent Events until a
-        "complete" event carries the result. Any failure (space asleep,
-        network error, timeout, malformed stream) returns "" so the caller
-        falls through to its next fallback -- never a crash.
-        """
+        """Call the bounded FastAPI Hugging Face Space over HTTP."""
         space_url = self._remote_url
         if not space_url:
             return ""
         timeout = float(os.environ.get("UMU_REMOTE_GENERATOR_TIMEOUT_SECONDS", "20"))
         try:
             payload = json.dumps({
-                "data": [query, lang, json.dumps(history or [])]
+                "message": query, "language": lang, "history": history or []
             }).encode("utf-8")
             post_request = urllib.request.Request(
-                f"{space_url}/call/generate", data=payload,
+                f"{space_url}/generate", data=payload,
                 headers={"Content-Type": "application/json"}, method="POST",
             )
             with urllib.request.urlopen(post_request, timeout=timeout) as response:
-                event_id = json.loads(response.read().decode("utf-8")).get("event_id")
-            if not event_id:
-                return ""
-
-            get_request = urllib.request.Request(f"{space_url}/call/generate/{event_id}")
-            with urllib.request.urlopen(get_request, timeout=timeout) as response:
-                event_type = None
-                for raw_line in response:
-                    line = raw_line.decode("utf-8").strip()
-                    if not line:
-                        continue
-                    if line.startswith("event:"):
-                        event_type = line[len("event:"):].strip()
-                    elif line.startswith("data:"):
-                        if event_type == "error":
-                            return ""
-                        if event_type == "complete":
-                            data = json.loads(line[len("data:"):].strip())
-                            return str(data[0]).strip() if data else ""
-            return ""
+                result = json.loads(response.read().decode("utf-8"))
+            return str(result.get("answer") or "").strip()
         except (OSError, TimeoutError, ValueError, urllib.error.URLError):
             return ""
 
