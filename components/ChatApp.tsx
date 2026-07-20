@@ -632,6 +632,13 @@ export default function ChatApp() {
               <div className="subtext" style={{ marginTop: 12 }}>
                 Si serivisi y&apos;ubuvuzi · niba uri mu kaga, hamagara {CRISIS_LINE}.
               </div>
+              <button
+                className="btn btn-sm"
+                style={{ marginTop: 16 }}
+                onClick={() => setConsented(false)}
+              >
+                Reba ipaji yo gutangira · See the welcome page again
+              </button>
             </div>
           </>
         )}
