@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AFFIRM, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat,
-  generateTitle, logEvent, optionLabel, optionValue, sendScreen, sessionId, sortThreads, touchThread, ScreenResponse,
+  generateTitle, optionLabel, optionValue, sendScreen, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
 import EpdsAssessment from "@/components/EpdsAssessment";
 import { EPDS_STORAGE_KEY } from "@/lib/epds";
@@ -65,12 +65,10 @@ export default function ChatApp() {
   // Fixed, not rotated: "Asking for help is a sign of strength, not weakness."
   const welcomeQuote = AFFIRM[4];
   const bottomRef = useRef<HTMLDivElement>(null);
-  const sid = useRef("");
   const hydrated = useRef(false);
   const retriedTitles = useRef(false);
 
   useEffect(() => {
-    sid.current = sessionId();
     const { threads: loaded, currentId: cid } = loadThreads();
     if (loaded.length) {
       setThreads(loaded);
@@ -169,7 +167,6 @@ export default function ChatApp() {
       };
       updateThread({ ...t, msgs: [...t.msgs, botMsg] });
       setLastMeta({ lang: res.language, mode: res.mode });
-      if (sid.current) await logEvent(sid.current, res);
       if (res.concern_signal) {
         try {
           const prev = JSON.parse(localStorage.getItem("umubyeyi_concern_v1") || "[]");

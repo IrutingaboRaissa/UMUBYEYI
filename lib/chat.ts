@@ -188,16 +188,6 @@ export function touchThread(t: Thread): Thread {
   return { ...t, ts: Date.now() };
 }
 
-export function sessionId(): string {
-  if (typeof window === "undefined") return "";
-  let sid = localStorage.getItem("umubyeyi_sid");
-  if (!sid) {
-    sid = Math.random().toString(36).slice(2, 18);
-    localStorage.setItem("umubyeyi_sid", sid);
-  }
-  return sid;
-}
-
 export async function sendChat(
   message: string, forceLang?: "en" | "rw" | null, history?: Msg[]
 ): Promise<ChatResponse> {
@@ -227,21 +217,6 @@ export async function sendScreen(answers: Record<string, string | number>): Prom
     throw new Error(err.error || `Request failed (${res.status})`);
   }
   return res.json();
-}
-
-export async function logEvent(sid: string, data: ChatResponse) {
-  await fetch("/api/event", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      session_id: sid,
-      language: data.language,
-      mode: data.mode,
-      grounded: data.grounded,
-      sources: data.sources,
-      latency_ms: data.latency_ms ?? 0,
-    }),
-  }).catch(() => {});
 }
 
 export async function generateTitle(userMessage: string, botReply: string, lang?: string): Promise<string> {
