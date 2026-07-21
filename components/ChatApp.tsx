@@ -639,11 +639,6 @@ export default function ChatApp() {
               Ntiyita ku bibazo by&apos;umubiri cyangwa byo kwita ku mwana.
               <br /><br />
               <i>Umubyeyi is a bilingual companion for the emotional wellbeing of first-time mothers in the first 6 months after birth.</i>
-              <div style={{ marginTop: 16 }}>
-                <button className="btn btn-sm" onClick={() => setConsented(false)}>
-                  Reba ipaji yo gutangira · See the welcome page again
-                </button>
-              </div>
             </div>
             <div className="section-h" style={{ marginTop: 20 }}>Icyo dukora · What Umubyeyi is (and isn&apos;t)</div>
             <div className="wcard">
