@@ -11,6 +11,10 @@ import ProgressDashboard from "@/components/ProgressDashboard";
 import HorizontalBarChart from "@/components/charts/HorizontalBarChart";
 import Mark from "@/components/Mark";
 import MotherBabyMark from "@/components/MotherBabyMark";
+import { hasPin, setPin, verifyPin, removePin, resetAllData } from "@/lib/lock";
+
+type PinFormMode = "set" | "change" | "remove" | null;
+type PinForm = { mode: PinFormMode; current: string; next: string; confirm: string; error: string };
 
 const EXAMPLE_PROMPTS = [
   "I feel exhausted all the time",
@@ -43,10 +47,15 @@ export default function ChatApp() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [lastMeta, setLastMeta] = useState<{ lang?: string; mode?: string }>({});
-  const [modal, setModal] = useState<"breathe" | "help" | null>(null);
+  const [modal, setModal] = useState<"breathe" | "help" | "pin" | null>(null);
   const [menuThreadId, setMenuThreadId] = useState<string | null>(null);
-  const [renameDraft, setRenameDraft] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [pinForm, setPinForm] = useState<PinForm | null>(null);
+  const [forgotConfirm, setForgotConfirm] = useState(false);
+  const [pendingLockThreadId, setPendingLockThreadId] = useState<string | null>(null);
+  const [pinPrompt, setPinPrompt] = useState<
+    { purpose: "view" | "unlock"; threadId: string; entry: string; error: string } | null
+  >(null);
   const [checkin, setCheckin] = useState<Record<string, string | number>>(() => {
     const initial: Record<string, string | number> = { Age: "" };
     for (const [key] of CHECKIN_FIELDS) initial[key] = "";
@@ -72,7 +81,21 @@ export default function ChatApp() {
     const { threads: loaded, currentId: cid } = loadThreads();
     if (loaded.length) {
       setThreads(loaded);
-      setCurrentId(cid);
+      // Never resume directly into a locked thread on load -- the remembered "last open
+      // chat" could be one the user locked since, and that must still require the PIN.
+      const resumeTarget = loaded.find((t) => t.id === cid);
+      if (resumeTarget?.locked) {
+        const firstUnlocked = loaded.find((t) => !t.locked);
+        if (firstUnlocked) {
+          setCurrentId(firstUnlocked.id);
+        } else {
+          const t = newThread();
+          setDraftThread(t);
+          setCurrentId(t.id);
+        }
+      } else {
+        setCurrentId(cid);
+      }
     } else {
       const t = newThread();
       setDraftThread(t);
@@ -222,13 +245,118 @@ export default function ChatApp() {
     setPanelOpen(false);
   };
 
-  const renameThread = (id: string, name: string) => {
-    const trimmed = name.trim().slice(0, 40);
-    if (!trimmed) return;
-    setThreads((prev) => sortThreads(prev.map((t) => (
-      t.id === id ? touchThread({ ...t, title: trimmed, titleSource: "manual" }) : t
-    ))));
+  const handleForgotPin = () => {
+    resetAllData();
+    setThreads([]);
+    setMoodHistory([]);
+    const t = newThread();
+    setDraftThread(t);
+    setCurrentId(t.id);
+    setForgotConfirm(false);
+    setModal(null);
+    setPinForm(null);
+    setConsented(false);
+  };
+
+  const openPinModal = () => {
+    setPinForm(hasPin()
+      ? { mode: null, current: "", next: "", confirm: "", error: "" }
+      : { mode: "set", current: "", next: "", confirm: "", error: "" });
+    setModal("pin");
+  };
+
+  // Locking a chat never needs the PIN -- like locking a door from outside without a key.
+  // If no PIN exists yet at all, there's nothing to gate an unlock with, so send the user to
+  // set one first; the thread gets locked automatically the moment that PIN is created.
+  const lockThread = (id: string) => {
+    if (!hasPin()) {
+      setPendingLockThreadId(id);
+      setPinForm({ mode: "set", current: "", next: "", confirm: "", error: "" });
+      setModal("pin");
+      return;
+    }
+    setThreads((prev) => prev.map((t) => (t.id === id ? { ...t, locked: true } : t)));
     setMenuThreadId(null);
+    // If the chat being locked is the one currently open, leave its messages immediately --
+    // otherwise "locking" it would do nothing visible until the user happened to navigate away.
+    if (currentId === id) {
+      const next = threads.find((t) => t.id !== id && !t.locked);
+      if (next) {
+        setCurrentId(next.id);
+      } else {
+        const t = newThread();
+        setDraftThread(t);
+        setCurrentId(t.id);
+      }
+    }
+  };
+
+  const requestUnlockThread = (id: string) => {
+    setMenuThreadId(null);
+    setPinPrompt({ purpose: "unlock", threadId: id, entry: "", error: "" });
+  };
+
+  const requestViewLockedThread = (id: string) => {
+    setPinPrompt({ purpose: "view", threadId: id, entry: "", error: "" });
+  };
+
+  const openThreadRow = (t: Thread) => {
+    if (t.locked) {
+      requestViewLockedThread(t.id);
+    } else {
+      setCurrent(t.id);
+      setView("chat");
+    }
+  };
+
+  const submitPinPrompt = async () => {
+    if (!pinPrompt) return;
+    const ok = await verifyPin(pinPrompt.entry);
+    if (!ok) {
+      setPinPrompt({ ...pinPrompt, error: "Ntibihuye · Incorrect PIN", entry: "" });
+      return;
+    }
+    if (pinPrompt.purpose === "unlock") {
+      setThreads((prev) => prev.map((t) => (t.id === pinPrompt.threadId ? { ...t, locked: false } : t)));
+    } else {
+      setCurrent(pinPrompt.threadId);
+      setView("chat");
+    }
+    setPinPrompt(null);
+  };
+
+  const submitPinForm = async () => {
+    if (!pinForm) return;
+    const { mode, current, next, confirm } = pinForm;
+    if (mode === "remove") {
+      if (!(await verifyPin(current))) {
+        setPinForm({ ...pinForm, error: "Ntibihuye · Incorrect PIN" });
+        return;
+      }
+      removePin();
+      setModal(null);
+      setPinForm(null);
+      return;
+    }
+    if (mode === "change" && !(await verifyPin(current))) {
+      setPinForm({ ...pinForm, error: "Ntibihuye · Incorrect PIN" });
+      return;
+    }
+    if (!/^\d{4,6}$/.test(next)) {
+      setPinForm({ ...pinForm, error: "Koresha imibare 4-6 · Use 4-6 digits" });
+      return;
+    }
+    if (next !== confirm) {
+      setPinForm({ ...pinForm, error: "Ntibihuye · PINs don't match" });
+      return;
+    }
+    await setPin(next);
+    if (pendingLockThreadId) {
+      setThreads((prev) => prev.map((t) => (t.id === pendingLockThreadId ? { ...t, locked: true } : t)));
+      setPendingLockThreadId(null);
+    }
+    setModal(null);
+    setPinForm(null);
   };
 
   const confirmDelete = () => {
@@ -251,7 +379,6 @@ export default function ChatApp() {
   const openMenu = (t: Thread, e: React.MouseEvent) => {
     e.stopPropagation();
     setMenuThreadId(menuThreadId === t.id ? null : t.id);
-    setRenameDraft(t.title);
   };
 
   if (!uiReady) {
@@ -282,6 +409,7 @@ export default function ChatApp() {
       <aside className={`sidebar ${panelOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <div className="sbrand">Umubyeyi</div>
+          <button className="sidebar-lock-btn" onClick={openPinModal} aria-label="Privacy lock" title="Kurinda ibanga · Privacy lock">🔒</button>
           <button className="sidebar-close" onClick={() => setPanelOpen(false)} aria-label="Close menu">✕</button>
         </div>
 
@@ -305,11 +433,12 @@ export default function ChatApp() {
         <div className="sblbl">Ibiganiro · Recent</div>
         <div className="thread-list">
           {threads.map((t) => {
-            const label = t.title || "Ikiganiro gishya · New chat";
+            const realLabel = t.title || "Ikiganiro gishya · New chat";
+            const label = t.locked ? "🔒 Ikiganiro kirinzwe · Locked chat" : realLabel;
             const active = t.id === currentId;
             return (
               <div key={t.id} className={`thread-row ${active ? "active" : ""}`}>
-                <button className="thread-btn" onClick={() => { setCurrent(t.id); setView("chat"); }}>
+                <button className="thread-btn" onClick={() => openThreadRow(t)}>
                   {active ? "• " : ""}{label}
                 </button>
                 <button
@@ -321,26 +450,20 @@ export default function ChatApp() {
                 </button>
                 {menuThreadId === t.id && (
                   <div className="thread-menu" onClick={(e) => e.stopPropagation()}>
-                    <label className="thread-menu-label">Guhindura izina · Rename</label>
-                    <input
-                      className="thread-rename-input"
-                      value={renameDraft}
-                      onChange={(e) => setRenameDraft(e.target.value)}
-                      placeholder="Izina · name"
-                      maxLength={40}
-                    />
                     <div className="thread-menu-actions">
-                      <button
-                        type="button"
-                        className="btn btn-sm"
-                        onClick={() => renameThread(t.id, renameDraft)}
-                      >
-                        Hindura izina · Rename
-                      </button>
+                      {t.locked ? (
+                        <button type="button" className="btn btn-sm" onClick={() => requestUnlockThread(t.id)}>
+                          🔓 Kuzibura · Unlock
+                        </button>
+                      ) : (
+                        <button type="button" className="btn btn-sm" onClick={() => lockThread(t.id)}>
+                          🔒 Fungisha · Lock
+                        </button>
+                      )}
                       <button
                         type="button"
                         className="btn btn-sm btn-danger"
-                        onClick={() => setDeleteTarget({ id: t.id, title: label })}
+                        onClick={() => setDeleteTarget({ id: t.id, title: realLabel })}
                       >
                         Siba · Delete
                       </button>
@@ -695,6 +818,124 @@ export default function ChatApp() {
               </div>
             )}
             <button className="btn btn-primary" style={{ marginTop: 16, width: "100%" }} onClick={() => setModal(null)}>OK</button>
+          </div>
+        </div>
+      )}
+
+      {modal === "pin" && pinForm && (
+        <div className="modal-overlay" onClick={() => { setModal(null); setPinForm(null); setPendingLockThreadId(null); setForgotConfirm(false); }}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Kurinda ibanga · Privacy lock</h3>
+            {pinForm.mode === null ? (
+              forgotConfirm ? (
+                <div className="card">
+                  Kwibagirwa PIN bizasiba amakuru yose ari kuri iyi mudasobwa (ibiganiro, imibereho,
+                  ibizamini), harimo n&apos;ibiganiro birinzwe. Ntibisubirwaho.
+                  <br /><br />
+                  <i>Resetting will erase all local data on this device (chats, mood, tests,
+                  check-ins), including anything in locked chats. This cannot be undone.</i>
+                  <div className="modal-actions" style={{ marginTop: 12 }}>
+                    <button className="btn" onClick={() => setForgotConfirm(false)}>Reka · Cancel</button>
+                    <button className="btn btn-primary btn-danger-solid" onClick={handleForgotPin}>
+                      Siba byose · Reset everything
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="card">
+                    Ikiganiro kirinzwe na PIN. · This app has a PIN set.
+                  </div>
+                  <div className="modal-actions" style={{ flexDirection: "column", gap: 8, marginTop: 12 }}>
+                    <button className="btn" onClick={() => setPinForm({ ...pinForm, mode: "change" })}>
+                      Hindura PIN · Change PIN
+                    </button>
+                    <button className="btn btn-danger" onClick={() => setPinForm({ ...pinForm, mode: "remove" })}>
+                      Kuraho PIN burundu · Remove PIN entirely
+                    </button>
+                    <button className="btn btn-sm" onClick={() => setForgotConfirm(true)}>
+                      Wibagiwe PIN? · Forgot PIN? (reset everything)
+                    </button>
+                  </div>
+                  <button className="btn" style={{ marginTop: 12, width: "100%" }}
+                    onClick={() => { setModal(null); setPinForm(null); setPendingLockThreadId(null); setForgotConfirm(false); }}>
+                    Funga · Close
+                  </button>
+                </>
+              )
+            ) : (
+              <>
+                {pinForm.mode !== "set" && (
+                  <input
+                    className="thread-rename-input"
+                    type="password" inputMode="numeric" maxLength={6}
+                    placeholder="PIN y'ubu · Current PIN"
+                    value={pinForm.current}
+                    onChange={(e) => setPinForm({ ...pinForm, current: e.target.value.replace(/\D/g, ""), error: "" })}
+                  />
+                )}
+                {pinForm.mode !== "remove" && (
+                  <>
+                    <input
+                      className="thread-rename-input"
+                      type="password" inputMode="numeric" maxLength={6}
+                      placeholder="PIN nshya (imibare 4-6) · New PIN (4-6 digits)"
+                      value={pinForm.next}
+                      onChange={(e) => setPinForm({ ...pinForm, next: e.target.value.replace(/\D/g, ""), error: "" })}
+                      style={{ marginTop: 8 }}
+                    />
+                    <input
+                      className="thread-rename-input"
+                      type="password" inputMode="numeric" maxLength={6}
+                      placeholder="Emeza PIN · Confirm PIN"
+                      value={pinForm.confirm}
+                      onChange={(e) => setPinForm({ ...pinForm, confirm: e.target.value.replace(/\D/g, ""), error: "" })}
+                      style={{ marginTop: 8 }}
+                    />
+                  </>
+                )}
+                {pinForm.error && <div style={{ color: "#b23a48", marginTop: 8 }}>{pinForm.error}</div>}
+                <div className="modal-actions" style={{ marginTop: 12 }}>
+                  <button className="btn" onClick={() => {
+                    if (hasPin()) {
+                      setPinForm({ mode: null, current: "", next: "", confirm: "", error: "" });
+                    } else {
+                      setPinForm(null);
+                      setModal(null);
+                      setPendingLockThreadId(null);
+                      setForgotConfirm(false);
+                    }
+                  }}>
+                    Reka · Cancel
+                  </button>
+                  <button className="btn btn-primary" onClick={submitPinForm}>Bika · Save</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {pinPrompt && (
+        <div className="modal-overlay" onClick={() => setPinPrompt(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>
+              {pinPrompt.purpose === "unlock" ? "Injiza PIN kugira ngo ukuraho · Enter PIN to unlock"
+                : "Injiza PIN kugira ngo urebe · Enter PIN to view"}
+            </h3>
+            <input
+              className="thread-rename-input"
+              type="password" inputMode="numeric" maxLength={6} autoFocus
+              placeholder="PIN"
+              value={pinPrompt.entry}
+              onChange={(e) => setPinPrompt({ ...pinPrompt, entry: e.target.value.replace(/\D/g, ""), error: "" })}
+              onKeyDown={(e) => { if (e.key === "Enter") submitPinPrompt(); }}
+            />
+            {pinPrompt.error && <div style={{ color: "#b23a48", marginTop: 8 }}>{pinPrompt.error}</div>}
+            <div className="modal-actions" style={{ marginTop: 12 }}>
+              <button className="btn" onClick={() => setPinPrompt(null)}>Reka · Cancel</button>
+              <button className="btn btn-primary" onClick={submitPinPrompt}>Emeza · Confirm</button>
+            </div>
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@ __pycache__/
 .ipynb_checkpoints/
 .venv/
 venv/
+.pytest_tmp/
 
 # OS / editor
 .DS_Store

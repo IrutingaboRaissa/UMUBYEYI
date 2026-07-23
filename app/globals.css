@@ -49,6 +49,17 @@ html, body {
   padding: 4px 8px;
 }
 
+/* Unlike .sidebar-close (mobile-drawer-only), this stays visible on every screen size --
+   the PIN lock is a permanent-sidebar feature on desktop too, not a drawer control. */
+.sidebar-lock-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #5E4A5E;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
 .sidebar-nav {
   display: flex;
   flex-direction: column;

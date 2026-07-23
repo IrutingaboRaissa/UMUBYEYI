@@ -16,6 +16,7 @@ export type Thread = {
   titleSource?: "fallback" | "generated" | "manual";
   ts: number;
   msgs: Msg[];
+  locked?: boolean;
 };
 
 export type ConcernSignal = {
