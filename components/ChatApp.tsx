@@ -50,6 +50,9 @@ export default function ChatApp() {
   const [modal, setModal] = useState<"breathe" | "help" | "pin" | null>(null);
   const [menuThreadId, setMenuThreadId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [locked, setLocked] = useState(false);
+  const [pinEntry, setPinEntry] = useState("");
+  const [pinError, setPinError] = useState("");
   const [pinForm, setPinForm] = useState<PinForm | null>(null);
   const [forgotConfirm, setForgotConfirm] = useState(false);
   const [pendingLockThreadId, setPendingLockThreadId] = useState<string | null>(null);
@@ -78,6 +81,7 @@ export default function ChatApp() {
   const retriedTitles = useRef(false);
 
   useEffect(() => {
+    if (hasPin()) setLocked(true);
     const { threads: loaded, currentId: cid } = loadThreads();
     if (loaded.length) {
       setThreads(loaded);
@@ -119,6 +123,17 @@ export default function ChatApp() {
       setDismissedMoodDates(JSON.parse(localStorage.getItem("umubyeyi_moods_dismissed_v1") || "[]"));
     } catch { /* ignore */ }
     setUiReady(true);
+  }, []);
+
+  // Re-lock as soon as the tab is hidden (switched away, minimized, screen off) so a PIN
+  // is required again on return -- protects everything (unlocked chats, EPDS results,
+  // progress, self-care), not just the chats a mother remembered to lock individually.
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.hidden && hasPin()) setLocked(true);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
   useEffect(() => {
@@ -245,6 +260,19 @@ export default function ChatApp() {
     setPanelOpen(false);
   };
 
+  const handleUnlock = async () => {
+    const ok = await verifyPin(pinEntry);
+    if (ok) {
+      setLocked(false);
+      setPinEntry("");
+      setPinError("");
+      setForgotConfirm(false);
+    } else {
+      setPinError("Ntibihuye · Incorrect PIN");
+      setPinEntry("");
+    }
+  };
+
   const handleForgotPin = () => {
     resetAllData();
     setThreads([]);
@@ -252,6 +280,9 @@ export default function ChatApp() {
     const t = newThread();
     setDraftThread(t);
     setCurrentId(t.id);
+    setLocked(false);
+    setPinEntry("");
+    setPinError("");
     setForgotConfirm(false);
     setModal(null);
     setPinForm(null);
@@ -383,6 +414,56 @@ export default function ChatApp() {
 
   if (!uiReady) {
     return <div className="app-loading" aria-hidden />;
+  }
+
+  if (locked) {
+    return (
+      <div className="hero">
+        <div className="hero-content">
+          <h1>Ikiganiro gifunze · App locked</h1>
+          <p className="lead">Injiza PIN yawe kugira ngo ubone ibiganiro byawe.</p>
+          <p className="leadEn">Enter your PIN to unlock your chats.</p>
+          <div style={{ marginTop: 20 }}>
+            <input
+              className="thread-rename-input"
+              type="password"
+              inputMode="numeric"
+              maxLength={6}
+              autoFocus
+              value={pinEntry}
+              onChange={(e) => { setPinEntry(e.target.value.replace(/\D/g, "")); setPinError(""); }}
+              onKeyDown={(e) => { if (e.key === "Enter") handleUnlock(); }}
+              placeholder="PIN"
+            />
+          </div>
+          {pinError && <div style={{ color: "#b23a48", marginTop: 8 }}>{pinError}</div>}
+          <div style={{ marginTop: 16 }}>
+            <button className="btn btn-primary" onClick={handleUnlock}>Fungura · Unlock →</button>
+          </div>
+          <div style={{ marginTop: 24 }}>
+            {!forgotConfirm ? (
+              <button className="btn btn-sm" onClick={() => setForgotConfirm(true)}>
+                Wibagiwe PIN? · Forgot PIN?
+              </button>
+            ) : (
+              <div className="card">
+                Kwibagirwa PIN bizasiba amakuru yose ari kuri iyi mudasobwa (ibiganiro, imibereho,
+                ibizamini). Ntibisubirwaho.
+                <br /><br />
+                <i>Resetting will erase all local data on this device (chats, mood, tests, check-ins).
+                This cannot be undone.</i>
+                <div className="modal-actions" style={{ marginTop: 12 }}>
+                  <button className="btn" onClick={() => setForgotConfirm(false)}>Reka · Cancel</button>
+                  <button className="btn btn-primary btn-danger-solid" onClick={handleForgotPin}>
+                    Siba byose · Reset everything
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!consented) {
@@ -827,42 +908,23 @@ export default function ChatApp() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>Kurinda ibanga · Privacy lock</h3>
             {pinForm.mode === null ? (
-              forgotConfirm ? (
+              <>
                 <div className="card">
-                  Kwibagirwa PIN bizasiba amakuru yose ari kuri iyi mudasobwa (ibiganiro, imibereho,
-                  ibizamini), harimo n&apos;ibiganiro birinzwe. Ntibisubirwaho.
-                  <br /><br />
-                  <i>Resetting will erase all local data on this device (chats, mood, tests,
-                  check-ins), including anything in locked chats. This cannot be undone.</i>
-                  <div className="modal-actions" style={{ marginTop: 12 }}>
-                    <button className="btn" onClick={() => setForgotConfirm(false)}>Reka · Cancel</button>
-                    <button className="btn btn-primary btn-danger-solid" onClick={handleForgotPin}>
-                      Siba byose · Reset everything
-                    </button>
-                  </div>
+                  Ikiganiro kirinzwe na PIN. · This app has a PIN set.
                 </div>
-              ) : (
-                <>
-                  <div className="card">
-                    Ikiganiro kirinzwe na PIN. · This app has a PIN set.
-                  </div>
-                  <div className="modal-actions" style={{ flexDirection: "column", gap: 8, marginTop: 12 }}>
-                    <button className="btn" onClick={() => setPinForm({ ...pinForm, mode: "change" })}>
-                      Hindura PIN · Change PIN
-                    </button>
-                    <button className="btn btn-danger" onClick={() => setPinForm({ ...pinForm, mode: "remove" })}>
-                      Kuraho PIN burundu · Remove PIN entirely
-                    </button>
-                    <button className="btn btn-sm" onClick={() => setForgotConfirm(true)}>
-                      Wibagiwe PIN? · Forgot PIN? (reset everything)
-                    </button>
-                  </div>
-                  <button className="btn" style={{ marginTop: 12, width: "100%" }}
-                    onClick={() => { setModal(null); setPinForm(null); setPendingLockThreadId(null); setForgotConfirm(false); }}>
-                    Funga · Close
+                <div className="modal-actions" style={{ flexDirection: "column", gap: 8, marginTop: 12 }}>
+                  <button className="btn" onClick={() => setPinForm({ ...pinForm, mode: "change" })}>
+                    Hindura PIN · Change PIN
                   </button>
-                </>
-              )
+                  <button className="btn btn-danger" onClick={() => setPinForm({ ...pinForm, mode: "remove" })}>
+                    Kuraho PIN burundu · Remove PIN entirely
+                  </button>
+                </div>
+                <button className="btn" style={{ marginTop: 12, width: "100%" }}
+                  onClick={() => { setModal(null); setPinForm(null); setPendingLockThreadId(null); }}>
+                  Funga · Close
+                </button>
+              </>
             ) : (
               <>
                 {pinForm.mode !== "set" && (
