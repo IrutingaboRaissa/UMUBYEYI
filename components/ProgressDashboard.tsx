@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TrendLine, { TrendPoint } from "@/components/charts/TrendLine";
+import TrendLine from "@/components/charts/TrendLine";
+import { aggregateTrend } from "@/lib/trends";
 import { EpdsBand, EpdsEntry, EpdsStreak, loadEpdsHistory, loadStreak } from "@/lib/epds";
 
 type MoodEntry = { mood: string; date: string };
@@ -23,12 +24,17 @@ function daysSince(iso: string): number {
   return Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86400000));
 }
 
-export default function ProgressDashboard() {
+const NUDGE_SNOOZE_KEY = "umubyeyi_weekly_nudge_snoozed_until_v1";
+const CHECKIN_LIST_COLLAPSED = 10;
+
+export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?: () => void }) {
   const [epdsHistory, setEpdsHistory] = useState<EpdsEntry[]>([]);
   const [streak, setStreak] = useState<EpdsStreak>({ count: 0, lastDate: "" });
   const [moodHistory, setMoodHistory] = useState<MoodEntry[]>([]);
   const [checkinHistory, setCheckinHistory] = useState<CheckinEntry[]>([]);
   const [concernHistory, setConcernHistory] = useState<ConcernEntry[]>([]);
+  const [nudgeSnoozedUntil, setNudgeSnoozedUntil] = useState("");
+  const [showAllCheckins, setShowAllCheckins] = useState(false);
 
   useEffect(() => {
     setEpdsHistory(loadEpdsHistory());
@@ -36,12 +42,15 @@ export default function ProgressDashboard() {
     try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
     try { setCheckinHistory(JSON.parse(localStorage.getItem("umubyeyi_checkin_v1") || "[]")); } catch { /* ignore */ }
     try { setConcernHistory(JSON.parse(localStorage.getItem("umubyeyi_concern_v1") || "[]")); } catch { /* ignore */ }
+    try { setNudgeSnoozedUntil(localStorage.getItem(NUDGE_SNOOZE_KEY) || ""); } catch { /* ignore */ }
   }, []);
 
-  const epdsPoints: TrendPoint[] = [...epdsHistory].reverse()
-    .map((e) => ({ date: e.date, value: e.total, label: formatLabel(e.date) }));
-  const concernPoints: TrendPoint[] = [...concernHistory].reverse()
-    .map((e) => ({ date: e.date, value: Math.round(e.score * 100), label: formatLabel(e.date) }));
+  // One point per day while history is short, one per week once it would otherwise be a
+  // wall of same-day dots -- see lib/trends.ts.
+  const epdsPoints = aggregateTrend(epdsHistory.map((e) => ({ date: e.date, value: e.total })));
+  const concernPoints = aggregateTrend(
+    concernHistory.map((e) => ({ date: e.date, value: Math.round(e.score * 100) }))
+  );
 
   const moodCounts = moodHistory.reduce<Record<string, number>>((acc, m) => {
     acc[m.mood] = (acc[m.mood] || 0) + 1;
@@ -60,8 +69,38 @@ export default function ProgressDashboard() {
 
   const hasAnyData = epdsHistory.length > 0 || moodHistory.length > 0 || checkinHistory.length > 0;
 
+  // A deliberate weekly rhythm, not just passive charting: nudge if it's been a week since
+  // any of mood / guided check-in / wellness test, so there's always at least one fresh
+  // point a week rather than relying on how much the mother happens to chat.
+  const lastActivityDate = [...moodHistory.map((m) => m.date), ...checkinHistory.map((c) => c.date),
+    ...epdsHistory.map((e) => e.date)].sort().reverse()[0];
+  const daysSinceActivity = lastActivityDate ? daysSince(lastActivityDate) : null;
+  const isSnoozed = nudgeSnoozedUntil !== "" && new Date(nudgeSnoozedUntil).getTime() > Date.now();
+  const showWeeklyNudge = hasAnyData && daysSinceActivity !== null && daysSinceActivity >= 7 && !isSnoozed;
+
+  const snoozeNudge = () => {
+    const until = new Date(Date.now() + 7 * 86400000).toISOString();
+    setNudgeSnoozedUntil(until);
+    try { localStorage.setItem(NUDGE_SNOOZE_KEY, until); } catch { /* ignore */ }
+  };
+
   return (
     <>
+      {showWeeklyNudge && (
+        <div className="card" style={{ marginBottom: 14 }}>
+          <b>It&apos;s been {daysSinceActivity} days since your last check-in</b>
+          <div className="subtext" style={{ marginTop: 4, marginBottom: 10 }}>
+            A quick weekly check-in keeps your trends meaningful, even on quiet weeks.
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {onGoToSelfcare && (
+              <button className="btn btn-sm btn-primary" onClick={onGoToSelfcare}>Log how you feel</button>
+            )}
+            <button className="btn btn-sm" onClick={snoozeNudge}>Remind me next week</button>
+          </div>
+        </div>
+      )}
+
       {hasAnyData && (
         <div className="stat-row">
           <div className="stat-tile">
@@ -127,12 +166,22 @@ export default function ProgressDashboard() {
               {checkinHistory.filter((c) => c.elevated).length} of {checkinHistory.length} guided check-ins suggested extra support.
             </div>
             <div className="mood-history">
-              {checkinHistory.slice(0, 10).map((c, i) => (
+              {(showAllCheckins ? checkinHistory : checkinHistory.slice(0, CHECKIN_LIST_COLLAPSED)).map((c, i) => (
                 <span key={`${c.date}-${i}`} className="mood-pill">
                   {formatLabel(c.date)} · {c.elevated ? "support suggested" : "steady"}
                 </span>
               ))}
             </div>
+            {checkinHistory.length > CHECKIN_LIST_COLLAPSED && (
+              <button
+                type="button"
+                className="btn btn-sm"
+                style={{ marginTop: 8 }}
+                onClick={() => setShowAllCheckins((v) => !v)}
+              >
+                {showAllCheckins ? "Show fewer" : `Show all ${checkinHistory.length}`}
+              </button>
+            )}
           </div>
         </>
       )}

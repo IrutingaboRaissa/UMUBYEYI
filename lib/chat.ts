@@ -94,6 +94,11 @@ export const CRISIS_LINE = "114";
 export const STORE_KEY = "umubyeyi_threads_v3";
 export const STORE_CURRENT_KEY = "umubyeyi_current_v3";
 
+// Local-only storage, so there's no real cost to a long history -- 500 entries is years of
+// even daily use. Used for mood, guided-check-in, and concern-signal history; the previous
+// cap of 30 raw entries silently deleted anything older with no way to get it back.
+export const RAW_HISTORY_CAP = 500;
+
 export const TIPS = [
   ["Shaka ubufasha", "Reach out", "Ganira n'umuntu wizeye cyangwa umukozi w'ubuzima.", "Talk to someone you trust or a health worker."],
   ["Wubake abagufasha", "Build support", "Egera uwo mwashakanye, umuryango n'incuti.", "Lean on your partner, family, and friends."],

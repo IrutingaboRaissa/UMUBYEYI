@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AFFIRM, ApiWakingUpError, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, TIPS,
+  AFFIRM, ApiWakingUpError, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, RAW_HISTORY_CAP, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat,
   generateTitle, optionLabel, optionValue, sendScreen, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
@@ -217,7 +217,7 @@ export default function ChatApp() {
         try {
           const prev = JSON.parse(localStorage.getItem("umubyeyi_concern_v1") || "[]");
           const next = [{ date: new Date().toISOString(), score: res.concern_signal.score, level: res.concern_signal.level },
-            ...(Array.isArray(prev) ? prev : [])].slice(0, 30);
+            ...(Array.isArray(prev) ? prev : [])].slice(0, RAW_HISTORY_CAP);
           localStorage.setItem("umubyeyi_concern_v1", JSON.stringify(next));
         } catch { /* ignore */ }
       }
@@ -629,7 +629,7 @@ export default function ChatApp() {
               <div className="mood-grid">
                 {["Great", "Okay", "Low", "Anxious", "Exhausted"].map((mood) => (
                   <button key={mood} onClick={() => {
-                    const next = [{ mood, date: new Date().toISOString() }, ...moodHistory].slice(0, 30);
+                    const next = [{ mood, date: new Date().toISOString() }, ...moodHistory].slice(0, RAW_HISTORY_CAP);
                     setMoodHistory(next);
                     localStorage.setItem("umubyeyi_moods_v1", JSON.stringify(next));
 
@@ -761,7 +761,7 @@ export default function ChatApp() {
                     try {
                       const prev = JSON.parse(localStorage.getItem(CHECKIN_HISTORY_KEY) || "[]");
                       const next = [{ date: new Date().toISOString(), risk: result.risk, elevated: result.elevated },
-                        ...(Array.isArray(prev) ? prev : [])].slice(0, 30);
+                        ...(Array.isArray(prev) ? prev : [])].slice(0, RAW_HISTORY_CAP);
                       localStorage.setItem(CHECKIN_HISTORY_KEY, JSON.stringify(next));
                     } catch { /* ignore */ }
                   }
@@ -824,7 +824,7 @@ export default function ChatApp() {
                 <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
               </div>
             </div>
-            <ProgressDashboard />
+            <ProgressDashboard onGoToSelfcare={() => goToView("selfcare")} />
           </section>
         )}
 

@@ -136,6 +136,9 @@ ordinary conversational path and direct the user to immediate human support.
   scored per the licensed dataset's own item-level scoring key
 - a client-side progress dashboard (EPDS trend, mood check-ins, chat concern trend) —
   everything stays on-device, nothing is sent anywhere
+- trends auto-aggregate from daily to weekly points as history grows, so a month of regular
+  use reads as a readable line rather than a wall of overlapping same-day dots, and a gentle
+  weekly nudge appears if it has been 7+ days since the last mood, check-in, or wellness test
 
 ### Self-care & mood tracking
 
@@ -276,6 +279,7 @@ components/EpdsAssessment.tsx     EPDS-10 wellness test UI (item-by-item, crisis
 components/ProgressDashboard.tsx  client-side trend dashboard (EPDS, mood, concern signal)
 components/charts/                shared Recharts trend/bar-chart components
 lib/epds.ts                       EPDS-10 items, scoring, band classification, streak tracking
+lib/trends.ts                     daily-to-weekly trend point aggregation for the progress dashboard
 data/postpartum_depression/       licensed participant data and dictionary
 data/intent/                      AMOD-derived weak labels and machine translations
 data/translation/                 schema and review gate for NLLB parallel fine-tuning data
@@ -313,7 +317,7 @@ scripts/benchmark_system.py       reproducible runtime benchmark
 python -m pytest -q
 ```
 
-Current verified result: **80 tests passed**. Strategies include unit, parameterized,
+Current verified result: **87 tests passed**. Strategies include unit, parameterized,
 boundary-value, invalid-input, offline/fallback, bilingual retrieval, safety, response-contract,
 dependency-injection, HTTP integration, indirect/obfuscated crisis messages, multi-turn conversation
 continuity (a bare follow-up stays in scope; an explicit off-topic pivot still redirects
@@ -356,12 +360,16 @@ python scripts/train_topic_classifier.py
 ```
 
 The persisted `models/topic_classifier.joblib` pipeline combines word and character TF-IDF with the
-best of seven probabilistic classifiers. It uses 596 deduplicated bilingual question pairs derived
-from `Amod/mental_health_counseling_conversations`: 417 train, 89 validation, and 90 untouched test
-rows. English and Kinyarwanda versions always remain in the same split. The labels are keyword weak
-labels and the Kinyarwanda text is NLLB-200 machine translation, so the scores measure reproduction of
-project labels rather than clinical validity. Runtime maps the Top-3 coarse intents to reviewed
-postpartum evidence topics.
+best of seven probabilistic classifiers (Extra Trees selected on validation macro-F1). It uses 596
+deduplicated bilingual question pairs derived from `Amod/mental_health_counseling_conversations`: 417
+train, 89 validation, and 90 untouched test rows. English and Kinyarwanda versions always remain in the
+same split. The labels are keyword weak labels and the Kinyarwanda text is NLLB-200 machine translation,
+so the scores measure reproduction of project labels rather than clinical validity. Runtime maps the
+Top-3 coarse intents to reviewed postpartum evidence topics.
+
+![Bilingual intent classifier validation comparison, all seven candidates](reports/topic_classifier/candidate_comparison_chart.png)
+
+![Bilingual intent classifier per-candidate validation confusion matrices](reports/topic_classifier/candidate_validation_confusion_matrices.png)
 
 The unified notebook also prepares a zero-shot NLLB translation-pivot experiment using
 `facebook/nllb-200-distilled-600M` (`kin_Latn` ↔ `eng_Latn`). It compares direct Kinyarwanda intent

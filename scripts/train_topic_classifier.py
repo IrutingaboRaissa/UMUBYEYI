@@ -91,6 +91,69 @@ def save_confusions(model: Pipeline, test: pd.DataFrame, classes: list[str]) -> 
     plt.close(fig)
 
 
+def save_candidate_validation_confusion_grid(
+    candidates: dict, validation_x: list[str], validation_y: list[str], classes: list[str]
+) -> None:
+    """One validation-set confusion matrix per candidate (bilingual, combined EN+RW rows,
+    matching how each candidate was actually scored for Table 22 / Figure 8). Mirrors the
+    ppd_classifier per-candidate confusion-matrix grid so both trained tasks report the
+    same depth of evidence, not just the winner.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    names = list(candidates.keys())
+    fig, axes = plt.subplots(2, 4, figsize=(20, 10))
+    for axis, name in zip(axes.flat, names):
+        predicted = candidates[name]["model"].predict(validation_x)
+        matrix = confusion_matrix(validation_y, predicted, labels=classes)
+        image = axis.imshow(matrix, cmap="Purples")
+        axis.set_xticks(range(len(classes)), classes, rotation=55, ha="right", fontsize=6)
+        axis.set_yticks(range(len(classes)), classes, fontsize=6)
+        macro_f1 = candidates[name]["validation"]["macro_f1"]
+        axis.set_title(f"{name}\nmacro-F1={macro_f1:.3f}", fontsize=9)
+        for row in range(len(classes)):
+            for column_index in range(len(classes)):
+                axis.text(column_index, row, str(matrix[row, column_index]),
+                          ha="center", va="center", fontsize=6)
+    for axis in axes.flat[len(names):]:
+        axis.axis("off")
+    fig.suptitle("Bilingual intent classifier -- validation-set confusion matrix per candidate", fontsize=13)
+    fig.tight_layout()
+    fig.savefig(REPORT_DIR / "candidate_validation_confusion_matrices.png", dpi=160, bbox_inches="tight")
+    plt.close(fig)
+
+
+def save_candidate_comparison_chart(candidates: dict) -> None:
+    """Accuracy / macro-F1 / top-3 accuracy bar chart across all seven candidates, on the
+    same validation set used to select the winner -- the missing "which model won" figure
+    for the intent-classification task."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    names = list(candidates.keys())
+    accuracy = [candidates[n]["validation"]["accuracy"] for n in names]
+    macro_f1 = [candidates[n]["validation"]["macro_f1"] for n in names]
+    top3 = [candidates[n]["validation"]["top_3_accuracy"] for n in names]
+
+    x = np.arange(len(names))
+    width = 0.26
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.bar(x - width, accuracy, width, label="Accuracy", color="#4f6d7a")
+    ax.bar(x, macro_f1, width, label="Macro-F1", color="#704f6f")
+    ax.bar(x + width, top3, width, label="Top-3 accuracy", color="#8fb996")
+    ax.set_xticks(x, names, rotation=30, ha="right")
+    ax.set_ylim(0, 1)
+    ax.set_ylabel("Score")
+    ax.set_title("Bilingual intent classifier -- validation comparison, all seven candidates")
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(REPORT_DIR / "candidate_comparison_chart.png", dpi=180, bbox_inches="tight")
+    plt.close(fig)
+
+
 def main() -> None:
     frame = pd.read_csv(DATA_PATH).dropna(subset=["Context", "intent", "context_rw"])
     for column in ("Context", "intent", "context_rw"):
@@ -131,6 +194,15 @@ def main() -> None:
         model.fit(train_x, train_y)
         candidates[name] = {"model": model, "validation": score(model, validation_x, validation_y)}
     selected = max(candidates, key=lambda name: candidates[name]["validation"]["macro_f1"])
+
+    # Must run before the final refit below: that refit reuses the same estimator objects
+    # from `definitions` (not fresh copies), so it mutates the winning candidate's fitted
+    # state in place -- any prediction against candidates[...]["model"] after that point
+    # would silently use the wrong (refit) feature space and raise a shape mismatch.
+    save_candidate_validation_confusion_grid(
+        candidates, validation_x, validation_y, sorted(frame["intent"].unique())
+    )
+    save_candidate_comparison_chart(candidates)
 
     fit_frame = pd.concat([train, validation], ignore_index=True)
     fit_x, fit_y = bilingual_rows(fit_frame)

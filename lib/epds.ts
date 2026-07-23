@@ -58,7 +58,10 @@ export type EpdsStreak = { count: number; lastDate: string };
 
 export const EPDS_STORAGE_KEY = "umubyeyi_epds_v1";
 export const EPDS_STREAK_KEY = "umubyeyi_epds_streak_v1";
-const HISTORY_CAP = 30;
+// Local-only storage, so there's no real cost to keeping a long history -- 500 entries is
+// years of even weekly use. The old cap of 30 was silently deleting a mother's own past
+// results once she'd taken the test 31 times, with no way to get them back.
+const HISTORY_CAP = 500;
 
 export function scoreOption(item: EpdsItem, optionIndex: number): number {
   return item.reverseScored ? 3 - optionIndex : optionIndex;
