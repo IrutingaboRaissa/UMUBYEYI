@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AFFIRM, ApiWakingUpError, CHECKIN_FIELDS, CRISIS_LINE, MOOD_TIPS, RAW_HISTORY_CAP, TIPS,
+  AFFIRM, ApiWakingUpError, CHECKIN_FIELDS, CRISIS_LINE, MOOD_LABEL, MOOD_TIPS, RAW_HISTORY_CAP, TIPS,
   Thread, loadThreads, newThread, saveThreads, sendChat,
   generateTitle, optionLabel, optionValue, sendScreen, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
@@ -12,31 +12,36 @@ import HorizontalBarChart from "@/components/charts/HorizontalBarChart";
 import Mark from "@/components/Mark";
 import MotherBabyMark from "@/components/MotherBabyMark";
 import { hasPin, setPin, verifyPin, removePin, resetAllData } from "@/lib/lock";
+import { useT, useBi, useLanguage } from "@/lib/language";
 
 type PinFormMode = "set" | "change" | "remove" | null;
 type PinForm = { mode: PinFormMode; current: string; next: string; confirm: string; error: string };
 
-const EXAMPLE_PROMPTS = [
-  "I feel exhausted all the time",
-  "I'm anxious about my baby",
-  "I feel guilty as a mother",
-  "I feel alone since giving birth",
-];
+// Real message content the mother could send as-is -- shown in whichever language is
+// currently selected, same as everything else, so clicking one always matches what she'd
+// actually type in that mode.
+const EXAMPLE_PROMPTS_EN = ["I feel exhausted all the time", "I'm anxious about my baby",
+  "I feel guilty as a mother", "I feel alone since giving birth"];
+const EXAMPLE_PROMPTS_RW = ["Numva ndushye buri gihe", "Mfite impungenge ku mwana wanjye",
+  "Numva mfite icyaha nk'umubyeyi", "Numva ndi wenyine kuva mbyara"];
 
 type View = "chat" | "checkin" | "epds" | "progress" | "selfcare" | "about";
 
-const NAV: { id: View; label: string }[] = [
-  { id: "chat", label: "Ikiganiro · Chat" },
-  { id: "checkin", label: "Isuzuma · Check-in" },
-  { id: "epds", label: "Ikizamini cy'imibereho · Wellness test" },
-  { id: "progress", label: "Aho ngeze · Progress" },
-  { id: "selfcare", label: "Kwiyitaho · Self-care" },
-  { id: "about", label: "Ibyerekeye · About" },
+const NAV: { id: View; rw: string; en: string }[] = [
+  { id: "chat", rw: "Ikiganiro", en: "Chat" },
+  { id: "checkin", rw: "Isuzuma", en: "Check-in" },
+  { id: "epds", rw: "Ikizamini cy'imibereho", en: "Wellness test" },
+  { id: "progress", rw: "Aho ngeze", en: "Progress" },
+  { id: "selfcare", rw: "Kwiyitaho", en: "Self-care" },
+  { id: "about", rw: "Ibyerekeye", en: "About" },
 ];
 
 const CHECKIN_HISTORY_KEY = "umubyeyi_checkin_v1";
 
 export default function ChatApp() {
+  const tr = useT();
+  const bi = useBi();
+  const { lang, ready: langReady, setLang } = useLanguage();
   const [consented, setConsented] = useState(false);
   const [uiReady, setUiReady] = useState(false);
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -268,7 +273,7 @@ export default function ChatApp() {
       setPinError("");
       setForgotConfirm(false);
     } else {
-      setPinError("Ntibihuye · Incorrect PIN");
+      setPinError(tr("Ntibihuye", "Incorrect PIN"));
       setPinEntry("");
     }
   };
@@ -344,7 +349,7 @@ export default function ChatApp() {
     if (!pinPrompt) return;
     const ok = await verifyPin(pinPrompt.entry);
     if (!ok) {
-      setPinPrompt({ ...pinPrompt, error: "Ntibihuye · Incorrect PIN", entry: "" });
+      setPinPrompt({ ...pinPrompt, error: tr("Ntibihuye", "Incorrect PIN"), entry: "" });
       return;
     }
     if (pinPrompt.purpose === "unlock") {
@@ -361,7 +366,7 @@ export default function ChatApp() {
     const { mode, current, next, confirm } = pinForm;
     if (mode === "remove") {
       if (!(await verifyPin(current))) {
-        setPinForm({ ...pinForm, error: "Ntibihuye · Incorrect PIN" });
+        setPinForm({ ...pinForm, error: tr("Ntibihuye", "Incorrect PIN") });
         return;
       }
       removePin();
@@ -370,15 +375,15 @@ export default function ChatApp() {
       return;
     }
     if (mode === "change" && !(await verifyPin(current))) {
-      setPinForm({ ...pinForm, error: "Ntibihuye · Incorrect PIN" });
+      setPinForm({ ...pinForm, error: tr("Ntibihuye", "Incorrect PIN") });
       return;
     }
     if (!/^\d{4,6}$/.test(next)) {
-      setPinForm({ ...pinForm, error: "Koresha imibare 4-6 · Use 4-6 digits" });
+      setPinForm({ ...pinForm, error: tr("Koresha imibare 4-6", "Use 4-6 digits") });
       return;
     }
     if (next !== confirm) {
-      setPinForm({ ...pinForm, error: "Ntibihuye · PINs don't match" });
+      setPinForm({ ...pinForm, error: tr("Ntibihuye", "PINs don't match") });
       return;
     }
     await setPin(next);
@@ -412,17 +417,33 @@ export default function ChatApp() {
     setMenuThreadId(menuThreadId === t.id ? null : t.id);
   };
 
-  if (!uiReady) {
+  if (!uiReady || !langReady) {
     return <div className="app-loading" aria-hidden />;
+  }
+
+  if (!lang) {
+    return (
+      <div className="hero">
+        <div className="hero-visual"><MotherBabyMark /></div>
+        <div className="hero-content">
+          <h1>Hitamo ururimi</h1>
+          <p className="lead">Hitamo ururimi rwo gukoresha muri Umubyeyi.</p>
+          <p className="leadEn">Choose the language you&apos;d like to use in Umubyeyi.</p>
+          <div style={{ display: "flex", gap: 12, marginTop: 20, justifyContent: "center", flexWrap: "wrap" }}>
+            <button className="btn btn-primary hero-cta" onClick={() => setLang("rw")}>Ikinyarwanda</button>
+            <button className="btn btn-primary hero-cta" onClick={() => setLang("en")}>English</button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (locked) {
     return (
       <div className="hero">
         <div className="hero-content">
-          <h1>Ikiganiro gifunze · App locked</h1>
-          <p className="lead">Injiza PIN yawe kugira ngo ubone ibiganiro byawe.</p>
-          <p className="leadEn">Enter your PIN to unlock your chats.</p>
+          <h1>{tr("Ikiganiro gifunze", "App locked")}</h1>
+          <p className="lead">{tr("Injiza PIN yawe kugira ngo ubone ibiganiro byawe.", "Enter your PIN to unlock your chats.")}</p>
           <div style={{ marginTop: 20 }}>
             <input
               className="thread-rename-input"
@@ -438,24 +459,23 @@ export default function ChatApp() {
           </div>
           {pinError && <div style={{ color: "#b23a48", marginTop: 8 }}>{pinError}</div>}
           <div style={{ marginTop: 16 }}>
-            <button className="btn btn-primary" onClick={handleUnlock}>Fungura · Unlock →</button>
+            <button className="btn btn-primary" onClick={handleUnlock}>{tr("Fungura →", "Unlock →")}</button>
           </div>
           <div style={{ marginTop: 24 }}>
             {!forgotConfirm ? (
               <button className="btn btn-sm" onClick={() => setForgotConfirm(true)}>
-                Wibagiwe PIN? · Forgot PIN?
+                {tr("Wibagiwe PIN?", "Forgot PIN?")}
               </button>
             ) : (
               <div className="card">
-                Kwibagirwa PIN bizasiba amakuru yose ari kuri iyi mudasobwa (ibiganiro, imibereho,
-                ibizamini). Ntibisubirwaho.
-                <br /><br />
-                <i>Resetting will erase all local data on this device (chats, mood, tests, check-ins).
-                This cannot be undone.</i>
+                {tr(
+                  "Kwibagirwa PIN bizasiba amakuru yose ari kuri iyi mudasobwa (ibiganiro, imibereho, ibizamini). Ntibisubirwaho.",
+                  "Resetting will erase all local data on this device (chats, mood, tests, check-ins). This cannot be undone."
+                )}
                 <div className="modal-actions" style={{ marginTop: 12 }}>
-                  <button className="btn" onClick={() => setForgotConfirm(false)}>Reka · Cancel</button>
+                  <button className="btn" onClick={() => setForgotConfirm(false)}>{tr("Reka", "Cancel")}</button>
                   <button className="btn btn-primary btn-danger-solid" onClick={handleForgotPin}>
-                    Siba byose · Reset everything
+                    {tr("Siba byose", "Reset everything")}
                   </button>
                 </div>
               </div>
@@ -471,13 +491,21 @@ export default function ChatApp() {
       <div className="hero">
         <div className="hero-visual"><MotherBabyMark /></div>
         <div className="hero-content">
-          <h1>Muraho, mama.</h1>
-          <p className="lead">Nturi wenyine. Umubyeyi ari hano ngo agufashe kwita ku mibereho myiza yo mu mutima.</p>
-          <p className="leadEn">You&apos;re not alone. Umubyeyi is here to support your emotional wellbeing.</p>
-          <div className="tag">Vugana mu Kinyarwanda cyangwa Icyongereza · Chat in Kinyarwanda or English</div>
+          <h1>{tr("Muraho, mama.", "Hello, mama.")}</h1>
+          <p className="lead">
+            {tr(
+              "Nturi wenyine. Umubyeyi ari hano ngo agufashe kwita ku mibereho myiza yo mu mutima.",
+              "You're not alone. Umubyeyi is here to support your emotional wellbeing."
+            )}
+          </p>
           <button className="btn btn-primary hero-cta" onClick={() => setConsented(true)}>
-            Tangira ikiganiro · Start →
+            {tr("Tangira ikiganiro →", "Start →")}
           </button>
+          <div style={{ marginTop: 14 }}>
+            <button className="btn btn-sm" onClick={() => setLang(lang === "rw" ? "en" : "rw")}>
+              {lang === "rw" ? "English" : "Ikinyarwanda"}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -490,63 +518,67 @@ export default function ChatApp() {
       <aside className={`sidebar ${panelOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <div className="sbrand">Umubyeyi</div>
-          <button className="sidebar-lock-btn" onClick={openPinModal} aria-label="Privacy lock" title="Kurinda ibanga · Privacy lock">🔒</button>
+          <button className="sidebar-lock-btn" onClick={() => setLang(lang === "rw" ? "en" : "rw")}
+            aria-label="Switch language" title={lang === "rw" ? "Switch to English" : "Hindura ku Kinyarwanda"}>
+            {lang === "rw" ? "EN" : "RW"}
+          </button>
+          <button className="sidebar-lock-btn" onClick={openPinModal} aria-label="Privacy lock" title={tr("Kurinda ibanga", "Privacy lock")}>🔒</button>
           <button className="sidebar-close" onClick={() => setPanelOpen(false)} aria-label="Close menu">✕</button>
         </div>
 
         <nav className="sidebar-nav">
-          {NAV.map(({ id, label }) => (
+          {NAV.map((n) => (
             <button
-              key={id}
+              key={n.id}
               type="button"
-              className={`sidebar-nav-btn ${view === id ? "active" : ""}`}
-              onClick={() => goToView(id)}
+              className={`sidebar-nav-btn ${view === n.id ? "active" : ""}`}
+              onClick={() => goToView(n.id)}
             >
-              {label}
+              {tr(n.rw, n.en)}
             </button>
           ))}
         </nav>
 
         <button className="btn btn-primary sidebar-new" onClick={startNewChat}>
-          ＋ Ikiganiro gishya · New chat
+          {tr("＋ Ikiganiro gishya", "＋ New chat")}
         </button>
 
-        <div className="sblbl">Ibiganiro · Recent</div>
+        <div className="sblbl">{tr("Ibiganiro", "Recent")}</div>
         <div className="thread-list">
-          {threads.map((t) => {
-            const realLabel = t.title || "Ikiganiro gishya · New chat";
-            const label = t.locked ? "🔒 Ikiganiro kirinzwe · Locked chat" : realLabel;
-            const active = t.id === currentId;
+          {threads.map((th) => {
+            const realLabel = th.title || tr("Ikiganiro gishya", "New chat");
+            const label = th.locked ? tr("🔒 Ikiganiro kirinzwe", "🔒 Locked chat") : realLabel;
+            const active = th.id === currentId;
             return (
-              <div key={t.id} className={`thread-row ${active ? "active" : ""}`}>
-                <button className="thread-btn" onClick={() => openThreadRow(t)}>
+              <div key={th.id} className={`thread-row ${active ? "active" : ""}`}>
+                <button className="thread-btn" onClick={() => openThreadRow(th)}>
                   {active ? "• " : ""}{label}
                 </button>
                 <button
                   className="thread-menu-btn"
-                  onClick={(e) => openMenu(t, e)}
+                  onClick={(e) => openMenu(th, e)}
                   aria-label="Chat options"
                 >
                   ⋯
                 </button>
-                {menuThreadId === t.id && (
+                {menuThreadId === th.id && (
                   <div className="thread-menu" onClick={(e) => e.stopPropagation()}>
                     <div className="thread-menu-actions">
-                      {t.locked ? (
-                        <button type="button" className="btn btn-sm" onClick={() => requestUnlockThread(t.id)}>
-                          🔓 Kuzibura · Unlock
+                      {th.locked ? (
+                        <button type="button" className="btn btn-sm" onClick={() => requestUnlockThread(th.id)}>
+                          {tr("🔓 Kuzibura", "🔓 Unlock")}
                         </button>
                       ) : (
-                        <button type="button" className="btn btn-sm" onClick={() => lockThread(t.id)}>
-                          🔒 Fungisha · Lock
+                        <button type="button" className="btn btn-sm" onClick={() => lockThread(th.id)}>
+                          {tr("🔒 Fungisha", "🔒 Lock")}
                         </button>
                       )}
                       <button
                         type="button"
                         className="btn btn-sm btn-danger"
-                        onClick={() => setDeleteTarget({ id: t.id, title: realLabel })}
+                        onClick={() => setDeleteTarget({ id: th.id, title: realLabel })}
                       >
-                        Siba · Delete
+                        {tr("Siba", "Delete")}
                       </button>
                     </div>
                   </div>
@@ -570,12 +602,12 @@ export default function ChatApp() {
               <div className="av"><Mark /></div>
               <div>
                 <div className="t">Umubyeyi</div>
-                <div className="s">Umufasha w&apos;imibereho myiza yo mu mutima · a mental-wellbeing companion</div>
+                <div className="s">{tr("Umufasha w'imibereho myiza yo mu mutima", "a mental-wellbeing companion")}</div>
               </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
-                <button className="btn btn-sm" onClick={() => setModal("breathe")}>Guhumeka · Breathe</button>
-                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>{tr("Ahabanza", "Home")}</button>
+                <button className="btn btn-sm" onClick={() => setModal("breathe")}>{tr("Guhumeka", "Breathe")}</button>
+                <button className="btn btn-sm" onClick={() => setModal("help")}>{tr("Ubufasha", "Help")}</button>
               </div>
             </div>
 
@@ -583,11 +615,10 @@ export default function ChatApp() {
               {current.msgs.length === 0 && (
                 <div className="chat-welcome">
                   <div className="quote">
-                    &ldquo;{welcomeQuote[0]}&rdquo;
-                    <span>{welcomeQuote[1]}</span>
+                    &ldquo;{tr(welcomeQuote[1], welcomeQuote[0])}&rdquo;
                   </div>
                   <div className="prompts">
-                    {EXAMPLE_PROMPTS.map((p) => (
+                    {(lang === "rw" ? EXAMPLE_PROMPTS_RW : EXAMPLE_PROMPTS_EN).map((p) => (
                       <button key={p} type="button" className="prompt-chip" onClick={() => setInput(p)}>
                         {p}
                       </button>
@@ -603,7 +634,7 @@ export default function ChatApp() {
                   </div>
                 </div>
               ))}
-              {typing && <div className="typing">Umubyeyi arimo arandika… · Umubyeyi is typing…</div>}
+              {typing && <div className="typing">{tr("Umubyeyi arimo arandika…", "Umubyeyi is typing…")}</div>}
               <div ref={bottomRef} />
             </div>
 
@@ -615,17 +646,17 @@ export default function ChatApp() {
             <div className="topbar">
               <div className="av"><Mark /></div>
               <div>
-                <div className="t">Kwiyitaho · Self-care</div>
-                <div className="s">Wowe wanitaye ku mwana - noneho niwiyiteho</div>
+                <div className="t">{tr("Kwiyitaho", "Self-care")}</div>
+                <div className="s">{tr("Wowe wanitaye ku mwana - noneho niwiyiteho", "You care for your baby - now care for yourself too")}</div>
               </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
-                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>{tr("Ahabanza", "Home")}</button>
+                <button className="btn btn-sm" onClick={() => setModal("help")}>{tr("Ubufasha", "Help")}</button>
               </div>
             </div>
-            <div className="section-h">Uko wiyumva · Mood check</div>
+            <div className="section-h">{tr("Uko wiyumva", "Mood check")}</div>
             <div className="card">
-              <div className="tt">Uyu munsi wiyumva ute? · How are you today?</div>
+              <div className="tt">{tr("Uyu munsi wiyumva ute?", "How are you today?")}</div>
               <div className="mood-grid">
                 {["Great", "Okay", "Low", "Anxious", "Exhausted"].map((mood) => (
                   <button key={mood} onClick={() => {
@@ -642,13 +673,13 @@ export default function ChatApp() {
                       const [en, rw] = pool[index];
                       setMoodTip({ mood, en, rw });
                     }
-                  }}>{mood}</button>
+                  }}>{bi(MOOD_LABEL[mood] ?? mood)}</button>
                 ))}
               </div>
               {moodTip && (
                 <div className="tip mood-tip">
-                  <div className="tt">For feeling {moodTip.mood.toLowerCase()}</div>
-                  <div className="td">{moodTip.en}<br /><span>{moodTip.rw}</span></div>
+                  <div className="tt">{bi(MOOD_LABEL[moodTip.mood] ?? moodTip.mood)}</div>
+                  <div className="td">{tr(moodTip.rw, moodTip.en)}</div>
                 </div>
               )}
               {(() => {
@@ -658,11 +689,11 @@ export default function ChatApp() {
                 if (!visibleMoodHistory.length) return null;
                 return (
                   <div className="disc">
-                    <div>Recent:</div>
+                    <div>{tr("Vuba aha", "Recent")}:</div>
                     <div className="mood-history">
                       {visibleMoodHistory.map((entry, i) => (
                         <span key={`${entry.date}-${i}`} className="mood-pill mood-pill-removable" style={{ animationDelay: `${i * 45}ms` }}>
-                          {entry.mood}
+                          {bi(MOOD_LABEL[entry.mood] ?? entry.mood)}
                           <button
                             type="button"
                             className="mood-pill-remove"
@@ -681,24 +712,27 @@ export default function ChatApp() {
                         </span>
                       ))}
                     </div>
-                    <div style={{ marginTop: 8 }}>Stored only on this device. Discuss persistent distress with a health worker.</div>
+                    <div style={{ marginTop: 8 }}>
+                      {tr("Bibikwa kuri iyi terefone/mudasobwa gusa. Ganira n'umukozi w'ubuzima niba ibibazo bikomeje.",
+                        "Stored only on this device. Discuss persistent distress with a health worker.")}
+                    </div>
                   </div>
                 );
               })()}
             </div>
-            <div className="section-h">Inama zo kwita ku mutima · Self-care tips</div>
+            <div className="section-h">{tr("Inama zo kwita ku mutima", "Self-care tips")}</div>
             <div className="tipgrid">
               {TIPS.map(([rw, en, drw, den]) => (
                 <div key={rw} className="tip">
-                  <div className="tt">{rw} · <span>{en}</span></div>
-                  <div className="td">{drw}<br /><span>{den}</span></div>
+                  <div className="tt">{tr(rw, en)}</div>
+                  <div className="td">{tr(drw, den)}</div>
                 </div>
               ))}
             </div>
-            <div className="section-h" style={{ marginTop: 20 }}>Amagambo yo kongera imbaraga · Gentle reminders</div>
+            <div className="section-h" style={{ marginTop: 20 }}>{tr("Amagambo yo kongera imbaraga", "Gentle reminders")}</div>
             <div className="tipgrid">
               {AFFIRM.map(([en, rw]) => (
-                <div key={en} className="aff">{en}<div className="affrw">{rw}</div></div>
+                <div key={en} className="aff">{tr(rw, en)}</div>
               ))}
             </div>
           </>
@@ -707,41 +741,41 @@ export default function ChatApp() {
         {view === "checkin" && (
           <section className="view-section">
             <div className="topbar"><div className="av"><Mark /></div><div>
-              <div className="t">Isuzuma ryoroheje · Guided check-in</div>
-              <div className="s">Optional screening support · not a diagnosis · answers are not stored</div>
+              <div className="t">{tr("Isuzuma ryoroheje", "Guided check-in")}</div>
+              <div className="s">
+                {tr("Ubufasha bwo kwisuzuma ku bushake, ntabwo ari isuzuma ry'ubuvuzi, ibisubizo ntibibikwa",
+                  "Optional screening support · not a diagnosis · answers are not stored")}
+              </div>
             </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
-                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>{tr("Ahabanza", "Home")}</button>
+                <button className="btn btn-sm" onClick={() => setModal("help")}>{tr("Ubufasha", "Help")}</button>
               </div>
             </div>
             <div className="card">
               <p>
-                Subiza buri kibazo hakurikijwe uko byifashe mu byumweru bishize, hanyuma ukande &quot;Reba ibisubizo.&quot;
-                <br />
-                <span className="subtext">
-                  Answer every question below based on how things have actually been recently, then press &quot;Check result.&quot;
-                  This research check-in estimates whether your answers resemble the dataset&apos;s elevated screening-risk
-                  group. It cannot diagnose postpartum depression, and nothing you enter is stored.
-                </span>
+                {tr(
+                  `Subiza buri kibazo hakurikijwe uko byifashe mu byumweru bishize, hanyuma ukande "Reba ibisubizo." Iri suzuma ry'ubushakashatsi rirebera niba ibisubizo byawe bisa n'ay'itsinda rifite ibyago byinshi mu bushakashatsi. Ntabwo rishobora kuvuga neza ko ufite indwara yo kwiheba nyuma yo kubyara, kandi nta kintu wandika kibikwa.`,
+                  `Answer every question below based on how things have actually been recently, then press "Check result." This research check-in estimates whether your answers resemble the dataset's elevated screening-risk group. It cannot diagnose postpartum depression, and nothing you enter is stored.`
+                )}
               </p>
-              <label className="thread-menu-label">Age</label>
+              <label className="thread-menu-label">{tr("Imyaka", "Age")}</label>
               <input className="thread-rename-input" type="number" min={18} max={60}
-                placeholder="Urugero: 25 · e.g. 25"
+                placeholder={tr("Urugero: 25", "e.g. 25")}
                 value={checkin.Age} onChange={(e) => setCheckin({ ...checkin, Age: e.target.value })} />
               <div className="tipgrid" style={{ marginTop: 14 }}>
                 {CHECKIN_FIELDS.map(([key, label, options]) => (
                   <label className="tip" key={key}>
-                    <span className="tt">{label}</span>
+                    <span className="tt">{bi(label)}</span>
                     <select
                       className="thread-rename-input"
                       value={String(checkin[key])}
                       style={checkin[key] === "" ? { color: "#A08E97" } : undefined}
                       onChange={(e) => setCheckin({ ...checkin, [key]: e.target.value })}
                     >
-                      <option value="" disabled hidden>Hitamo · Select</option>
+                      <option value="" disabled hidden>{tr("Hitamo", "Select")}</option>
                       {options.map((option) => (
-                        <option key={optionValue(option)} value={optionValue(option)}>{optionLabel(option)}</option>
+                        <option key={optionValue(option)} value={optionValue(option)}>{bi(optionLabel(option))}</option>
                       ))}
                     </select>
                   </label>
@@ -750,7 +784,8 @@ export default function ChatApp() {
               <label className="subtext" style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
                 <input type="checkbox" checked={saveCheckinHistory}
                   onChange={(e) => setSaveCheckinHistory(e.target.checked)} />
-                Save this result on this device only, to see your trend. Nothing leaves your phone.
+                {tr("Bika iki gisubizo kuri iyi telefone gusa kugira ngo ubone uko ugenda, nta kintu gisohoka.",
+                  "Save this result on this device only, to see your trend. Nothing leaves your phone.")}
               </label>
               <button className="btn btn-primary" style={{ marginTop: 10 }} disabled={screening || !checkinReady} onClick={async () => {
                 setScreening(true); setScreenError(""); setScreenResult(null);
@@ -766,30 +801,34 @@ export default function ChatApp() {
                     } catch { /* ignore */ }
                   }
                 }
-                catch (e) { setScreenError(e instanceof Error ? e.message : "Unable to complete check-in"); }
+                catch (e) { setScreenError(e instanceof Error ? e.message : tr("Ntibyakunze gusoza isuzuma", "Unable to complete check-in")); }
                 finally { setScreening(false); }
-              }}>{screening ? "Checking…" : "Reba ibisubizo · Check result"}</button>
+              }}>{screening ? tr("Birasuzumwa…", "Checking…") : tr("Reba ibisubizo", "Check result")}</button>
               {!checkinReady && (
                 <div className="subtext" style={{ marginTop: 8 }}>
-                  Subiza ibibazo byose hejuru kugira ngo ubone ibisubizo. · Answer all the questions above to see your result.
+                  {tr("Subiza ibibazo byose hejuru kugira ngo ubone ibisubizo.", "Answer all the questions above to see your result.")}
                 </div>
               )}
               {screenError && <div className="card danger">{screenError}</div>}
               {screenResult && <div className={`card ${screenResult.elevated ? "danger" : ""}`}>
                 <b style={{ fontSize: 16 }}>
                   {screenResult.elevated
-                    ? "Ushobora gukenera ubufasha bwinyongera · You may benefit from some extra support"
-                    : "Nta bimenyetso bikomeye byagaragaye · Nothing concerning stood out today"}
+                    ? tr("Ushobora gukenera ubufasha bwinyongera", "You may benefit from some extra support")
+                    : tr("Nta bimenyetso bikomeye byagaragaye", "Nothing concerning stood out today")}
                 </b>
-                <p style={{ marginTop: 10 }}>{screenResult.message_en}</p>
-                <p style={{ marginTop: 8 }}>{screenResult.message_rw}</p>
-                <div className="disc" style={{ marginTop: 12 }}>{screenResult.disclaimer}</div>
+                <p style={{ marginTop: 10 }}>{tr(screenResult.message_rw, screenResult.message_en)}</p>
+                <div className="disc" style={{ marginTop: 12 }}>
+                  {tr(screenResult.disclaimer_rw ?? screenResult.disclaimer, screenResult.disclaimer)}
+                </div>
                 {screenResult.explainability_available && screenResult.explanation && (
                   <>
-                    <div className="section-h" style={{ marginTop: 22 }}>What played the biggest role in this result</div>
+                    <div className="section-h" style={{ marginTop: 22 }}>
+                      {tr("Ibyagize uruhare runini kuri iki gisubizo", "What played the biggest role in this result")}
+                    </div>
                     <HorizontalBarChart data={screenResult.explanation} />
                     <div className="subtext" style={{ marginTop: 6 }}>
-                      This comes straight from your own answers, not a fixed rule. Every mother&apos;s chart looks different.
+                      {tr("Ibi biva ku bisubizo byawe bwite, ntabwo ari itegeko rihamye. Buri mubyeyi afite ishusho itandukanye.",
+                        "This comes straight from your own answers, not a fixed rule. Every mother's chart looks different.")}
                     </div>
                   </>
                 )}
@@ -801,12 +840,15 @@ export default function ChatApp() {
         {view === "epds" && (
           <section className="view-section">
             <div className="topbar"><div className="av"><Mark /></div><div>
-              <div className="t">Ikizamini cy&apos;imibereho · Wellness test</div>
-              <div className="s">Based on the Edinburgh Postnatal Depression Scale (EPDS-10) · not a diagnosis</div>
+              <div className="t">{tr("Ikizamini cy'imibereho", "Wellness test")}</div>
+              <div className="s">
+                {tr("Ishingiye ku kizamini cya EPDS-10 (Edinburgh Postnatal Depression Scale), si isuzuma ry'ubuvuzi",
+                  "Based on the Edinburgh Postnatal Depression Scale (EPDS-10) · not a diagnosis")}
+              </div>
             </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
-                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>{tr("Ahabanza", "Home")}</button>
+                <button className="btn btn-sm" onClick={() => setModal("help")}>{tr("Ubufasha", "Help")}</button>
               </div>
             </div>
             <EpdsAssessment onCrisis={() => setModal("help")} />
@@ -816,12 +858,15 @@ export default function ChatApp() {
         {view === "progress" && (
           <section className="view-section">
             <div className="topbar"><div className="av"><Mark /></div><div>
-              <div className="t">Aho ngeze · Your progress</div>
-              <div className="s">Trends from your wellness test, mood check-ins, and guided check-in</div>
+              <div className="t">{tr("Aho ngeze", "Your progress")}</div>
+              <div className="s">
+                {tr("Uko wagenze mu kizamini cy'imibereho, mu kwiyumva, no mu isuzuma ryoroheje",
+                  "Trends from your wellness test, mood check-ins, and guided check-in")}
+              </div>
             </div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
-                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>{tr("Ahabanza", "Home")}</button>
+                <button className="btn btn-sm" onClick={() => setModal("help")}>{tr("Ubufasha", "Help")}</button>
               </div>
             </div>
             <ProgressDashboard onGoToSelfcare={() => goToView("selfcare")} />
@@ -832,27 +877,37 @@ export default function ChatApp() {
           <>
             <div className="topbar">
               <div className="av"><Mark /></div>
-              <div><div className="t">Ibyerekeye Umubyeyi</div><div className="s">About</div></div>
+              <div><div className="t">{tr("Ibyerekeye Umubyeyi", "About Umubyeyi")}</div>
+                <div className="s">{tr("Umufasha wawe w'imibereho myiza", "Your wellness companion")}</div></div>
               <div className="actions">
-                <button className="btn btn-sm" onClick={() => setConsented(false)}>Ahabanza · Home</button>
-                <button className="btn btn-sm" onClick={() => setModal("help")}>Ubufasha · Help</button>
+                <button className="btn btn-sm" onClick={() => setConsented(false)}>{tr("Ahabanza", "Home")}</button>
+                <button className="btn btn-sm" onClick={() => setModal("help")}>{tr("Ubufasha", "Help")}</button>
               </div>
             </div>
             <div className="card">
-              <b>Umubyeyi</b> ni umufasha uvuga Ikinyarwanda n&apos;Icyongereza, witeguye kugufasha uko wiyumva mu mezi 6 ya mbere nyuma yo kubyara.
-              Ntiyita ku bibazo by&apos;umubiri cyangwa byo kwita ku mwana.
-              <br /><br />
-              <i>Umubyeyi is a bilingual companion for the emotional wellbeing of first-time mothers in the first 6 months after birth.</i>
+              {lang === "rw" ? (
+                <>
+                  <b>Umubyeyi</b> ni umufasha uvuga Ikinyarwanda n&apos;Icyongereza, witeguye kugufasha uko wiyumva mu
+                  mezi 6 ya mbere nyuma yo kubyara. Ntiyita ku bibazo by&apos;umubiri cyangwa byo kwita ku mwana.
+                </>
+              ) : (
+                <>
+                  <b>Umubyeyi</b> is a bilingual companion for the emotional wellbeing of first-time mothers in the
+                  first 6 months after birth. It does not address physical or baby-care concerns.
+                </>
+              )}
             </div>
-            <div className="section-h" style={{ marginTop: 20 }}>Icyo dukora · What Umubyeyi is (and isn&apos;t)</div>
+            <div className="section-h" style={{ marginTop: 20 }}>{tr("Icyo dukora", "What Umubyeyi is (and isn't)")}</div>
             <div className="wcard">
               <div className="wrow">
-                <b>Umufasha w&apos;imibereho myiza yo mu mutima gusa.</b><br />
-                <span>A wellness companion for your mental wellbeing only, not for medical, baby-care, or other challenges.</span>
+                <b>{tr("Umufasha w'imibereho myiza yo mu mutima gusa.",
+                  "A wellness companion for your mental wellbeing only, not for medical, baby-care, or other challenges.")}</b>
               </div>
               <div className="wrow">
-                <b>Ku bibazo by&apos;umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara {CRISIS_LINE}.</b><br />
-                <span>For physical or baby concerns, see a health worker; in a crisis call {CRISIS_LINE}. Chats stay on this device.</span>
+                <b>
+                  {tr(`Ku bibazo by'umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara ${CRISIS_LINE}. Ibiganiro bibikwa kuri iyi terefone.`,
+                    `For physical or baby concerns, see a health worker; in a crisis call ${CRISIS_LINE}. Chats stay on this device.`)}
+                </b>
               </div>
             </div>
           </>
@@ -865,7 +920,7 @@ export default function ChatApp() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Andika uko wiyumva... · Type how you feel..."
+              placeholder={tr("Andika uko wiyumva...", "Type how you feel...")}
               disabled={typing}
             />
             <button type="submit" disabled={typing || !input.trim()} aria-label="Send">
@@ -876,7 +931,8 @@ export default function ChatApp() {
             </button>
           </form>
           <div className="foot">
-            Umufasha w&apos;imibereho myiza gusa · si uw&apos;ibindi bibazo · mu kaga hamagara {CRISIS_LINE}
+            {tr(`Umufasha w'imibereho myiza gusa, si uw'ibindi bibazo, mu kaga hamagara ${CRISIS_LINE}`,
+              `Wellbeing support only, not other concerns -- in a crisis call ${CRISIS_LINE}`)}
           </div>
         </div>
       )}
@@ -884,18 +940,22 @@ export default function ChatApp() {
       {modal && (
         <div className="modal-overlay" onClick={() => setModal(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>{modal === "breathe" ? "Guhumeka · Breathe" : "Ubufasha · Help"}</h3>
+            <h3>{modal === "breathe" ? tr("Guhumeka", "Breathe") : tr("Ubufasha", "Help")}</h3>
             {modal === "breathe" ? (
               <div className="card">
-                Fata akanya gato uhumeke. Injiza umwuka mu mazuru ubara kugeza kuri <b>4</b>, uwushikire kugeza kuri <b>4</b>, hanyuma uwusohore buhoro kugeza kuri <b>6</b>.
-                <br /><br />
-                <i>Take a slow moment. Breathe in for 4, hold for 4, out gently for 6. Repeat five times.</i>
+                {lang === "rw" ? (
+                  <>Fata akanya gato uhumeke. Injiza umwuka mu mazuru ubara kugeza kuri <b>4</b>, uwushikire kugeza kuri <b>4</b>, hanyuma uwusohore buhoro kugeza kuri <b>6</b>. Subiramo inshuro eshanu.</>
+                ) : (
+                  <>Take a slow moment. Breathe in for <b>4</b>, hold for <b>4</b>, out gently for <b>6</b>. Repeat five times.</>
+                )}
               </div>
             ) : (
               <div className="card">
-                Niba uri mu kaga, hamagara <b>{CRISIS_LINE}</b> nonaha.
-                <br /><br />
-                <i>If you are in danger, call <b>{CRISIS_LINE}</b> now. Umubyeyi is emotional support, not a doctor.</i>
+                {lang === "rw" ? (
+                  <>Niba uri mu kaga, hamagara <b>{CRISIS_LINE}</b> nonaha. Umubyeyi ni ubufasha bwo mu mutima, si umuganga.</>
+                ) : (
+                  <>If you are in danger, call <b>{CRISIS_LINE}</b> now. Umubyeyi is emotional support, not a doctor.</>
+                )}
               </div>
             )}
             <button className="btn btn-primary" style={{ marginTop: 16, width: "100%" }} onClick={() => setModal(null)}>OK</button>
@@ -906,23 +966,23 @@ export default function ChatApp() {
       {modal === "pin" && pinForm && (
         <div className="modal-overlay" onClick={() => { setModal(null); setPinForm(null); setPendingLockThreadId(null); setForgotConfirm(false); }}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Kurinda ibanga · Privacy lock</h3>
+            <h3>{tr("Kurinda ibanga", "Privacy lock")}</h3>
             {pinForm.mode === null ? (
               <>
                 <div className="card">
-                  Ikiganiro kirinzwe na PIN. · This app has a PIN set.
+                  {tr("Ikiganiro kirinzwe na PIN.", "This app has a PIN set.")}
                 </div>
                 <div className="modal-actions" style={{ flexDirection: "column", gap: 8, marginTop: 12 }}>
                   <button className="btn" onClick={() => setPinForm({ ...pinForm, mode: "change" })}>
-                    Hindura PIN · Change PIN
+                    {tr("Hindura PIN", "Change PIN")}
                   </button>
                   <button className="btn btn-danger" onClick={() => setPinForm({ ...pinForm, mode: "remove" })}>
-                    Kuraho PIN burundu · Remove PIN entirely
+                    {tr("Kuraho PIN burundu", "Remove PIN entirely")}
                   </button>
                 </div>
                 <button className="btn" style={{ marginTop: 12, width: "100%" }}
                   onClick={() => { setModal(null); setPinForm(null); setPendingLockThreadId(null); }}>
-                  Funga · Close
+                  {tr("Funga", "Close")}
                 </button>
               </>
             ) : (
@@ -931,7 +991,7 @@ export default function ChatApp() {
                   <input
                     className="thread-rename-input"
                     type="password" inputMode="numeric" maxLength={6}
-                    placeholder="PIN y'ubu · Current PIN"
+                    placeholder={tr("PIN y'ubu", "Current PIN")}
                     value={pinForm.current}
                     onChange={(e) => setPinForm({ ...pinForm, current: e.target.value.replace(/\D/g, ""), error: "" })}
                   />
@@ -941,7 +1001,7 @@ export default function ChatApp() {
                     <input
                       className="thread-rename-input"
                       type="password" inputMode="numeric" maxLength={6}
-                      placeholder="PIN nshya (imibare 4-6) · New PIN (4-6 digits)"
+                      placeholder={tr("PIN nshya (imibare 4-6)", "New PIN (4-6 digits)")}
                       value={pinForm.next}
                       onChange={(e) => setPinForm({ ...pinForm, next: e.target.value.replace(/\D/g, ""), error: "" })}
                       style={{ marginTop: 8 }}
@@ -949,7 +1009,7 @@ export default function ChatApp() {
                     <input
                       className="thread-rename-input"
                       type="password" inputMode="numeric" maxLength={6}
-                      placeholder="Emeza PIN · Confirm PIN"
+                      placeholder={tr("Emeza PIN", "Confirm PIN")}
                       value={pinForm.confirm}
                       onChange={(e) => setPinForm({ ...pinForm, confirm: e.target.value.replace(/\D/g, ""), error: "" })}
                       style={{ marginTop: 8 }}
@@ -968,9 +1028,9 @@ export default function ChatApp() {
                       setForgotConfirm(false);
                     }
                   }}>
-                    Reka · Cancel
+                    {tr("Reka", "Cancel")}
                   </button>
-                  <button className="btn btn-primary" onClick={submitPinForm}>Bika · Save</button>
+                  <button className="btn btn-primary" onClick={submitPinForm}>{tr("Bika", "Save")}</button>
                 </div>
               </>
             )}
@@ -982,8 +1042,8 @@ export default function ChatApp() {
         <div className="modal-overlay" onClick={() => setPinPrompt(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>
-              {pinPrompt.purpose === "unlock" ? "Injiza PIN kugira ngo ukuraho · Enter PIN to unlock"
-                : "Injiza PIN kugira ngo urebe · Enter PIN to view"}
+              {pinPrompt.purpose === "unlock" ? tr("Injiza PIN kugira ngo ukuraho", "Enter PIN to unlock")
+                : tr("Injiza PIN kugira ngo urebe", "Enter PIN to view")}
             </h3>
             <input
               className="thread-rename-input"
@@ -995,8 +1055,8 @@ export default function ChatApp() {
             />
             {pinPrompt.error && <div style={{ color: "#b23a48", marginTop: 8 }}>{pinPrompt.error}</div>}
             <div className="modal-actions" style={{ marginTop: 12 }}>
-              <button className="btn" onClick={() => setPinPrompt(null)}>Reka · Cancel</button>
-              <button className="btn btn-primary" onClick={submitPinPrompt}>Emeza · Confirm</button>
+              <button className="btn" onClick={() => setPinPrompt(null)}>{tr("Reka", "Cancel")}</button>
+              <button className="btn btn-primary" onClick={submitPinPrompt}>{tr("Emeza", "Confirm")}</button>
             </div>
           </div>
         </div>
@@ -1005,15 +1065,17 @@ export default function ChatApp() {
       {deleteTarget && (
         <div className="modal-overlay" onClick={() => setDeleteTarget(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Siba iki kiganiro? · Delete this chat?</h3>
+            <h3>{tr("Siba iki kiganiro?", "Delete this chat?")}</h3>
             <div className="card">
-              Uragiye gusiba <b>&quot;{deleteTarget.title}&quot;</b>. Iki gikorwa ntigisubirwaho.
-              <br /><br />
-              <i>This cannot be undone.</i>
+              {lang === "rw" ? (
+                <>Uragiye gusiba <b>&quot;{deleteTarget.title}&quot;</b>. Iki gikorwa ntigisubirwaho.</>
+              ) : (
+                <>You are about to delete <b>&quot;{deleteTarget.title}&quot;</b>. This cannot be undone.</>
+              )}
             </div>
             <div className="modal-actions">
-              <button className="btn" onClick={() => setDeleteTarget(null)}>Reka · Cancel</button>
-              <button className="btn btn-primary btn-danger-solid" onClick={confirmDelete}>Yego, siba · Delete</button>
+              <button className="btn" onClick={() => setDeleteTarget(null)}>{tr("Reka", "Cancel")}</button>
+              <button className="btn btn-primary btn-danger-solid" onClick={confirmDelete}>{tr("Yego, siba", "Delete")}</button>
             </div>
           </div>
         </div>

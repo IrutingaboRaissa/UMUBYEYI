@@ -11,35 +11,50 @@
 // used below). This is a documented methodological choice, not a claim that
 // every response option is verbatim from the 1987 paper.
 //
-// English only for now — no validated Kinyarwanda translation of this
-// instrument exists yet; presenting an unverified one as equivalent would be
-// dishonest. Ship bilingual once a validated RW translation is sourced.
+// The 10 item questions and the response scale are English-sourced from the published
+// scale/licensed dataset (see above). The Kinyarwanda text on each (textRw / the RW half of
+// RESPONSE_LABELS) is this project's own translation, authored the same way as the rest of
+// the app's Kinyarwanda copy -- it has NOT been reviewed by a clinician or a native-speaker
+// translator, and is not a claim of official equivalence with the validated English EPDS-10.
+// The disclaimer shown in EpdsAssessment.tsx states this plainly; see also
+// UMUBYEYI project docs for the open item to source/commission a validated RW translation.
 
 export type EpdsItem = {
   id: string;
   text: string;
+  textRw: string;
   /** true if a higher-frequency answer means FEWER symptoms (score is flipped). */
   reverseScored: boolean;
 };
 
 export const RESPONSE_LABELS = [
-  "Not at all",
-  "Several days",
-  "More than half the days",
-  "Nearly every day",
+  ["Not at all", "Rwose ntabwo"],
+  ["Several days", "Iminsi mike"],
+  ["More than half the days", "Birenze kimwe cya kabiri cy'iminsi"],
+  ["Nearly every day", "Hafi buri munsi"],
 ] as const;
 
 export const EPDS_ITEMS: EpdsItem[] = [
-  { id: "epds_1", text: "I have been able to laugh and see the funny side of things", reverseScored: true },
-  { id: "epds_2", text: "I have looked forward with enjoyment to things", reverseScored: true },
-  { id: "epds_3", text: "I have blamed myself unnecessarily when things went wrong", reverseScored: false },
-  { id: "epds_4", text: "I have been anxious or worried for no good reason", reverseScored: false },
-  { id: "epds_5", text: "I have felt scared or panicky for no very good reason", reverseScored: false },
-  { id: "epds_6", text: "Things have been getting on top of me", reverseScored: false },
-  { id: "epds_7", text: "I have been so unhappy that I have had difficulty sleeping", reverseScored: false },
-  { id: "epds_8", text: "I have felt sad or miserable", reverseScored: false },
-  { id: "epds_9", text: "I have been so unhappy that I have been crying", reverseScored: false },
-  { id: "epds_10", text: "The thought of harming myself has occurred to me", reverseScored: false },
+  { id: "epds_1", text: "I have been able to laugh and see the funny side of things",
+    textRw: "Narashoboye guseka no kubona uruhande rushimishije rw'ibintu", reverseScored: true },
+  { id: "epds_2", text: "I have looked forward with enjoyment to things",
+    textRw: "Nari niteze kunezerwa n'ibintu byari bigiye kuba", reverseScored: true },
+  { id: "epds_3", text: "I have blamed myself unnecessarily when things went wrong",
+    textRw: "Nariyibazaga nta mpamvu igihe ibintu byifashe nabi", reverseScored: false },
+  { id: "epds_4", text: "I have been anxious or worried for no good reason",
+    textRw: "Nagize impungenge cyangwa guhangayika nta mpamvu ihagije", reverseScored: false },
+  { id: "epds_5", text: "I have felt scared or panicky for no very good reason",
+    textRw: "Nagize ubwoba cyangwa guhahamuka nta mpamvu ihagije", reverseScored: false },
+  { id: "epds_6", text: "Things have been getting on top of me",
+    textRw: "Numvaga ibintu byose binyikubiseho", reverseScored: false },
+  { id: "epds_7", text: "I have been so unhappy that I have had difficulty sleeping",
+    textRw: "Nababaye cyane ku buryo byangoye gusinzira", reverseScored: false },
+  { id: "epds_8", text: "I have felt sad or miserable",
+    textRw: "Numvaga mbabaye cyangwa ntishimye", reverseScored: false },
+  { id: "epds_9", text: "I have been so unhappy that I have been crying",
+    textRw: "Nababaye cyane ku buryo narize", reverseScored: false },
+  { id: "epds_10", text: "The thought of harming myself has occurred to me",
+    textRw: "Nagize igitekerezo cyo kwihutaza", reverseScored: false },
 ];
 
 /** Index of the self-harm item — any non-zero answer routes to the existing crisis modal. */

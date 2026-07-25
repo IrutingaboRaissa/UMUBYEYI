@@ -51,6 +51,7 @@ export type ScreenResponse = {
   message_en: string;
   message_rw: string;
   disclaimer: string;
+  disclaimer_rw?: string;
   explainability_available?: boolean;
   explanation?: Explanation[] | null;
 };
@@ -63,24 +64,65 @@ export type ScreenResponse = {
 // good news everywhere else in this form.
 export type CheckinOption = string | readonly [string, string];
 
+// Display labels and option labels are bilingual ("Kinyarwanda · English"), matching the
+// rest of the app's static UI text. The first tuple element (the dataset column name) and
+// every option VALUE must stay exactly as the trained model's OneHotEncoder was fit on --
+// only the second element and option LABELS (what's actually shown) are translated.
 export const CHECKIN_FIELDS: readonly (readonly [string, string, readonly CheckinOption[]])[] = [
-  ["Relationship with husband", "Relationship with partner", ["Good", "Neutral", "Bad"]],
-  ["Relationship with the newborn", "Connection with your baby", ["Good", "Neutral", "Bad"]],
-  ["Feeling about motherhood", "How you feel about motherhood", ["Positive", "Neutral", "Negative"]],
-  ["Recieved Support", "Support you currently receive", ["High", "Medium", "Low"]],
-  ["Need for Support", "How much more support you need", ["High", "Medium", "Low"]],
-  ["Abuse", "Have you experienced abuse?", ["No", "Yes"]],
-  ["Trust and share feelings", "Can you share feelings with someone you trust?", ["Yes", "No"]],
-  ["Worry about newborn", "Are you constantly worried about your baby?", ["No", "Yes"]],
-  ["Relax/sleep when newborn is tended ", "Can you rest when someone trusted watches the baby?", ["Yes", "No"]],
-  ["Relax/sleep when the newborn is asleep", "Can you rest when the baby sleeps?", ["Yes", "No"]],
-  ["Angry after latest child birth", "Have you often felt angry or hard to calm?", ["No", "Yes"]],
-  ["Feeling for regular activities", "How do ordinary activities feel?", ["Nothing (no difficulty)", "Tired", "Anxious", "Fearful"]],
-  ["Depression before pregnancy (PHQ2)", "Before this pregnancy, did you often feel down or lose interest in things?",
-    [["Negative", "No"], ["Positive", "Yes"]]],
-  ["Depression during pregnancy (PHQ2)", "During this pregnancy, did you often feel down or lose interest in things?",
-    [["Negative", "No"], ["Positive", "Yes"]]],
+  ["Relationship with husband", "Umubano wawe n'uwo mwashakanye · Relationship with partner",
+    [["Good", "Mwiza · Good"], ["Neutral", "Uringaniye · Neutral"], ["Bad", "Mubi · Bad"]]],
+  ["Relationship with the newborn", "Umubano wawe n'umwana wawe · Connection with your baby",
+    [["Good", "Mwiza · Good"], ["Neutral", "Uringaniye · Neutral"], ["Bad", "Mubi · Bad"]]],
+  ["Feeling about motherhood", "Uko wiyumva ku byerekeye ubumama · How you feel about motherhood",
+    [["Positive", "Byiza · Positive"], ["Neutral", "Uringaniye · Neutral"], ["Negative", "Bibi · Negative"]]],
+  ["Recieved Support", "Ubufasha ubu ubona · Support you currently receive",
+    [["High", "Bwinshi · High"], ["Medium", "Bugereranyije · Medium"], ["Low", "Buke · Low"]]],
+  ["Need for Support", "Ubufasha bwinshi ukeneye · How much more support you need",
+    [["High", "Bwinshi · High"], ["Medium", "Bugereranyije · Medium"], ["Low", "Buke · Low"]]],
+  ["Abuse", "Waba warigeze ugirirwa nabi? · Have you experienced abuse?", [["No", "Oya · No"], ["Yes", "Yego · Yes"]]],
+  ["Trust and share feelings", "Ushobora kubwira umuntu wizeye uko wiyumva? · Can you share feelings with someone you trust?",
+    [["Yes", "Yego · Yes"], ["No", "Oya · No"]]],
+  ["Worry about newborn", "Uhorana impungenge ku mwana wawe? · Are you constantly worried about your baby?",
+    [["No", "Oya · No"], ["Yes", "Yego · Yes"]]],
+  ["Relax/sleep when newborn is tended ", "Ushobora kuruhuka igihe undi yitaho umwana? · Can you rest when someone trusted watches the baby?",
+    [["Yes", "Yego · Yes"], ["No", "Oya · No"]]],
+  ["Relax/sleep when the newborn is asleep", "Ushobora kuruhuka igihe umwana asinziriye? · Can you rest when the baby sleeps?",
+    [["Yes", "Yego · Yes"], ["No", "Oya · No"]]],
+  ["Angry after latest child birth", "Waba wumva urakaye cyangwa bigoranye kwitonda? · Have you often felt angry or hard to calm?",
+    [["No", "Oya · No"], ["Yes", "Yego · Yes"]]],
+  ["Feeling for regular activities", "Ibikorwa bisanzwe bikumera bite? · How do ordinary activities feel?",
+    [["Nothing (no difficulty)", "Nta kibazo · Nothing (no difficulty)"], ["Tired", "Umunaniro · Tired"],
+      ["Anxious", "Impungenge · Anxious"], ["Fearful", "Ubwoba · Fearful"]]],
+  ["Depression before pregnancy (PHQ2)",
+    "Mbere yo gutwita, wari usanzwe wiyumva ubabaye cyangwa udashishikajwe n'ibintu? · Before this pregnancy, did you often feel down or lose interest in things?",
+    [["Negative", "Oya · No"], ["Positive", "Yego · Yes"]]],
+  ["Depression during pregnancy (PHQ2)",
+    "Mu gihe cyo gutwita, wari usanzwe wiyumva ubabaye cyangwa udashishikajwe n'ibintu? · During this pregnancy, did you often feel down or lose interest in things?",
+    [["Negative", "Oya · No"], ["Positive", "Yego · Yes"]]],
 ] as const;
+
+// Bilingual short axis-style labels for the SHAP explanation chart, keyed by the same raw
+// dataset column names as CHECKIN_FIELDS above (the backend's Explanation.feature value) --
+// a shorter, noun-phrase style than the check-in form's question-style labels, since these
+// are chart categories rather than form prompts. Overrides the backend's English-only
+// feature_label on the frontend rather than requiring a Python change.
+export const FEATURE_LABEL: Record<string, string> = {
+  "Age": "Imyaka · Age",
+  "Relationship with husband": "Umubano n'uwo mwashakanye · Relationship with partner",
+  "Relationship with the newborn": "Umubano n'umwana · Connection with your baby",
+  "Feeling about motherhood": "Uko wiyumva ku bumama · How you feel about motherhood",
+  "Recieved Support": "Ubufasha ubona · Support you currently receive",
+  "Need for Support": "Ubufasha ukeneye · How much more support you need",
+  "Abuse": "Kugirirwa nabi · Experience of abuse",
+  "Trust and share feelings": "Kubwira uwizeye uko wiyumva · Can share feelings with someone you trust",
+  "Worry about newborn": "Impungenge ku mwana · Constantly worried about your baby",
+  "Relax/sleep when newborn is tended ": "Kuruhuka undi yitaho umwana · Can rest when someone trusted watches the baby",
+  "Relax/sleep when the newborn is asleep": "Kuruhuka umwana asinziriye · Can rest when the baby sleeps",
+  "Angry after latest child birth": "Kwumva urakaye cyangwa bigoye kwitonda · Feeling angry or hard to calm",
+  "Feeling for regular activities": "Uko ibikorwa bisanzwe bimeze · Comfort with ordinary daily activities",
+  "Depression before pregnancy (PHQ2)": "Uko wiyumva mbere yo gutwita · Low mood before pregnancy (screening)",
+  "Depression during pregnancy (PHQ2)": "Uko wiyumva mu gutwita · Low mood during pregnancy (screening)",
+};
 
 export function optionValue(option: CheckinOption): string {
   return typeof option === "string" ? option : option[0];
@@ -138,6 +180,17 @@ export const MOOD_TIPS: Record<string, readonly (readonly [string, string])[]> =
     ["Ask for one specific piece of help today instead of managing everything alone.", "Saba ubufasha ku kintu kimwe uyu munsi aho kwikorera byose wenyine."],
     ["Lower the bar today: fed and safe is enough.", "Gabanya icyo witeze uyu munsi: kurya no kuba mu mutekano birahagije."],
   ],
+};
+
+// Display-only bilingual labels for the mood-grid buttons/pills -- the English mood name
+// (Great/Okay/Low/Anxious/Exhausted) stays the actual stored/lookup key into MOOD_TIPS
+// and local storage; only what's shown to the mother changes here.
+export const MOOD_LABEL: Record<string, string> = {
+  Great: "Byiza cyane · Great",
+  Okay: "Ni byiza · Okay",
+  Low: "Ntabwo ari byiza · Low",
+  Anxious: "Impungenge · Anxious",
+  Exhausted: "Umunaniro · Exhausted",
 };
 
 export const AFFIRM = [

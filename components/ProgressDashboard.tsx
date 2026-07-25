@@ -4,15 +4,17 @@ import { useEffect, useState } from "react";
 import TrendLine from "@/components/charts/TrendLine";
 import { aggregateTrend } from "@/lib/trends";
 import { EpdsBand, EpdsEntry, EpdsStreak, loadEpdsHistory, loadStreak } from "@/lib/epds";
+import { MOOD_LABEL } from "@/lib/chat";
+import { useT, useBi } from "@/lib/language";
 
 type MoodEntry = { mood: string; date: string };
 type CheckinEntry = { date: string; risk: string; elevated: boolean };
 type ConcernEntry = { date: string; score: number; level: string };
 
 const BAND_LABEL: Record<EpdsBand, string> = {
-  low: "Steady",
-  medium: "Some symptoms to watch",
-  high: "Extra support suggested",
+  low: "Biratekanye · Steady",
+  medium: "Hari ibimenyetso wagenzura · Some symptoms to watch",
+  high: "Ukeneye ubufasha bwinyongera · Extra support suggested",
 };
 
 function formatLabel(iso: string): string {
@@ -28,6 +30,8 @@ const NUDGE_SNOOZE_KEY = "umubyeyi_weekly_nudge_snoozed_until_v1";
 const CHECKIN_LIST_COLLAPSED = 10;
 
 export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?: () => void }) {
+  const tr = useT();
+  const bi = useBi();
   const [epdsHistory, setEpdsHistory] = useState<EpdsEntry[]>([]);
   const [streak, setStreak] = useState<EpdsStreak>({ count: 0, lastDate: "" });
   const [moodHistory, setMoodHistory] = useState<MoodEntry[]>([]);
@@ -88,15 +92,16 @@ export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?:
     <>
       {showWeeklyNudge && (
         <div className="card" style={{ marginBottom: 14 }}>
-          <b>It&apos;s been {daysSinceActivity} days since your last check-in</b>
+          <b>{tr(`Haciye iminsi ${daysSinceActivity} udakora isuzuma`, `It's been ${daysSinceActivity} days since your last check-in`)}</b>
           <div className="subtext" style={{ marginTop: 4, marginBottom: 10 }}>
-            A quick weekly check-in keeps your trends meaningful, even on quiet weeks.
+            {tr("Isuzuma rigufi buri cyumweru rifasha kubona neza uko ibintu bigenda, n'igihe nta kintu kigaragara cyane.",
+              "A quick weekly check-in keeps your trends meaningful, even on quiet weeks.")}
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             {onGoToSelfcare && (
-              <button className="btn btn-sm btn-primary" onClick={onGoToSelfcare}>Log how you feel</button>
+              <button className="btn btn-sm btn-primary" onClick={onGoToSelfcare}>{tr("Andika uko wiyumva", "Log how you feel")}</button>
             )}
-            <button className="btn btn-sm" onClick={snoozeNudge}>Remind me next week</button>
+            <button className="btn btn-sm" onClick={snoozeNudge}>{tr("Nyibutsa mu cyumweru gitaha", "Remind me next week")}</button>
           </div>
         </div>
       )}
@@ -105,53 +110,59 @@ export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?:
         <div className="stat-row">
           <div className="stat-tile">
             <div className="stat-value">{streak.count}</div>
-            <div className="stat-label">Wellness check-in streak</div>
+            <div className="stat-label">{tr("Iminsi ukurikiranye", "Wellness check-in streak")}</div>
           </div>
           <div className="stat-tile">
             <div className="stat-value">{epdsHistory.length}</div>
-            <div className="stat-label">Wellness tests taken</div>
+            <div className="stat-label">{tr("Ibizamini wakoze", "Wellness tests taken")}</div>
           </div>
           <div className="stat-tile">
             <div className="stat-value">{moodHistory.length}</div>
-            <div className="stat-label">Mood check-ins logged</div>
+            <div className="stat-label">{tr("Uko wiyumva wanditse", "Mood check-ins logged")}</div>
           </div>
           <div className="stat-tile">
             <div className="stat-value">{daysTracked}</div>
-            <div className="stat-label">Day{daysTracked === 1 ? "" : "s"} since you started</div>
+            <div className="stat-label">{tr("Iminsi kuva watangira", `Day${daysTracked === 1 ? "" : "s"} since you started`)}</div>
           </div>
         </div>
       )}
 
       {latestEpds && (
         <div className={`card ${latestEpds.band === "high" ? "danger" : ""}`} style={{ marginTop: hasAnyData ? 14 : 0 }}>
-          <b>Most recent wellness check: {BAND_LABEL[latestEpds.band]}</b>
+          <b>{tr("Isuzuma rya vuba riheruka", "Most recent wellness check")}: {bi(BAND_LABEL[latestEpds.band])}</b>
           <div className="subtext" style={{ marginTop: 4 }}>
-            {formatLabel(latestEpds.date)} · score {latestEpds.total}/30
+            {formatLabel(latestEpds.date)} · {tr("amanota", "score")} {latestEpds.total}/30
             {epdsDelta !== null && epdsDelta !== 0 && (
-              <> · {epdsDelta > 0 ? `up ${epdsDelta}` : `down ${Math.abs(epdsDelta)}`} since your last check</>
+              <> · {tr(
+                epdsDelta > 0 ? `hiyongereyeho ${epdsDelta}` : `hagabanutseho ${Math.abs(epdsDelta)}`,
+                epdsDelta > 0 ? `up ${epdsDelta}` : `down ${Math.abs(epdsDelta)}`
+              )} {tr("kuva isuzuma riheruka", "since your last check")}</>
             )}
           </div>
         </div>
       )}
 
-      <div className="section-h" style={{ marginTop: 20 }}>How your wellness check has been going</div>
+      <div className="section-h" style={{ marginTop: 20 }}>{tr("Uko ikizamini cy'imibereho kigenda", "How your wellness check has been going")}</div>
       <div className="card">
-        <TrendLine data={epdsPoints} domain={[0, 30]} referenceValue={13} referenceLabel="extra support may help" />
-        <div className="subtext">Lower generally means fewer symptoms. The dashed line marks where extra support is often recommended.</div>
+        <TrendLine data={epdsPoints} domain={[0, 30]} referenceValue={13} referenceLabel={tr("ubufasha bwinshi", "extra support")} />
+        <div className="subtext">
+          {tr("Uko umubare ugabanuka, ni ko ibimenyetso bigabanuka. Umurongo utunganye werekana aho ubufasha bwinshi bukunze gusabwa.",
+            "Lower generally means fewer symptoms. The dashed line marks where extra support is often recommended.")}
+        </div>
       </div>
 
-      <div className="section-h" style={{ marginTop: 20 }}>Mood check-ins</div>
+      <div className="section-h" style={{ marginTop: 20 }}>{tr("Uko wiyumva", "Mood check-ins")}</div>
       <div className="card">
         {rankedMoods.length === 0 ? (
-          <div className="subtext">No mood check-ins yet. Log one from Self-care.</div>
+          <div className="subtext">{tr("Nta kwiyumva wanditse. Andika kimwe uva ku Kwiyitaho.", "No mood check-ins yet. Log one from Self-care.")}</div>
         ) : (
           <>
             <div className="subtext" style={{ marginBottom: 8 }}>
-              Most often: <b>{topMood[0]}</b> ({topMood[1]} of {moodHistory.length} check-ins)
+              {tr("Akenshi cyane", "Most often")}: <b>{bi(MOOD_LABEL[topMood[0]] ?? topMood[0])}</b> ({topMood[1]} {tr("muri", "of")} {moodHistory.length})
             </div>
             <div className="mood-history">
               {rankedMoods.map(([mood, count]) => (
-                <span key={mood} className="mood-pill">{mood} · {count}</span>
+                <span key={mood} className="mood-pill">{bi(MOOD_LABEL[mood] ?? mood)} · {count}</span>
               ))}
             </div>
           </>
@@ -160,15 +171,18 @@ export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?:
 
       {checkinHistory.length > 0 && (
         <>
-          <div className="section-h" style={{ marginTop: 20 }}>Check-in history</div>
+          <div className="section-h" style={{ marginTop: 20 }}>{tr("Amateka y'isuzuma", "Check-in history")}</div>
           <div className="card">
             <div className="subtext" style={{ marginBottom: 8 }}>
-              {checkinHistory.filter((c) => c.elevated).length} of {checkinHistory.length} guided check-ins suggested extra support.
+              {tr(
+                `${checkinHistory.filter((c) => c.elevated).length} muri ${checkinHistory.length} mu masuzuma yagaragaje ko hakenewe ubufasha bwinshi.`,
+                `${checkinHistory.filter((c) => c.elevated).length} of ${checkinHistory.length} guided check-ins suggested extra support.`
+              )}
             </div>
             <div className="mood-history">
               {(showAllCheckins ? checkinHistory : checkinHistory.slice(0, CHECKIN_LIST_COLLAPSED)).map((c, i) => (
                 <span key={`${c.date}-${i}`} className="mood-pill">
-                  {formatLabel(c.date)} · {c.elevated ? "support suggested" : "steady"}
+                  {formatLabel(c.date)} · {c.elevated ? tr("hakenewe ubufasha", "support suggested") : tr("biratekanye", "steady")}
                 </span>
               ))}
             </div>
@@ -179,7 +193,7 @@ export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?:
                 style={{ marginTop: 8 }}
                 onClick={() => setShowAllCheckins((v) => !v)}
               >
-                {showAllCheckins ? "Show fewer" : `Show all ${checkinHistory.length}`}
+                {showAllCheckins ? tr("Garuka ku bike", "Show fewer") : tr(`Byose ${checkinHistory.length}`, `Show all ${checkinHistory.length}`)}
               </button>
             )}
           </div>
@@ -188,10 +202,13 @@ export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?:
 
       {concernPoints.length > 0 && (
         <>
-          <div className="section-h" style={{ marginTop: 20 }}>How your chats have been feeling</div>
+          <div className="section-h" style={{ marginTop: 20 }}>{tr("Uko ibiganiro byagenze", "How your chats have been feeling")}</div>
           <div className="card">
             <TrendLine data={concernPoints} domain={[0, 100]} color="#356B7D" />
-            <div className="subtext">A rough sense of how heavy your recent messages sounded. Just a pattern, not a diagnosis.</div>
+            <div className="subtext">
+              {tr("Igitekerezo rusange ku buremere bw'ubutumwa bwawe bwa vuba. Ni ishusho gusa, ntabwo ari isuzuma ry'ubuvuzi.",
+                "A rough sense of how heavy your recent messages sounded. Just a pattern, not a diagnosis.")}
+            </div>
           </div>
         </>
       )}
@@ -199,13 +216,15 @@ export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?:
       {!hasAnyData && (
         <div className="card">
           <div className="subtext">
-            Nothing tracked yet. Take the wellness test, log a mood in Self-care, or run a guided check-in to start seeing your trends here.
+            {tr("Nta kintu cyanditswe kugeza ubu. Fata ikizamini cy'imibereho, wandike uko wiyumva ku Kwiyitaho, cyangwa ukore isuzuma ryoroheje kugira ngo utangire kubona uko ugenda hano.",
+              "Nothing tracked yet. Take the wellness test, log a mood in Self-care, or run a guided check-in to start seeing your trends here.")}
           </div>
         </div>
       )}
 
       <div className="subtext" style={{ marginTop: 16 }}>
-        Everything here stays on this device. Nothing is sent anywhere.
+        {tr("Ibi byose bibikwa kuri iyi terefone/mudasobwa gusa. Nta kintu gisohoka ahandi.",
+          "Everything here stays on this device. Nothing is sent anywhere.")}
       </div>
     </>
   );

@@ -1,5 +1,10 @@
 import ChatApp from "@/components/ChatApp";
+import { LanguageProvider } from "@/lib/language";
 
 export default function Home() {
-  return <ChatApp />;
+  return (
+    <LanguageProvider>
+      <ChatApp />
+    </LanguageProvider>
+  );
 }

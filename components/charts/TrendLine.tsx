@@ -1,6 +1,7 @@
 "use client";
 
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useT } from "@/lib/language";
 
 export type TrendPoint = { date: string; value: number; label: string };
 
@@ -13,8 +14,9 @@ export default function TrendLine({
   referenceLabel?: string;
   color?: string;
 }) {
+  const tr = useT();
   if (data.length === 0) {
-    return <div className="subtext">No entries yet. Check in to start your trend.</div>;
+    return <div className="subtext">{tr("Nta kintu cyanditswe. Kora isuzuma kugira ngo utangire uko ugenda.", "No entries yet. Check in to start your trend.")}</div>;
   }
   return (
     <ResponsiveContainer width="100%" height={200}>

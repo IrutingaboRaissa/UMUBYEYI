@@ -101,6 +101,7 @@ class ScreeningService:
                 "ibyiyumvo bikomeza, nyamuneka vugana n'umukozi w'ubuzima kugira ngo umenye neza."
             ),
             "disclaimer": "Research screening support only; not a diagnosis or medical advice.",
+            "disclaimer_rw": "Ubufasha bwo kwisuzuma ku bushakashatsi gusa; ntabwo ari isuzuma cyangwa inama y'ubuvuzi.",
             "explainability_available": explanation is not None,
             "explanation": explanation,
         }
