@@ -1,10 +1,16 @@
 import { createClient } from "@/lib/supabase/client";
 import { RAW_HISTORY_CAP, STORE_CURRENT_KEY, Thread } from "@/lib/chat";
 
+// Reads the cached local session rather than auth.getUser() -- getUser() re-validates
+// against Supabase's server on every call, so any transient network hiccup made every
+// save fail with a misleading "Not signed in". Row Level Security re-checks the real JWT
+// server-side regardless of what user_id the client sends, so there's no security reason
+// to make this a network round trip.
 async function requireUserId(): Promise<string> {
-  const { data, error } = await createClient().auth.getUser();
-  if (error || !data.user) throw new Error("Not signed in");
-  return data.user.id;
+  const { data, error } = await createClient().auth.getSession();
+  if (error) throw new Error(`Could not read session: ${error.message}`);
+  if (!data.session) throw new Error("Not signed in");
+  return data.session.user.id;
 }
 
 type ThreadRow = {

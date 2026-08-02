@@ -115,10 +115,13 @@ export async function loadEpdsHistory(): Promise<EpdsEntry[]> {
 }
 
 export async function saveEpdsEntry(entry: EpdsEntry): Promise<EpdsEntry[]> {
-  const { data: userData, error: userError } = await createClient().auth.getUser();
-  if (userError || !userData.user) throw new Error("Not signed in");
+  // getSession() reads the cached local session instead of hitting the network like
+  // getUser() does -- see the matching comment in lib/supabase/data.ts's requireUserId().
+  const { data: sessionData, error: sessionError } = await createClient().auth.getSession();
+  if (sessionError) throw new Error(`Could not read session: ${sessionError.message}`);
+  if (!sessionData.session) throw new Error("Not signed in");
   const { error } = await createClient().from("epds_results").insert({
-    user_id: userData.user.id,
+    user_id: sessionData.session.user.id,
     total: entry.total,
     band: entry.band,
     item10_flag: entry.item10Flag,
