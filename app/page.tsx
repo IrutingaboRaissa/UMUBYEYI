@@ -1,10 +1,10 @@
 import ChatApp from "@/components/ChatApp";
-import { LanguageProvider } from "@/lib/language";
+import AuthGate from "@/components/AuthGate";
 
 export default function Home() {
   return (
-    <LanguageProvider>
+    <AuthGate>
       <ChatApp />
-    </LanguageProvider>
+    </AuthGate>
   );
 }

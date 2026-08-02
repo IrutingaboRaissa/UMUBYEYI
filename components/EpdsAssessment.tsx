@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EPDS_ITEM10_INDEX, EPDS_ITEMS, EpdsBand, EpdsEntry, RESPONSE_LABELS,
-  bumpStreak, classifyBand, computeTotal, isItem10Flagged, loadStreak, saveEpdsEntry,
+  classifyBand, computeTotal, deriveStreak, isItem10Flagged, loadEpdsHistory, saveEpdsEntry,
 } from "@/lib/epds";
 import { useT } from "@/lib/language";
 
@@ -36,12 +36,18 @@ export default function EpdsAssessment({ onCrisis }: { onCrisis: () => void }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>(() => Array(EPDS_ITEMS.length).fill(-1));
   const [result, setResult] = useState<EpdsEntry | null>(null);
-  const [streakCount, setStreakCount] = useState(() => loadStreak().count);
+  const [streakCount, setStreakCount] = useState(0);
+
+  useEffect(() => {
+    loadEpdsHistory()
+      .then((history) => setStreakCount(deriveStreak(history).count))
+      .catch((err) => console.error("Failed to load wellness test streak", err));
+  }, []);
 
   const item = EPDS_ITEMS[stepIndex];
   const answered = answers[stepIndex] !== -1;
 
-  const selectOption = (optionIndex: number) => {
+  const selectOption = async (optionIndex: number) => {
     const next = [...answers];
     next[stepIndex] = optionIndex;
     setAnswers(next);
@@ -60,8 +66,12 @@ export default function EpdsAssessment({ onCrisis }: { onCrisis: () => void }) {
         band: classifyBand(total),
         item10Flag: isItem10Flagged(next),
       };
-      saveEpdsEntry(entry);
-      setStreakCount(bumpStreak().count);
+      try {
+        const history = await saveEpdsEntry(entry);
+        setStreakCount(deriveStreak(history).count);
+      } catch (err) {
+        console.error("Failed to save wellness test result", err);
+      }
       setResult(entry);
     }
   };
@@ -126,8 +136,8 @@ export default function EpdsAssessment({ onCrisis }: { onCrisis: () => void }) {
       )}
       <div className="subtext" style={{ marginTop: 14 }}>
         {tr(
-          "Ibisobanuro by'Ikinyarwanda by'iki kizamini cy'ubuvuzi (EPDS-10) byakozwe n'iki gikorwa ubwacyo, kandi ntibyemejwe n'inzobere mu buvuzi cyangwa umuvugizi w'Ikinyarwanda nk'ururimi rwavukiyemo -- ntibigomba gufatwa nk'ibisa n'icyongereza cy'umwimerere ku buryo bunoze. Iki kizamini gitandukanye n'isuzuma ryoroheje, kandi ntikibika ibisubizo byawe kuri buri kibazo -- itariki n'amanota rusange gusa ni byo bibikwa, kuri iyi terefone gusa.",
-          "The Kinyarwanda wording of this clinical instrument (EPDS-10) was authored by this project and has not been reviewed by a clinician or a native Kinyarwanda speaker -- it should not be assumed to precisely match the original validated English. It is separate from the guided check-in and does not store your individual answers. Only the date and total score are saved, on this device only."
+          "Ibisobanuro by'Ikinyarwanda by'iki kizamini cy'ubuvuzi (EPDS-10) byakozwe n'iki gikorwa ubwacyo, kandi ntibyemejwe n'inzobere mu buvuzi cyangwa umuvugizi w'Ikinyarwanda nk'ururimi rwavukiyemo -- ntibigomba gufatwa nk'ibisa n'icyongereza cy'umwimerere ku buryo bunoze. Iki kizamini gitandukanye n'isuzuma ryoroheje, kandi ntikibika ibisubizo byawe kuri buri kibazo -- itariki n'amanota rusange gusa ni byo bibikwa, kuri konti yawe irinzwe.",
+          "The Kinyarwanda wording of this clinical instrument (EPDS-10) was authored by this project and has not been reviewed by a clinician or a native Kinyarwanda speaker -- it should not be assumed to precisely match the original validated English. It is separate from the guided check-in and does not store your individual answers. Only the date and total score are saved, to your secure account."
         )}
       </div>
     </div>

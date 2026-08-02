@@ -1,17 +1,25 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AFFIRM, ApiWakingUpError, CHECKIN_FIELDS, CRISIS_LINE, MOOD_LABEL, MOOD_TIPS, RAW_HISTORY_CAP, TIPS,
-  Thread, loadThreads, newThread, saveThreads, sendChat,
+  AFFIRM, ApiWakingUpError, CHECKIN_FIELDS, CRISIS_LINE, MOOD_LABEL, MOOD_TIPS, STORE_CURRENT_KEY, TIPS,
+  Thread, newThread, sendChat,
   generateTitle, optionLabel, optionValue, sendScreen, sortThreads, touchThread, ScreenResponse,
 } from "@/lib/chat";
+import {
+  loadThreads, saveThread, deleteThread,
+  loadMoodHistory, saveMoodEntry,
+  saveCheckinEntry,
+  saveConcernEntry,
+} from "@/lib/supabase/data";
+import { createClient } from "@/lib/supabase/client";
 import EpdsAssessment from "@/components/EpdsAssessment";
 import ProgressDashboard from "@/components/ProgressDashboard";
 import HorizontalBarChart from "@/components/charts/HorizontalBarChart";
 import Mark from "@/components/Mark";
 import MotherBabyMark from "@/components/MotherBabyMark";
-import { hasPin, setPin, verifyPin, removePin, resetAllData } from "@/lib/lock";
+import { hasPin, setPin, verifyPin, removePin } from "@/lib/lock";
 import { useT, useBi, useLanguage } from "@/lib/language";
 
 type PinFormMode = "set" | "change" | "remove" | null;
@@ -35,8 +43,6 @@ const NAV: { id: View; rw: string; en: string }[] = [
   { id: "selfcare", rw: "Kwiyitaho", en: "Self-care" },
   { id: "about", rw: "Ibyerekeye", en: "About" },
 ];
-
-const CHECKIN_HISTORY_KEY = "umubyeyi_checkin_v1";
 
 export default function ChatApp() {
   const tr = useT();
@@ -87,29 +93,6 @@ export default function ChatApp() {
 
   useEffect(() => {
     if (hasPin()) setLocked(true);
-    const { threads: loaded, currentId: cid } = loadThreads();
-    if (loaded.length) {
-      setThreads(loaded);
-      // Never resume directly into a locked thread on load -- the remembered "last open
-      // chat" could be one the user locked since, and that must still require the PIN.
-      const resumeTarget = loaded.find((t) => t.id === cid);
-      if (resumeTarget?.locked) {
-        const firstUnlocked = loaded.find((t) => !t.locked);
-        if (firstUnlocked) {
-          setCurrentId(firstUnlocked.id);
-        } else {
-          const t = newThread();
-          setDraftThread(t);
-          setCurrentId(t.id);
-        }
-      } else {
-        setCurrentId(cid);
-      }
-    } else {
-      const t = newThread();
-      setDraftThread(t);
-      setCurrentId(t.id);
-    }
     // The welcome screen is a deliberate landing page on a brand-new browser session --
     // it's shown the first time a tab opens and only ever dismissed by an explicit click
     // on "Start" (or the Home button). Within that same tab, a reload restores whichever
@@ -122,12 +105,41 @@ export default function ChatApp() {
       const storedView = sessionStorage.getItem("umubyeyi_view_v1") as View | null;
       if (storedView && NAV.some((n) => n.id === storedView)) setView(storedView);
     } catch { /* ignore */ }
-    hydrated.current = true;
-    try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
     try {
       setDismissedMoodDates(JSON.parse(localStorage.getItem("umubyeyi_moods_dismissed_v1") || "[]"));
     } catch { /* ignore */ }
-    setUiReady(true);
+
+    (async () => {
+      const [{ threads: loaded, currentId: cid }, moods] = await Promise.all([
+        loadThreads(),
+        loadMoodHistory(),
+      ]);
+      setMoodHistory(moods);
+      if (loaded.length) {
+        setThreads(loaded);
+        // Never resume directly into a locked thread on load -- the remembered "last open
+        // chat" could be one the user locked since, and that must still require the PIN.
+        const resumeTarget = loaded.find((t) => t.id === cid);
+        if (resumeTarget?.locked) {
+          const firstUnlocked = loaded.find((t) => !t.locked);
+          if (firstUnlocked) {
+            setCurrentId(firstUnlocked.id);
+          } else {
+            const t = newThread();
+            setDraftThread(t);
+            setCurrentId(t.id);
+          }
+        } else {
+          setCurrentId(cid);
+        }
+      } else {
+        const t = newThread();
+        setDraftThread(t);
+        setCurrentId(t.id);
+      }
+      hydrated.current = true;
+      setUiReady(true);
+    })();
   }, []);
 
   // Re-lock as soon as the tab is hidden (switched away, minimized, screen off) so a PIN
@@ -141,10 +153,12 @@ export default function ChatApp() {
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
+  // Which thread is open is a pure per-device UI preference, so it's kept in localStorage
+  // rather than synced to the account -- see lib/supabase/data.ts loadThreads().
   useEffect(() => {
     if (!hydrated.current) return;
-    saveThreads(threads, currentId);
-  }, [threads, currentId]);
+    try { localStorage.setItem(STORE_CURRENT_KEY, currentId); } catch { /* ignore */ }
+  }, [currentId]);
 
   useEffect(() => {
     if (!hydrated.current) return;
@@ -175,9 +189,9 @@ export default function ChatApp() {
       if (!looksUnupgraded) return;
       generateTitle(firstUser.text, firstBot.text, firstBot.lang ?? "en").then((title) => {
         if (!title) return;
-        setThreads((prev) => prev.map((th) => (
-          th.id === t.id ? { ...th, title, titleSource: "generated" } : th
-        )));
+        const titled: Thread = { ...t, title, titleSource: "generated" };
+        setThreads((prev) => prev.map((th) => (th.id === t.id ? titled : th)));
+        saveThread(titled).catch((err) => console.error("Failed to save chat title", err));
       });
     });
   }, [threads]);
@@ -192,9 +206,15 @@ export default function ChatApp() {
     setPanelOpen(false);
   }, []);
 
-  const updateThread = useCallback((updated: Thread) => {
+  const updateThread = useCallback(async (updated: Thread) => {
     const touched = touchThread(updated);
     setThreads((prev) => sortThreads([touched, ...prev.filter((t) => t.id !== touched.id)]));
+    try {
+      await saveThread(touched);
+    } catch (err) {
+      console.error("Failed to save chat", err);
+    }
+    return touched;
   }, []);
 
   const handleSend = async (text: string) => {
@@ -206,7 +226,7 @@ export default function ChatApp() {
       t.title = userMsg.slice(0, 40);
       t.titleSource = "fallback";
     }
-    updateThread(t);
+    await updateThread(t);
     if (draftThread?.id === t.id) setDraftThread(null);
     setInput("");
     setTyping(true);
@@ -216,22 +236,20 @@ export default function ChatApp() {
       const botMsg = {
         role: "bot" as const, text: res.answer, danger: res.danger, mode: res.mode, lang: res.language,
       };
-      updateThread({ ...t, msgs: [...t.msgs, botMsg] });
+      const withReply = { ...t, msgs: [...t.msgs, botMsg] };
+      await updateThread(withReply);
       setLastMeta({ lang: res.language, mode: res.mode });
       if (res.concern_signal) {
         try {
-          const prev = JSON.parse(localStorage.getItem("umubyeyi_concern_v1") || "[]");
-          const next = [{ date: new Date().toISOString(), score: res.concern_signal.score, level: res.concern_signal.level },
-            ...(Array.isArray(prev) ? prev : [])].slice(0, RAW_HISTORY_CAP);
-          localStorage.setItem("umubyeyi_concern_v1", JSON.stringify(next));
-        } catch { /* ignore */ }
+          await saveConcernEntry({ score: res.concern_signal.score, level: res.concern_signal.level });
+        } catch (err) { console.error("Failed to save concern signal", err); }
       }
       if (isFirstMessage) {
         generateTitle(userMsg, res.answer, res.language).then((title) => {
           if (!title) return;
-          setThreads((prev) => prev.map((th) => (
-            th.id === t.id ? { ...th, title, titleSource: "generated" } : th
-          )));
+          const titled: Thread = { ...withReply, title, titleSource: "generated" };
+          setThreads((prev) => prev.map((th) => (th.id === t.id ? titled : th)));
+          saveThread(titled).catch((err) => console.error("Failed to save chat title", err));
         });
       }
     } catch (err) {
@@ -242,7 +260,7 @@ export default function ChatApp() {
           : lastMeta.lang === "rw"
             ? "Mbabarira, hari ikibazo. Ongera ugerageze."
             : "Sorry, something went wrong. Mbabarira, hari ikibazo. Ongera ugerageze.";
-      updateThread({
+      await updateThread({
         ...t,
         msgs: [...t.msgs, { role: "bot", text: fallbackText }],
       });
@@ -278,20 +296,22 @@ export default function ChatApp() {
     }
   };
 
-  const handleForgotPin = () => {
-    resetAllData();
-    setThreads([]);
-    setMoodHistory([]);
-    const t = newThread();
-    setDraftThread(t);
-    setCurrentId(t.id);
-    setLocked(false);
+  // Forgetting the local PIN no longer wipes anything -- the mother's data lives in her
+  // Supabase account, not this device, so this just signs her out of the device. AuthGate's
+  // onAuthStateChange listener unmounts ChatApp back to the sign-in screen once the session
+  // clears, and everything re-loads from the account on her next sign-in.
+  const handleForgotPin = async () => {
+    removePin();
     setPinEntry("");
     setPinError("");
     setForgotConfirm(false);
     setModal(null);
     setPinForm(null);
-    setConsented(false);
+    try {
+      await createClient().auth.signOut();
+    } catch (err) {
+      console.error("Failed to sign out", err);
+    }
   };
 
   const openPinModal = () => {
@@ -311,7 +331,9 @@ export default function ChatApp() {
       setModal("pin");
       return;
     }
+    const target = threads.find((t) => t.id === id);
     setThreads((prev) => prev.map((t) => (t.id === id ? { ...t, locked: true } : t)));
+    if (target) saveThread({ ...target, locked: true }).catch((err) => console.error("Failed to lock chat", err));
     setMenuThreadId(null);
     // If the chat being locked is the one currently open, leave its messages immediately --
     // otherwise "locking" it would do nothing visible until the user happened to navigate away.
@@ -353,7 +375,9 @@ export default function ChatApp() {
       return;
     }
     if (pinPrompt.purpose === "unlock") {
+      const target = threads.find((t) => t.id === pinPrompt.threadId);
       setThreads((prev) => prev.map((t) => (t.id === pinPrompt.threadId ? { ...t, locked: false } : t)));
+      if (target) saveThread({ ...target, locked: false }).catch((err) => console.error("Failed to unlock chat", err));
     } else {
       setCurrent(pinPrompt.threadId);
       setView("chat");
@@ -388,14 +412,16 @@ export default function ChatApp() {
     }
     await setPin(next);
     if (pendingLockThreadId) {
+      const target = threads.find((t) => t.id === pendingLockThreadId);
       setThreads((prev) => prev.map((t) => (t.id === pendingLockThreadId ? { ...t, locked: true } : t)));
+      if (target) saveThread({ ...target, locked: true }).catch((err) => console.error("Failed to lock chat", err));
       setPendingLockThreadId(null);
     }
     setModal(null);
     setPinForm(null);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteTarget) return;
     const remaining = threads.filter((t) => t.id !== deleteTarget.id);
     setThreads(sortThreads(remaining));
@@ -407,6 +433,11 @@ export default function ChatApp() {
         setDraftThread(t);
         setCurrentId(t.id);
       }
+    }
+    try {
+      await deleteThread(deleteTarget.id);
+    } catch (err) {
+      console.error("Failed to delete chat", err);
     }
     setDeleteTarget(null);
     setMenuThreadId(null);
@@ -469,13 +500,13 @@ export default function ChatApp() {
             ) : (
               <div className="card">
                 {tr(
-                  "Kwibagirwa PIN bizasiba amakuru yose ari kuri iyi mudasobwa (ibiganiro, imibereho, ibizamini). Ntibisubirwaho.",
-                  "Resetting will erase all local data on this device (chats, mood, tests, check-ins). This cannot be undone."
+                  "Kwibagirwa PIN bizagusohora kuri iyi mudasobwa. Nta kintu gisibwa - ibiganiro byawe, imibereho, n'ibizamini byabitswe kuri konti yawe. Injira ukoresheje imeyili n'ijambo ry'ibanga kugira ngo ukomeze, hanyuma ushobora gushyiraho PIN nshya.",
+                  "Forgetting your PIN signs you out of this device. Nothing is deleted - your chats, mood history, and check-ins are saved to your account. Sign back in with your email and password to continue, and you can set a new PIN."
                 )}
                 <div className="modal-actions" style={{ marginTop: 12 }}>
                   <button className="btn" onClick={() => setForgotConfirm(false)}>{tr("Reka", "Cancel")}</button>
                   <button className="btn btn-primary btn-danger-solid" onClick={handleForgotPin}>
-                    {tr("Siba byose", "Reset everything")}
+                    {tr("Gusohoka", "Sign out")}
                   </button>
                 </div>
               </div>
@@ -506,6 +537,10 @@ export default function ChatApp() {
               {lang === "rw" ? "English" : "Ikinyarwanda"}
             </button>
           </div>
+          <div style={{ marginTop: 16, display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/privacy" className="btn btn-sm">{tr("Politiki y'ibanga", "Privacy Policy")}</Link>
+            <Link href="/eula" className="btn btn-sm">{tr("Amasezerano", "Terms")}</Link>
+          </div>
         </div>
       </div>
     );
@@ -523,6 +558,14 @@ export default function ChatApp() {
             {lang === "rw" ? "EN" : "RW"}
           </button>
           <button className="sidebar-lock-btn" onClick={openPinModal} aria-label="Privacy lock" title={tr("Kurinda ibanga", "Privacy lock")}>🔒</button>
+          <button
+            className="sidebar-lock-btn"
+            onClick={() => createClient().auth.signOut().catch((err) => console.error("Failed to sign out", err))}
+            aria-label="Sign out"
+            title={tr("Gusohoka", "Sign out")}
+          >
+            ⏻
+          </button>
           <button className="sidebar-close" onClick={() => setPanelOpen(false)} aria-label="Close menu">✕</button>
         </div>
 
@@ -659,10 +702,12 @@ export default function ChatApp() {
               <div className="tt">{tr("Uyu munsi wiyumva ute?", "How are you today?")}</div>
               <div className="mood-grid">
                 {["Great", "Okay", "Low", "Anxious", "Exhausted"].map((mood) => (
-                  <button key={mood} onClick={() => {
-                    const next = [{ mood, date: new Date().toISOString() }, ...moodHistory].slice(0, RAW_HISTORY_CAP);
-                    setMoodHistory(next);
-                    localStorage.setItem("umubyeyi_moods_v1", JSON.stringify(next));
+                  <button key={mood} onClick={async () => {
+                    try {
+                      setMoodHistory(await saveMoodEntry(mood));
+                    } catch (err) {
+                      console.error("Failed to save mood", err);
+                    }
 
                     const pool = MOOD_TIPS[mood] ?? [];
                     if (pool.length > 0) {
@@ -713,8 +758,8 @@ export default function ChatApp() {
                       ))}
                     </div>
                     <div style={{ marginTop: 8 }}>
-                      {tr("Bibikwa kuri iyi terefone/mudasobwa gusa. Ganira n'umukozi w'ubuzima niba ibibazo bikomeje.",
-                        "Stored only on this device. Discuss persistent distress with a health worker.")}
+                      {tr("Bibikwa kuri konti yawe. Ganira n'umukozi w'ubuzima niba ibibazo bikomeje.",
+                        "Saved to your account. Discuss persistent distress with a health worker.")}
                     </div>
                   </div>
                 );
@@ -784,8 +829,8 @@ export default function ChatApp() {
               <label className="subtext" style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
                 <input type="checkbox" checked={saveCheckinHistory}
                   onChange={(e) => setSaveCheckinHistory(e.target.checked)} />
-                {tr("Bika iki gisubizo kuri iyi telefone gusa kugira ngo ubone uko ugenda, nta kintu gisohoka.",
-                  "Save this result on this device only, to see your trend. Nothing leaves your phone.")}
+                {tr("Bika iki gisubizo kuri konti yawe kugira ngo ubone uko ugenda ku mudasobwa iyo ari yo yose.",
+                  "Save this result to your account so you can see your trend across devices.")}
               </label>
               <button className="btn btn-primary" style={{ marginTop: 10 }} disabled={screening || !checkinReady} onClick={async () => {
                 setScreening(true); setScreenError(""); setScreenResult(null);
@@ -794,11 +839,8 @@ export default function ChatApp() {
                   setScreenResult(result);
                   if (saveCheckinHistory) {
                     try {
-                      const prev = JSON.parse(localStorage.getItem(CHECKIN_HISTORY_KEY) || "[]");
-                      const next = [{ date: new Date().toISOString(), risk: result.risk, elevated: result.elevated },
-                        ...(Array.isArray(prev) ? prev : [])].slice(0, RAW_HISTORY_CAP);
-                      localStorage.setItem(CHECKIN_HISTORY_KEY, JSON.stringify(next));
-                    } catch { /* ignore */ }
+                      await saveCheckinEntry({ risk: result.risk, elevated: result.elevated });
+                    } catch (err) { console.error("Failed to save check-in result", err); }
                   }
                 }
                 catch (e) { setScreenError(e instanceof Error ? e.message : tr("Ntibyakunze gusoza isuzuma", "Unable to complete check-in")); }
@@ -905,9 +947,16 @@ export default function ChatApp() {
               </div>
               <div className="wrow">
                 <b>
-                  {tr(`Ku bibazo by'umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara ${CRISIS_LINE}. Ibiganiro bibikwa kuri iyi terefone.`,
-                    `For physical or baby concerns, see a health worker; in a crisis call ${CRISIS_LINE}. Chats stay on this device.`)}
+                  {tr(`Ku bibazo by'umubiri cyangwa umwana, reba umuganga. Mu kaga, hamagara ${CRISIS_LINE}. Ibiganiro byawe bibikwa kuri konti yawe irinzwe.`,
+                    `For physical or baby concerns, see a health worker; in a crisis call ${CRISIS_LINE}. Your chats are saved to your secure account.`)}
                 </b>
+              </div>
+            </div>
+            <div className="section-h" style={{ marginTop: 20 }}>{tr("Amategeko", "Legal")}</div>
+            <div className="wcard">
+              <div className="wrow" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <Link href="/privacy" className="btn btn-sm">{tr("Politiki y'ibanga", "Privacy Policy")}</Link>
+                <Link href="/eula" className="btn btn-sm">{tr("Amasezerano y'ukoresha", "End User License Agreement")}</Link>
               </div>
             </div>
           </>

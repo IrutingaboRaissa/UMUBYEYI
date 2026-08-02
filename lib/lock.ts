@@ -1,22 +1,11 @@
-// Local-only privacy lock: a PIN gates the whole app in the browser. Nothing here is sent
-// anywhere -- consistent with the rest of Umubyeyi's client-side-only storage. The PIN itself
-// is never stored, only its SHA-256 hash, so reading localStorage doesn't reveal it.
+// Local-only privacy lock: a PIN gates the whole app in the browser, on top of the real
+// account sign-in (see components/AuthGate.tsx). Nothing here is sent anywhere. The PIN
+// itself is never stored, only its SHA-256 hash, so reading localStorage doesn't reveal it.
+//
+// This is deliberately just a per-device quick-lock now, not the only line of defense --
+// the mother's actual data lives in her Supabase account, so forgetting this PIN signs her
+// out rather than destroying anything (see ChatApp.tsx's handleForgotPin).
 const PIN_HASH_KEY = "umubyeyi_pin_hash_v1";
-
-// Every key that holds anything personal (threads, mood, EPDS, check-in, concern trend).
-// A "forgot PIN" reset wipes exactly these, matching the app's "nothing survives off-device,
-// and if you can't get back in there's nothing left to protect" privacy model.
-const PERSONAL_DATA_KEYS = [
-  "umubyeyi_threads_v3",
-  "umubyeyi_current_v3",
-  "umubyeyi_moods_v1",
-  "umubyeyi_concern_v1",
-  "umubyeyi_checkin_v1",
-  "umubyeyi_epds_v1",
-  "umubyeyi_epds_streak_v1",
-  "umubyeyi_sid",
-  PIN_HASH_KEY,
-];
 
 async function sha256Hex(text: string): Promise<string> {
   const bytes = new TextEncoder().encode(text);
@@ -41,10 +30,4 @@ export async function verifyPin(pin: string): Promise<boolean> {
 
 export function removePin(): void {
   localStorage.removeItem(PIN_HASH_KEY);
-}
-
-/** "Forgot PIN" path: wipes all locked local data and the PIN itself. Nothing is recoverable
- * beyond this, by design -- there is no server copy to restore from. */
-export function resetAllData(): void {
-  for (const key of PERSONAL_DATA_KEYS) localStorage.removeItem(key);
 }

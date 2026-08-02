@@ -19,6 +19,8 @@
 // The disclaimer shown in EpdsAssessment.tsx states this plainly; see also
 // UMUBYEYI project docs for the open item to source/commission a validated RW translation.
 
+import { createClient } from "@/lib/supabase/client";
+
 export type EpdsItem = {
   id: string;
   text: string;
@@ -71,11 +73,9 @@ export type EpdsEntry = {
 
 export type EpdsStreak = { count: number; lastDate: string };
 
-export const EPDS_STORAGE_KEY = "umubyeyi_epds_v1";
-export const EPDS_STREAK_KEY = "umubyeyi_epds_streak_v1";
-// Local-only storage, so there's no real cost to keeping a long history -- 500 entries is
-// years of even weekly use. The old cap of 30 was silently deleting a mother's own past
-// results once she'd taken the test 31 times, with no way to get them back.
+// There's no real cost to keeping a long history -- 500 entries is years of even weekly
+// use. The old cap of 30 was silently deleting a mother's own past results once she'd
+// taken the test 31 times, with no way to get them back.
 const HISTORY_CAP = 500;
 
 export function scoreOption(item: EpdsItem, optionIndex: number): number {
@@ -99,36 +99,37 @@ export function isItem10Flagged(optionIndices: number[]): boolean {
   return (optionIndices[EPDS_ITEM10_INDEX] ?? 0) > 0;
 }
 
-export function loadEpdsHistory(): EpdsEntry[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = JSON.parse(localStorage.getItem(EPDS_STORAGE_KEY) || "[]");
-    return Array.isArray(raw) ? raw : [];
-  } catch {
-    return [];
-  }
+export async function loadEpdsHistory(): Promise<EpdsEntry[]> {
+  const { data, error } = await createClient()
+    .from("epds_results")
+    .select("occurred_at, total, band, item10_flag")
+    .order("occurred_at", { ascending: false })
+    .limit(HISTORY_CAP);
+  if (error) throw error;
+  return (data ?? []).map((row) => ({
+    date: row.occurred_at,
+    total: row.total,
+    band: row.band as EpdsBand,
+    item10Flag: row.item10_flag,
+  }));
 }
 
-export function saveEpdsEntry(entry: EpdsEntry): EpdsEntry[] {
-  const next = [entry, ...loadEpdsHistory()].slice(0, HISTORY_CAP);
-  if (typeof window !== "undefined") localStorage.setItem(EPDS_STORAGE_KEY, JSON.stringify(next));
-  return next;
+export async function saveEpdsEntry(entry: EpdsEntry): Promise<EpdsEntry[]> {
+  const { data: userData, error: userError } = await createClient().auth.getUser();
+  if (userError || !userData.user) throw new Error("Not signed in");
+  const { error } = await createClient().from("epds_results").insert({
+    user_id: userData.user.id,
+    total: entry.total,
+    band: entry.band,
+    item10_flag: entry.item10Flag,
+  });
+  if (error) throw error;
+  return loadEpdsHistory();
 }
 
-export function loadStreak(): EpdsStreak {
-  if (typeof window === "undefined") return { count: 0, lastDate: "" };
-  try {
-    const raw = JSON.parse(localStorage.getItem(EPDS_STREAK_KEY) || "null");
-    if (raw && typeof raw.count === "number") return raw;
-  } catch {
-    /* ignore */
-  }
-  return { count: 0, lastDate: "" };
-}
-
-/** Rewards taking the assessment regularly — never the score/content of answers. */
-export function bumpStreak(): EpdsStreak {
-  const next = { count: loadStreak().count + 1, lastDate: new Date().toISOString() };
-  if (typeof window !== "undefined") localStorage.setItem(EPDS_STREAK_KEY, JSON.stringify(next));
-  return next;
+/** Derived from history rather than stored separately -- it was always incremented 1:1
+ * with each saved entry, so a separate counter could only drift once writes go over the
+ * network (e.g. a failed insert would still have bumped a locally-stored streak). */
+export function deriveStreak(history: EpdsEntry[]): EpdsStreak {
+  return { count: history.length, lastDate: history[0]?.date ?? "" };
 }

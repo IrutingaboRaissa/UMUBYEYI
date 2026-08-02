@@ -133,7 +133,8 @@ export function optionLabel(option: CheckinOption): string {
 }
 
 export const CRISIS_LINE = "114";
-export const STORE_KEY = "umubyeyi_threads_v3";
+// Which thread is currently open -- a pure per-device UI preference, so it stays in
+// localStorage rather than syncing to the account; see lib/supabase/data.ts loadThreads().
 export const STORE_CURRENT_KEY = "umubyeyi_current_v3";
 
 // Local-only storage, so there's no real cost to a long history -- 500 entries is years of
@@ -209,34 +210,6 @@ export function newThread(): Thread {
     ts: Date.now(),
     msgs: [],
   };
-}
-
-export function loadThreads(): { threads: Thread[]; currentId: string } {
-  if (typeof window === "undefined") {
-    return { threads: [], currentId: "" };
-  }
-  let threads: Thread[] = [];
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) {
-      const data = JSON.parse(raw);
-      if (Array.isArray(data) && data.length) threads = data;
-    }
-  } catch { /* ignore */ }
-  if (!threads.length) {
-    return { threads: [], currentId: "" };
-  }
-  const savedCurrent = localStorage.getItem(STORE_CURRENT_KEY);
-  const currentId = savedCurrent && threads.some((t) => t.id === savedCurrent)
-    ? savedCurrent
-    : threads[0].id;
-  return { threads: sortThreads(threads), currentId };
-}
-
-export function saveThreads(threads: Thread[], currentId: string) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(STORE_KEY, JSON.stringify(sortThreads(threads)));
-  localStorage.setItem(STORE_CURRENT_KEY, currentId);
 }
 
 export function sortThreads(threads: Thread[]): Thread[] {

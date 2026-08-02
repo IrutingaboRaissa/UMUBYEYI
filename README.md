@@ -151,6 +151,7 @@ ordinary conversational path and direct the user to immediate human support.
 |---|---|
 | Frontend | Next.js 15, React 19, TypeScript, Recharts (progress-dashboard charts) |
 | Backend / API | Python serverless functions (Vercel `api/*.py`); `local_api.py` mirrors them for local dev |
+| Auth & persistence | Supabase (Postgres, email/password auth, Row Level Security) — chats, mood check-ins, EPDS-10 history, guided check-ins, and concern trends are saved to the mother's account, not just the browser |
 | Chat generation (primary) | Groq (`llama-3.3-70b-versatile`) |
 | Chat generation (fallback) | Umubyeyi's own fine-tuned BLOOMZ-560m (LoRA on real ESConv data), local Ollama (dev-only, opt-in) |
 | Retrieval | same-language character n-gram TF-IDF across 14 source-attributed reviewed topics |
@@ -219,6 +220,30 @@ Create a fresh Groq API key and put it only in the git-ignored `.env.local` file
 `GROQ_API_KEY=...`. Never commit or paste a real key into source code, a notebook, or the report.
 Without a key, the app safely continues through its local/retrieval paths.
 
+### Step 4b — Set up Supabase (auth + cloud persistence)
+
+The app stores chats, mood check-ins, EPDS-10 results, guided check-ins, and concern trends in a
+Supabase account rather than only in the browser, so a mother's history survives a device change.
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. In **Authentication → Providers → Email**, turn **off** "Confirm email" so sign-up works without
+   depending on email delivery (fine for a project at this stage; revisit before any real deployment
+   with real users).
+3. In **Authentication → URL Configuration**, set the Site URL to your deployed URL (or
+   `http://localhost:3000` for local-only use) and add `http://localhost:3000` to Redirect URLs.
+4. Open the **SQL Editor** and run the migration in [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql)
+   once — it creates the `profiles`, `threads`, `mood_checkins`, `epds_results`, `guided_checkins`, and
+   `concern_history` tables, each with Row Level Security scoped to the signed-in user.
+5. In **Project Settings → API**, copy the **Project URL** and **anon public** key into `.env.local`:
+
+   ```powershell
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+   Both are safe to expose in the browser bundle — the anon key is meant to be public, and Row Level
+   Security in the database (not key secrecy) is what actually restricts each user to their own data.
+
 ### Step 5 — Fine-tuned local response model (optional)
 
 Run `notebooks/umubyeyi.ipynb` on a Colab T4 to produce the current `esconv-v1` LoRA adapter. The
@@ -275,9 +300,13 @@ Next.js, normally http://localhost:3000. If port 3000 is occupied, it selects an
 ```text
 api/                              deployment Python endpoints
 app/, components/, lib/           Next.js user interface
+components/AuthGate.tsx           gates the app behind a signed-in Supabase account
+components/AuthScreen.tsx         sign-up / log-in / forgot-password UI
 components/EpdsAssessment.tsx     EPDS-10 wellness test UI (item-by-item, crisis-aware)
 components/ProgressDashboard.tsx  client-side trend dashboard (EPDS, mood, concern signal)
 components/charts/                shared Recharts trend/bar-chart components
+lib/supabase/                     Supabase client setup and the account-scoped data-access layer
+supabase/migrations/0001_init.sql cloud persistence schema (tables + Row Level Security policies)
 lib/epds.ts                       EPDS-10 items, scoring, band classification, streak tracking
 lib/trends.ts                     daily-to-weekly trend point aggregation for the progress dashboard
 data/postpartum_depression/       licensed participant data and dictionary

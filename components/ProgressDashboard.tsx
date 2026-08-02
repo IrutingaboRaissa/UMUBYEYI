@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import TrendLine from "@/components/charts/TrendLine";
 import { aggregateTrend } from "@/lib/trends";
-import { EpdsBand, EpdsEntry, EpdsStreak, loadEpdsHistory, loadStreak } from "@/lib/epds";
+import { EpdsBand, EpdsEntry, EpdsStreak, deriveStreak, loadEpdsHistory } from "@/lib/epds";
 import { MOOD_LABEL } from "@/lib/chat";
+import {
+  MoodEntry, CheckinEntry, ConcernEntry,
+  loadMoodHistory, loadCheckinHistory, loadConcernHistory,
+} from "@/lib/supabase/data";
 import { useT, useBi } from "@/lib/language";
-
-type MoodEntry = { mood: string; date: string };
-type CheckinEntry = { date: string; risk: string; elevated: boolean };
-type ConcernEntry = { date: string; score: number; level: string };
 
 const BAND_LABEL: Record<EpdsBand, string> = {
   low: "Biratekanye · Steady",
@@ -41,12 +41,14 @@ export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?:
   const [showAllCheckins, setShowAllCheckins] = useState(false);
 
   useEffect(() => {
-    setEpdsHistory(loadEpdsHistory());
-    setStreak(loadStreak());
-    try { setMoodHistory(JSON.parse(localStorage.getItem("umubyeyi_moods_v1") || "[]")); } catch { /* ignore */ }
-    try { setCheckinHistory(JSON.parse(localStorage.getItem("umubyeyi_checkin_v1") || "[]")); } catch { /* ignore */ }
-    try { setConcernHistory(JSON.parse(localStorage.getItem("umubyeyi_concern_v1") || "[]")); } catch { /* ignore */ }
     try { setNudgeSnoozedUntil(localStorage.getItem(NUDGE_SNOOZE_KEY) || ""); } catch { /* ignore */ }
+    loadEpdsHistory().then((history) => {
+      setEpdsHistory(history);
+      setStreak(deriveStreak(history));
+    }).catch((err) => console.error("Failed to load wellness test history", err));
+    loadMoodHistory().then(setMoodHistory).catch((err) => console.error("Failed to load mood history", err));
+    loadCheckinHistory().then(setCheckinHistory).catch((err) => console.error("Failed to load check-in history", err));
+    loadConcernHistory().then(setConcernHistory).catch((err) => console.error("Failed to load concern history", err));
   }, []);
 
   // One point per day while history is short, one per week once it would otherwise be a
@@ -223,8 +225,8 @@ export default function ProgressDashboard({ onGoToSelfcare }: { onGoToSelfcare?:
       )}
 
       <div className="subtext" style={{ marginTop: 16 }}>
-        {tr("Ibi byose bibikwa kuri iyi terefone/mudasobwa gusa. Nta kintu gisohoka ahandi.",
-          "Everything here stays on this device. Nothing is sent anywhere.")}
+        {tr("Ibi byose bibikwa kuri konti yawe irinzwe, kandi ubona uko ugenda kuri mudasobwa iyo ari yo yose winjiyeho.",
+          "Everything here is saved to your secure account, so your trends follow you across any device you sign into.")}
       </div>
     </>
   );
