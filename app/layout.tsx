@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { LanguageProvider } from "@/lib/language";
 
 export const metadata: Metadata = {
   title: "Umubyeyi",
@@ -9,7 +10,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      {/* suppressHydrationWarning here only: browser extensions (Grammarly, password
+          managers, etc.) inject attributes like data-gr-ext-installed onto <body> before
+          React hydrates, causing a false-positive mismatch warning unrelated to our code. */}
+      <body suppressHydrationWarning>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   );
 }

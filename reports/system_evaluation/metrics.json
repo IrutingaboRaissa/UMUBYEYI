@@ -45,18 +45,18 @@
     }
   },
   "generator": {
-    "evaluation": "conversation/question-grouped held-out ESConv and AMOD responses",
+    "evaluation": "conversation-grouped held-out ESConv responses",
     "available": true,
     "baseline": {
-      "rouge_l_f1": 0.0,
-      "distinct_2": 0.2727272727272727,
-      "mean_response_words": 1.22,
+      "rouge_l_f1": 0.06483984694550449,
+      "distinct_2": 0.8073836276083467,
+      "mean_response_words": 7.23,
       "examples": 100
     },
     "fine_tuned": {
-      "rouge_l_f1": 0.1149548306238782,
-      "distinct_2": 0.3723076923076923,
-      "mean_response_words": 7.5,
+      "rouge_l_f1": 0.12849513372528043,
+      "distinct_2": 0.6912216083486802,
+      "mean_response_words": 17.29,
       "examples": 100
     },
     "limitation": "automatic metrics do not measure empathy, clinical safety, or native fluency"
@@ -196,5 +196,5 @@
       }
     }
   },
-  "scope_statement": "Screening metrics use untouched participant records. Intent metrics use AMOD-derived weak labels and NLLB-translated Kinyarwanda. Retrieval and routing cases are controlled project evaluations. Generator metrics require a completed grouped ESConv/AMOD Colab run."
+  "scope_statement": "Screening metrics use untouched participant records. Intent metrics use AMOD-derived weak labels and NLLB-translated Kinyarwanda. Retrieval and routing cases are controlled project evaluations. Generator metrics require a completed conversation-grouped ESConv Colab run."
 }

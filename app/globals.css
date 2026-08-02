@@ -320,6 +320,11 @@ html, body {
   padding: 8px 15px;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(90,70,80,.05);
+  /* .btn is also applied directly to <a>/<Link> in a few places (legal-page links) --
+     these resets keep an anchor styled as .btn indistinguishable from a real <button>. */
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .btn:hover { border-color: #C9B9C2; background: #FCF8F2; }
@@ -848,3 +853,52 @@ html, body {
   .sidebar-backdrop { display: none !important; }
   .sidebar-close { display: none; }
 }
+
+/* Standalone legal pages (Privacy Policy, EULA) -- not part of the SPA view system, so they
+   get their own simple centered-column layout rather than reusing .app-shell/.sidebar. */
+.legal-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 56px) 20px 64px;
+  color: #4A3F47;
+  line-height: 1.65;
+}
+.legal-page .legal-back {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #5E4A5E;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.legal-page .legal-back:hover { text-decoration: underline; }
+.legal-page h1 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(26px, 4vw, 34px);
+  color: #3B2E39;
+  margin: 0 0 6px;
+}
+.legal-page .legal-updated { color: #A08E97; font-size: 13px; margin-bottom: 24px; }
+.legal-page h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 19px;
+  color: #3B2E39;
+  margin: 30px 0 10px;
+}
+.legal-page p { margin: 0 0 14px; font-size: 15px; }
+.legal-page ul { margin: 0 0 14px; padding-left: 22px; }
+.legal-page li { margin-bottom: 6px; font-size: 15px; }
+.legal-page .legal-summary {
+  background: #FCF8F2; border: 1px solid #EFE6D8; border-radius: 16px;
+  padding: 16px 20px; margin-bottom: 28px; font-size: 15px; color: #5b4f56;
+}
+.legal-page .legal-summary b { color: #3B2E39; }
+.legal-page a { color: #5E4A5E; font-weight: 600; }
+.legal-page .legal-summary a { font-weight: 700; }
+.legal-page .legal-footer-links {
+  margin-top: 40px; padding-top: 20px; border-top: 1px solid #EFE6D8;
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.legal-page .legal-footer-links a { text-decoration: none; }
